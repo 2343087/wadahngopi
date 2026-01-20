@@ -2,7 +2,6 @@
     "version": 2,
     "framework": null,
     "functions": {
-        "api/index.php": { "runtime": "vercel-php@0.6.0" },
         "public/index.php": { "runtime": "vercel-php@0.6.0" }
     },
     "routes": [
@@ -10,11 +9,5 @@
             "src": "/(.*)",
             "dest": "/public/index.php"
         }
-    ],
-    "env": {
-        "APP_ENV": "production",
-        "APP_DEBUG": "true",
-        "APP_URL": "https://wadahngopi.vercel.app",
-        "APP_KEY": "base64:..." 
-    }
+    ]
 }
