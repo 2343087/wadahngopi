@@ -12,4 +12,6 @@ Route::get('/profile', function () {
     return view('profile');
 })->name('profile');
 Route::get('/cafes/{cafe}', [CafeController::class, 'show'])->name('cafes.show');
-Route::post('/cafes/{cafe}/review', [CafeController::class, 'storeReview'])->name('cafes.review');
+Route::post('/cafes/{cafe}/energy', [CafeController::class, 'storeEnergy'])
+    ->middleware('throttle:10,1')
+    ->name('cafes.energy');

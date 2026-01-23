@@ -3,40 +3,43 @@
 @section('title', 'Profil - WadahNgopi.Com')
 
 @section('content')
+    <div class="animate-up">
+        {{-- Profile Header --}}
+        <div class="px-6 py-16 text-center relative overflow-hidden">
+            <div
+                class="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-[--color-cream-dark] to-transparent -z-10 opacity-40">
+            </div>
+
+            <div
+                class="w-32 h-32 bg-gradient-to-br from-[--color-espresso] to-[--color-coffee] text-white rounded-[40px] flex items-center justify-center mx-auto mb-6 shadow-2xl border-4 border-white animate-bounce-slow">
+                <i class="ph ph-user-circle-fill text-[4rem]"></i>
+            </div>
+
+            <h1 class="text-3xl font-black text-[--color-espresso] mb-1 tracking-tight">Halo, Kopi Mania!</h1>
+            <p class="text-[--color-text-muted] font-bold opacity-70">Pecinta Kopi Sejati</p>
+        </div>
+
+        {{-- About Card --}}
+        <div class="m-6 p-8 bg-white/40 backdrop-blur-xl border border-white/60 rounded-[35px] shadow-sm">
+            <h3 class="text-xl font-black text-[--color-espresso] mb-4">Tentang WadahNgopi</h3>
+            <p class="text-slate-600 leading-relaxed font-medium text-[0.95rem]">
+                WadahNgopi.Com adalah aplikasi pencarian tempat ngopi Kalimantan kekinian yang informatif dan modern.
+                Dirancang buat buanmu yang pengen eksplor spot ngopi baru
+                dan pengalaman visual yang clean.
+            </p>
+        </div>
+
+        {{-- App Info --}}
+        <div class="px-6 mt-12 text-center">           
+            <div class="text-[0.6rem] font-bold text-slate-300 tracking-[0.2em] uppercase">
+                MADE WITH ❤️ FOR ANAK KALIMANTAN KREATIF
+                <i class="ph ph-rocket-launch"></i> WadahNgopi.Com V1.0
+            </div>
+        </div>
+    </div>
+
     <style>
-        /* ===== Profile Header ===== */
-        .profile-header {
-            padding: 60px 20px 40px;
-            text-align: center;
-            position: relative;
-        }
-
-        .profile-header::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at top, rgba(111, 78, 55, 0.12), transparent 60%);
-            z-index: -1;
-        }
-
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(145deg, var(--color-coffee-dark), var(--color-coffee));
-            color: white;
-            border-radius: 42px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 22px;
-            font-size: 3.5rem;
-            box-shadow:
-                0 20px 40px rgba(62, 39, 35, 0.25),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.15);
-            animation: floatAvatar 5s ease-in-out infinite;
-        }
-
-        @keyframes floatAvatar {
+        @keyframes bounce-slow {
 
             0%,
             100% {
@@ -44,134 +47,12 @@
             }
 
             50% {
-                transform: translateY(-6px);
+                transform: translateY(-10px);
             }
         }
 
-        .profile-info h1 {
-            font-size: 1.9rem;
-            font-weight: 800;
-            color: var(--color-coffee-dark);
-            margin-bottom: 6px;
-            letter-spacing: -0.5px;
-        }
-
-        .profile-info p {
-            color: var(--color-text-muted);
-            font-weight: 500;
-            font-size: 0.95rem;
-            opacity: 0.85;
-        }
-
-        /* ===== Info Card ===== */
-        .info-card {
-            margin: 22px;
-            padding: 32px;
-            border-radius: 34px;
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(14px);
-            transition: transform 0.35s ease, box-shadow 0.35s ease;
-        }
-
-        .info-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(120deg,
-                    rgba(255, 255, 255, 0.25),
-                    rgba(255, 255, 255, 0.05),
-                    rgba(255, 255, 255, 0.25));
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .info-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 25px 50px rgba(62, 39, 35, 0.18);
-        }
-
-        .info-card:hover::before {
-            opacity: 1;
-        }
-
-        .info-card h3 {
-            font-size: 1.25rem;
-            font-weight: 800;
-            margin-bottom: 14px;
-            color: var(--color-coffee-dark);
-            letter-spacing: -0.3px;
-        }
-
-        .info-card p {
-            font-size: 0.95rem;
-            line-height: 1.75;
-            opacity: 0.85;
-        }
-
-        /* ===== Admin CTA ===== */
-        .admin-cta {
-            margin: 0 22px;
-        }
-
-        .admin-cta .btn {
-            border-radius: 18px;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-            box-shadow: 0 14px 30px rgba(62, 39, 35, 0.25);
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-        }
-
-        .admin-cta .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 20px 45px rgba(62, 39, 35, 0.35);
-        }
-
-        .admin-cta i {
-            margin-right: 6px;
-        }
-
-        /* ===== Version Label ===== */
-        .version-label {
-            text-align: center;
-            padding: 42px 0 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--color-text-muted);
-            letter-spacing: 1.6px;
-            opacity: 0.7;
+        .animate-bounce-slow {
+            animation: bounce-slow 4s ease-in-out infinite;
         }
     </style>
-
-    <div class="animate-up">
-        <div class="profile-header">
-            <div class="profile-avatar">
-                <i class="bi bi-person-stars"></i>
-            </div>
-            <div class="profile-info">
-                <h1>Halo, Buan Kopi Mania!</h1>
-                <p>Pecinta Kopi Sejati</p>
-            </div>
-        </div>
-
-        <div class="glass info-card">
-            <h3>Tentang WadahNgopi</h3>
-            <p>
-                WadahNgopi.Com adalah aplikasi pencarian tempat ngopi Kalimantan kekinian yang ringan dan modern.
-                Dirancang buat buanmu yang pengen eksplor spot ngopi baru
-                dan pengalaman visual yang clean.
-            </p>
-        </div>
-
-        <div class="admin-cta animate-up" style="animation-delay: 0.1s">
-            <a href="/admin" class="btn btn-primary" style="width: 100%; padding: 18px; border-radius: 20px;">
-                <i class="bi bi-shield-lock-fill"></i>
-                Login Panel Admin
-            </a>
-        </div>
-
-        <div class="version-label">
-            WADAHNGOPI.COM V1.0
-        </div>
-    </div>
 @endsection

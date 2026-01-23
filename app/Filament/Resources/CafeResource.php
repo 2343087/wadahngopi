@@ -14,49 +14,108 @@ class CafeResource extends Resource
 {
     protected static ?string $model = Cafe::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Info Utama')
+                // SECTION: ADMIN CONTROL (Structural) - Hidden from Owner
+                Forms\Components\Section::make('Admin Control')
+                    ->description('Hanya Admin yang bisa mengatur ini.')
                     ->schema([
+                        Forms\Components\Select::make('owner_id')
+                            ->relationship('owner', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->label('Pemilik Cafe')
+                            ->required(),
+
+                        Forms\Components\Select::make('status')
+                            ->options([
+                                'draft' => 'Draft',
+                                'review' => 'Under Review',
+                                'published' => 'Published',
+                            ])
+                            ->default('draft')
+                            ->required(),
+
                         Forms\Components\TextInput::make('name')
                             ->required()
-                            ->maxLength(255),
-                        Forms\Components\Textarea::make('description')
-                            ->columnSpanFull(),
-                        Forms\Components\FileUpload::make('image_path')
-                            ->image()
-                            ->directory('cafes')
-                            ->visibility('public'),
-                    ])->columns(2),
+                            ->maxLength(255)
+                            ->label('Nama Cafe'),
 
-                Forms\Components\Section::make('Lokasi & Kontak')
-                    ->schema([
-                        Forms\Components\Textarea::make('address')
-                            ->required()
-                            ->columnSpanFull(),
-                        Forms\Components\TextInput::make('google_maps_url')
-                            ->url()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('whatsapp_number')
-                            ->tel()
-                            ->maxLength(255),
-                    ])->columns(2),
-
-                Forms\Components\Section::make('Fasilitas & Rating')
-                    ->schema([
-                        Forms\Components\Toggle::make('has_wifi')
-                            ->label('Ada WiFi?')
-                            ->required(),
                         Forms\Components\TextInput::make('rating')
                             ->numeric()
                             ->step(0.1)
                             ->minValue(0)
-                            ->maxValue(5),
-                    ])->columns(2),
+                            ->maxValue(5)
+                            ->label('Rating (Manual)'),
+                    ])
+                    ->columns(2)
+                    ->visible(fn () => auth()->user()->role === 'admin'),
+
+                // SECTION: OWNER CONTENT (Content) - Hidden from Admin
+                Forms\Components\Section::make('Informasi Cafe')
+                    ->description('Kelola detail cafe Anda di sini.')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->readOnly() // Owner cannot change name provided by Admin
+                            ->label('Nama Cafe'),
+
+                        Forms\Components\Select::make('status')
+                            ->options([
+                                'review' => 'Ajukan Review',
+                                'published' => 'Publish Sekarang',
+                            ])
+                            ->label('Status Publikasi'),
+
+                        Forms\Components\Textarea::make('description')
+                            ->label('Deskripsi')
+                            ->columnSpanFull(),
+
+                        Forms\Components\FileUpload::make('image_path')
+                            ->image()
+                            ->directory('cafes')
+                            ->visibility('public')
+                            ->label('Gambar Utama (Cover)'),
+
+                        Forms\Components\FileUpload::make('images')
+                            ->image()
+                            ->multiple()
+                            ->maxFiles(5)
+                            ->directory('cafes/gallery')
+                            ->visibility('public')
+                            ->label('Galeri Gambar (Max 5)')
+                            ->reorderable()
+                            ->columnSpanFull(),
+
+                        Forms\Components\Section::make('Lokasi & Kontak')
+                            ->schema([
+                                Forms\Components\Textarea::make('address')
+                                    ->required()
+                                    ->label('Alamat Lengkap')
+                                    ->columnSpanFull(),
+                                Forms\Components\TextInput::make('google_maps_url')
+                                    ->url()
+                                    ->label('Link Google Maps'),
+                                Forms\Components\TextInput::make('whatsapp_number')
+                                    ->tel()
+                                    ->label('Nomor WhatsApp'),
+                            ])->columns(2),
+
+                        Forms\Components\Section::make('Jam Operasional & Koordinat')
+                            ->schema([
+                                Forms\Components\TimePicker::make('opening_time')->label('Buka'),
+                                Forms\Components\TimePicker::make('closing_time')->label('Tutup'),
+                                Forms\Components\TextInput::make('latitude')->numeric(),
+                                Forms\Components\TextInput::make('longitude')->numeric(),
+                            ])->columns(2),
+
+                    ])
+                    ->visible(fn () => auth()->user()->role !== 'admin'),
             ]);
     }
 
@@ -65,26 +124,30 @@ class CafeResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image_path')
-                    ->label('Foto'),
+                    ->label('Foto')
+                    ->visible(fn () => auth()->user()->role !== 'admin'), // Admin might not care about photo
+
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
+                    ->sortable()
+                    ->label('Nama Cafe'),
+
+                Tables\Columns\TextColumn::make('owner.name')
+                    ->label('Owner')
+                    ->visible(fn () => auth()->user()->role === 'admin'),
+
+                Tables\Columns\BadgeColumn::make('status')
+                    ->colors([
+                        'gray' => 'draft',
+                        'warning' => 'review',
+                        'success' => 'published',
+                    ])
                     ->sortable(),
-                Tables\Columns\IconColumn::make('has_wifi')
-                    ->boolean()
-                    ->label('WiFi'),
+
                 Tables\Columns\TextColumn::make('rating')
                     ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('whatsapp_number')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->visible(fn () => auth()->user()->role === 'admin'), // Only Admin cares about managing rating
             ])
             ->filters([
                 //
@@ -97,6 +160,17 @@ class CafeResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (auth()->user()->role !== 'admin') {
+            $query->where('owner_id', auth()->id());
+        }
+
+        return $query;
     }
 
     public static function getRelations(): array

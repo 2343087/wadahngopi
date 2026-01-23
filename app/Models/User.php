@@ -16,7 +16,12 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return true; // Allow all users for now
+        return in_array($this->role, ['admin', 'user']);
+    }
+
+    public function cafes()
+    {
+        return $this->hasMany(Cafe::class, 'owner_id');
     }
 
     /**
@@ -28,6 +33,7 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**

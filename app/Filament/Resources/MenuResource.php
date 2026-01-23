@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class MenuResource extends Resource
 {
@@ -21,10 +22,23 @@ class MenuResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('cafe_id')
-                    ->relationship('cafe', 'name')
+                    ->relationship('cafe', 'name', modifyQueryUsing: function (Builder $query) {
+                        // If Admin, show all. If Owner, show only owned cafes.
+                        if (auth()->user()->role !== 'admin') {
+                            $query->where('owner_id', auth()->id());
+                        }
+                    })
+                    ->visible(fn () => auth()->user()->role === 'admin' || auth()->user()->cafes()->count() > 1)
                     ->required()
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->default(fn () => auth()->user()->role !== 'admin' ? auth()->user()->cafes()->first()?->id : null),
+
+                // Hidden field for single-cafe owners to ensuring data integrity
+                Forms\Components\Hidden::make('cafe_id')
+                    ->default(fn () => auth()->user()->role !== 'admin' ? auth()->user()->cafes()->first()?->id : null)
+                    ->visible(fn () => auth()->user()->role !== 'admin' && auth()->user()->cafes()->count() <= 1),
+
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -44,6 +58,20 @@ class MenuResource extends Resource
                     ->directory('menus')
                     ->visibility('public'),
             ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (auth()->user()->role !== 'admin') {
+            // Join tables to filter menus by cafe ownership
+            $query->whereHas('cafe', function (Builder $q) {
+                $q->where('owner_id', auth()->id());
+            });
+        }
+
+        return $query;
     }
 
     public static function table(Table $table): Table
