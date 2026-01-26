@@ -1,0 +1,167 @@
+﻿
+   FAIL  Tests\Feature\SecurityAuditTest
+  Ô£ô cannot viÔÇª 0.57s  
+  Ô£ô can viewÔÇª  0.08s  
+  Ô£ô saved cafÔÇª 0.09s  
+  Ô£ô energy syÔÇª 0.10s  
+  Ô£ô saved cafÔÇª 0.10s  
+  Ô¿» home pageÔÇª 0.10s  
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\FÔÇª   
+  Expected: <!DOCTYPE html>\r\n
+<html lang="id">\r\n
+\r\n
+<head>\r\n
+    <meta charset="utf-8">\r\n
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">\r\n
+    <meta name="theme-color" content="#6F4E37">\r\n
+    <link rel="manifest" href="/manifest.json">\r\n
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">\r\n
+\r\n
+    <title>WadahNgopi.Com Ôÿò</title>\r\n
+\r\n
+    <!-- Fonts - Modern & Premium -->\r\n
+    <link rel="preconnect" href="https://fonts.googleapis.com">\r\n
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\r\n
+    <link\r\n
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&display=swap"\r\n
+        rel="stylesheet">\r\n
+\r\n
+    <!-- Icons & Interactivity -->\r\n
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>\r\n
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>\r\n
+\r\n
+    <link rel="preload" as="style" href="http://wadahngopi.test/build/assets/app-BXviVq6A.css" /><link rel="modulepreload" as="script" href="http://wadahngopi.test/build/assets/app-CAiCLEjY.js" /><link rel="stylesheet" href="http://wadahngopi.test/build/assets/app-BXviVq6A.css" data-navigate-track="reload" /><script type="module" src="http://wadahngopi.test/build/assets/app-CAiCLEjY.js" data-navigate-track="reload"></script></head>\r\n
+\r\n
+<body>\r\n
+    <div class="main-container">\r\n
+            <div x-data="homeLogic()" x-init="initComponent()">\r\n
+        <div class="hero-fancy">\r\n
+            <h1 class="hero-luxury-title">WadahNgopi.Com</h1>\r\n
+            <p class="text-[--color-text-muted] text-[1.1rem] font-semibold opacity-80">Temukan Tempat Nongkrong Terbaik\r\n
+                Buanmu.</p>\r\n
+\r\n
+            <div class="search-luxury-container">\r\n
+                <div class="search-luxury-box">\r\n
+                    <i class="ph ph-magnifying-glass text-xl opacity-40"></i>\r\n
+                    <input type="text" x-model="search" placeholder="Cari nama cafe atau lokasi..."\r\n
+                        @keyup.escape="search = ''">\r\n
+                </div>\r\n
+            </div>\r\n
+        </div>\r\n
+\r\n
+        <div class="flex justify-between items-center px-6 pt-10 pb-4">\r\n
+            <h2 class="text-[1.3rem] font-black text-[--color-espresso]">Rekomendasi</h2>\r\n
+            <a href="http://wadahngopi.test/explore"\r\n
+                class="text-[0.8rem] font-bold text-[--color-coffee] bg-[#fff] px-4 py-2 rounded-xl shadow-sm border border-black/5 no-underline transition-all active:scale-95">Lihat\r\n
+                Semua</a>\r\n
+        </div>\r\n
+\r\n
+        <div class="luxury-grid" x-show="filteredCafes().length > 0">\r\n
+            <template x-for="(cafe, index) in filteredCafes()" :key="cafe.id">\r\n
+                <a :href="cafe.url" class="luxury-cafe-card animate-up" :style="'animation-delay: ' + (index * 0.1) + 's'">\r\n
+                    <div class="luxury-image-wrapper">\r\n
+                        <img :src="cafe.image || 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800'"\r\n
+                            :alt="cafe.name" loading="lazy">\r\n
+                        <div class="luxury-badge">\r\n
+                            <span x-text="cafe.isOpen ? 'BUKA' : 'TUTUP'"></span>\r\n
+                        </div>\r\n
+                    </div>\r\n
+                    <div class="luxury-card-info">\r\n
+                        <h3 x-text="cafe.name"></h3>\r\n
+                        <div class="luxury-meta-row">\r\n
+                            <div class="energy-tag">\r\n
+                                <i class="ph-fill ph-bolt"></i> <span x-text="formatNumber(cafe.energy || 0)"></span>\r\n
+                            </div>\r\n
+                            <span class="opacity-40">ÔÇó</span>\r\n
+                            <span x-text="cafe.address.split(',')[0]"></span>\r\n
+                        </div>\r\n
+                    </div>\r\n
+                </a>\r\n
+            </template>\r\n
+        </div>\r\n
+\r\n
+        <div x-show="filteredCafes().length === 0" x-cloak\r\n
+            style="text-align: center; padding: 100px 40px; color: var(--color-text-muted);">\r\n
+            <i class="ph ph-mask-sad text-[4rem] opacity-20 block mb-6 mx-auto"></i>\r\n
+            <h3 class="text-[1.2rem] font-black text-[--color-espresso] mb-2">Waduh, Gak Ketemu!</h3>\r\n
+            <p class="text-[0.9rem] font-medium opacity-60">Coba cari dengan kata kunci lain atau cek lokasi sekitarmu.</p>\r\n
+        </div>\r\n
+    </div>\r\n
+\r\n
+        <nav class="bottom-nav">\r\n
+            <a href="http://wadahngopi.test" class="nav-item active">\r\n
+                <i class="ph-fill ph-house"></i>\r\n
+                <span>Beranda</span>\r\n
+            </a>\r\n
+            <a href="http://wadahngopi.test/explore" class="nav-item ">\r\n
+                <i class="ph ph-compass"></i>\r\n
+                <span>Explore</span>\r\n
+            </a>\r\n
+            <a href="http://wadahngopi.test/saved" class="nav-item ">\r\n
+                <i\r\n
+                    class="ph ph-bookmark-simple"></i>\r\n
+                <span>Simpan</span>\r\n
+            </a>\r\n
+            <a href="http://wadahngopi.test/profile" class="nav-item ">\r\n
+                <i class="ph ph-user"></i>\r\n
+                <span>Profil</span>\r\n
+            </a>\r\n
+        </nav>\r\n
+    </div>\r\n
+\r\n
+    <script>\r\n
+        // Register Service Worker\r\n
+        if ('serviceWorker' in navigator) {\r\n
+            window.addEventListener('load', () => {\r\n
+                navigator.serviceWorker.register('/sw.js');\r\n
+            });\r\n
+        }\r\n
+    </script>\r\n
+        <script>\r\n
+        window.cafesData = JSON.parse('[{\u0022id\u0022:1,\u0022name\u0022:\u0022Cafe \\u003Cscript\\u003Ealert(\\u0022xss\\u0022)\\u003C\\\/script\\u003E\u0022,\u0022address\u0022:\u0022Jln. Moch. Ramdan No. 916, Tanjung Pinang 68964, Sulteng\u0022,\u0022energy\u0022:0,\u0022isOpen\u0022:false,\u0022image\u0022:\u0022https:\\\/\\\/images.unsplash.com\\\/photo-1509042239860-f550ce710b93?auto=format\\u0026fit=crop\\u0026q=80\\u0026w=800\u0022,\u0022url\u0022:\u0022http:\\\/\\\/wadahngopi.test\\\/cafes\\\/1\u0022}]');\r\n
+\r\n
+        document.addEventListener('alpine:init', () => {\r\n
+            Alpine.data('homeLogic', () => ({\r\n
+                search: '',\r\n
+                cafes: [],\r\n
+\r\n
+                initComponent() {\r\n
+                    this.cafes = window.cafesData || [];\r\n
+                },\r\n
+\r\n
+                filteredCafes() {\r\n
+                    if (!this.search) return this.cafes;\r\n
+                    const s = this.search.toLowerCase();\r\n
+                    return this.cafes.filter(c =>\r\n
+                        c.name.toLowerCase().includes(s) ||\r\n
+                        c.address.toLowerCase().includes(s)\r\n
+                    );\r\n
+                },\r\n
+\r\n
+                formatNumber(n) {\r\n
+                    if (n >= 1000) return (n / 1000).toFixed(1) + 'k';\r\n
+                    return n;\r\n
+                }\r\n
+            }));\r\n
+        });\r\n
+    </script>\r\n
+</body>\r\n
+\r\n
+</html>
+
+  To contain: "Cafe <script>alert(\"xss\")<\/script>"
+
+  at tests\Feature\SecurityAuditTest.php:87
+     83Ôûò 
+     84Ôûò     $response->assertStatus(200);
+     85Ôûò     // @json will escape the string properly
+     86Ôûò     $response->assertDontSee($maliciousName, false);
+  Ô×£  87Ôûò     $response->assertSee(json_encode($maliciousName), false);
+     88Ôûò });
+     89Ôûò
+
+
+  Tests:    1 failed, 5 passed (13 assertions)
+  Duration: 1.22s
+

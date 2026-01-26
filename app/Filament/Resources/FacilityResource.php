@@ -24,7 +24,12 @@ class FacilityResource extends Resource
                 // Auto-fill cafe_id with the logged-in Owner's cafe
                 Forms\Components\Hidden::make('cafe_id')
                     ->default(fn () => auth()->user()->cafes()->first()?->id)
-                    ->required(),
+                    ->required()
+                    ->rules(
+                        fn () => auth()->user()->role === 'admin'
+                        ? ['exists:cafes,id']
+                        : ['exists:cafes,id,owner_id,'.auth()->id()]
+                    ),
 
                 Forms\Components\TextInput::make('name')
                     ->required()

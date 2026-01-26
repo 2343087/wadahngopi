@@ -2,33 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ExploreFilterRequest;
 use App\Models\Cafe;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ExploreController extends Controller
 {
-    public function index(Request $request): View
+    public function index(ExploreFilterRequest $request): View
     {
+        $validated = $request->validated();
         $query = Cafe::where('status', 'published');
 
-        if ($request->filled('search')) {
-            $query->where('name', 'like', '%'.$request->search.'%');
+        // Search with escaped wildcards for security
+        if (! empty($validated['search'])) {
+            $search = str_replace(['%', '_'], ['\\%', '\\_'], $validated['search']);
+            $query->where('name', 'like', '%'.$search.'%');
         }
 
-        // Filter by facilities (including any facility)
-        if ($request->filled('facilities')) {
-            $facilities = $request->input('facilities');
-            if (! is_array($facilities)) {
-                $facilities = explode(',', $facilities);
-            }
+        // Filter by facilities
+        if (! empty($validated['facilities'])) {
+            $facilities = $validated['facilities'];
             $query->whereHas('facilities', function ($q) use ($facilities) {
                 $q->whereIn('facilities.id', $facilities);
             });
         }
 
         // Filter: Open Now
-        if ($request->boolean('open_now')) {
+        if (! empty($validated['open_now'])) {
             $now = now()->format('H:i:s');
             $query->where(function ($q) use ($now) {
                 $q->where(function ($sub) use ($now) {
@@ -36,7 +36,6 @@ class ExploreController extends Controller
                         ->where('opening_time', '<=', $now)
                         ->where('closing_time', '>=', $now);
                 })->orWhere(function ($sub) use ($now) {
-                    // Overnight (e.g. 18:00 to 02:00)
                     $sub->whereColumn('closing_time', '<', 'opening_time')
                         ->where(function ($time) use ($now) {
                             $time->where('opening_time', '<=', $now)
@@ -46,10 +45,10 @@ class ExploreController extends Controller
             });
         }
 
-        // Sorting
-        if ($request->input('sort') === 'nearest' && $request->filled('lat') && $request->filled('lng')) {
-            $lat = $request->input('lat');
-            $lng = $request->input('lng');
+        // Sorting by nearest (validated lat/lng)
+        if (($validated['sort'] ?? null) === 'nearest' && ! empty($validated['lat']) && ! empty($validated['lng'])) {
+            $lat = (float) $validated['lat'];
+            $lng = (float) $validated['lng'];
             $query->select('*')
                 ->selectRaw('(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance', [$lat, $lng, $lat])
                 ->orderBy('distance');

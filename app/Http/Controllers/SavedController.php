@@ -10,11 +10,14 @@ class SavedController extends Controller
 {
     public function index(Request $request): View
     {
-        $ids = $request->query('ids', []);
+        $ids = is_array($request->query('ids')) ? $request->query('ids') : [];
 
-        $cafes = [];
+        // Security: Limit IDs to prevent DOS (max 50)
+        $ids = array_slice($ids, 0, 50);
+
+        $cafes = collect([]);
         if (! empty($ids)) {
-            $cafes = Cafe::whereIn('id', $ids)->get();
+            $cafes = Cafe::where('status', 'published')->whereIn('id', $ids)->get();
         }
 
         return view('saved', compact('cafes'));

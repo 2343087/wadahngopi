@@ -19,18 +19,13 @@ class Cafe extends Model
         'has_wifi',
         'rating',
         'image_path',
-        'images', // Multiple images (JSON array)
+        'images',
         'latitude',
         'longitude',
         'opening_time',
         'closing_time',
         'owner_id',
         'status',
-        'total_energy',
-    ];
-
-    protected $casts = [
-        'images' => 'array', // Cast JSON to array
     ];
 
     public function owner()
@@ -63,21 +58,18 @@ class Cafe extends Model
         return $this->hasMany(Facility::class);
     }
 
-    public function reactions()
-    {
-        return $this->hasMany(Reaction::class);
-    }
-
+    /**
+     * Check if the cafe is currently open.
+     */
     public function getIsOpenAttribute(): bool
     {
         if (! $this->opening_time || ! $this->closing_time) {
             return false;
         }
 
-        $now = now()->setTimezone('Asia/Pontianak')->format('H:i:s'); // Assuming Pontianak/WITA or WIB. Defaulting to App timezone, maybe safe to use 'Asia/Jakarta' or config value. Sticking to simple now() for generic context or explicit if needed.
-        // Let's use simple now() which uses App config timezone.
         $now = now()->format('H:i:s');
 
+        // Handle overnight hours (e.g., 18:00 - 02:00)
         if ($this->closing_time < $this->opening_time) {
             return $now >= $this->opening_time || $now <= $this->closing_time;
         }
@@ -93,6 +85,7 @@ class Cafe extends Model
     protected function casts(): array
     {
         return [
+            'images' => 'array',
             'has_wifi' => 'boolean',
             'rating' => 'decimal:2',
             'latitude' => 'decimal:8',

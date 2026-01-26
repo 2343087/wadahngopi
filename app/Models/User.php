@@ -16,6 +16,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
+        // Admin and User (cafe owners) can access panel
         return in_array($this->role, ['admin', 'user']);
     }
 

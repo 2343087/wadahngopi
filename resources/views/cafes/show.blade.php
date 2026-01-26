@@ -22,7 +22,6 @@
 @section('content')
     <div class="detail-wrapper" x-data="cafeDetailComponent({
         id: {{ $cafe->id }},
-        totalEnergy: {{ $cafe->total_energy }},
         images: {{ json_encode($galleryImages) }}
     })">
 
@@ -73,18 +72,18 @@
 
         {{-- Main Detail Content --}}
         <div class="detail-content-luxury animate-up">
-            {{-- Action Buttons --}}
-            <div class="flex gap-4 mb-10">
-                <a href="{{ $cafe->google_maps_url }}" target="_blank" class="flex-1 btn btn-primary py-4 h-16">
-                    <i class="ph-fill ph-navigation-arrow text-xl"></i>Petunjuk Arah
-                </a>
-                <a href="https://wa.me/{{ $cafe->whatsapp_number }}" target="_blank" class="flex-1 btn bg-[#10B981] text-white py-4 h-16 shadow-lg shadow-emerald-500/20">
-                    <i class="ph-fill ph-whatsapp-logo text-2xl"></i>Chat Admin
-                </a>
+            <div class="text-slate-600 leading-[1.8] text-[1rem] font-medium mb-10 opacity-90">
+                {{ $cafe->description }}
             </div>
 
-            <div class="text-slate-600 leading-[1.8] text-[1.05rem] font-medium mb-10 opacity-90">
-                {{ $cafe->description }}
+            {{-- Action Buttons --}}
+            <div class="flex gap-3 mb-12">
+                <a href="{{ $cafe->google_maps_url }}" target="_blank" class="flex-1 btn btn-primary py-4 h-14 text-sm shadow-xl">
+                    <i class="ph-fill ph-navigation-arrow text-lg"></i>Maps
+                </a>
+                <a href="https://wa.me/{{ $cafe->whatsapp_number }}" target="_blank" class="flex-1 btn bg-[#10B981] text-white py-4 h-14 text-sm shadow-xl shadow-emerald-500/20">
+                    <i class="ph-fill ph-whatsapp-logo text-xl"></i>WhatsApp
+                </a>
             </div>
 
             {{-- Features Section --}}
@@ -153,35 +152,6 @@
                 </div>
             </section>
 
-            {{-- Interactive Energy Center --}}
-            <section class="mb-12">
-                <div class="energy-box-luxury">
-                    <h3 class="text-2xl font-black text-[--color-espresso] mb-2">Kirim Energi! ⚡️</h3>
-                    <p class="text-slate-400 font-bold text-[0.9rem] mb-8 px-6">Bantu cafe ini makin populer dengan sekali ketuk!</p>
-
-                    <div class="relative inline-block">
-                        <button @click="addEnergy" class="energy-btn-luxury" :class="isBouncing ? 'animate-bounce' : ''">
-                            <i class="ph-fill ph-coffee text-[--color-coffee-dark]"></i>
-                        </button>
-                        
-                        {{-- Particles --}}
-                        <template x-for="p in particles" :key="p.id">
-                            <span class="floating-particle" 
-                                :style="'left: ' + p.x + 'px; bottom: 80px;'"
-                                x-text="p.icon"></span>
-                        </template>
-                    </div>
-
-                    <div class="mt-6 flex flex-col items-center">
-                        <div class="px-6 py-2 bg-white rounded-full border border-slate-100 shadow-sm font-black text-[1.2rem] text-[--color-espresso]">
-                            <span x-text="formatNumber(totalEnergy)"></span> ⚡️
-                        </div>
-                        <div x-show="pendingSync > 0" x-cloak class="mt-3 text-[0.7rem] font-black text-slate-300 uppercase tracking-widest">
-                            Menyimpan <span x-text="pendingSync"></span> energi...
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             {{-- Footer Spacer --}}
             <div class="h-20"></div>
@@ -195,13 +165,8 @@
                 currentTab: 'coffee',
                 images: props.images,
                 isBookmarked: false,
-                totalEnergy: props.totalEnergy,
-                pendingSync: 0,
-                isBouncing: false,
-                particles: [],
+                isBookmarked: false,
                 visitorId: '',
-                syncTimer: null,
-                tx: 0,
 
                 init() {
                     let vid = localStorage.getItem('wadah-visitor-id');
@@ -217,10 +182,6 @@
                     // Auto slide
                     setInterval(() => { this.nextSlide(); }, 6000);
 
-                    // Final Sync
-                    window.addEventListener('beforeunload', () => {
-                        if (this.pendingSync > 0) this.syncEnergy();
-                    });
                 },
 
                 nextSlide() { this.currentSlide = (this.currentSlide + 1) % this.images.length; },
@@ -237,46 +198,6 @@
                     this.isBookmarked ? b = b.filter(id => id !== props.id) : b.push(props.id);
                     localStorage.setItem('wadah-bookmarks', JSON.stringify(b));
                     this.isBookmarked = !this.isBookmarked;
-                },
-
-                addEnergy() {
-                    this.totalEnergy++;
-                    this.pendingSync++;
-                    this.isBouncing = true;
-                    setTimeout(() => { this.isBouncing = false; }, 200);
-
-                    const icons = ['☕️', '⚡️', '🔥', '✨'];
-                    const id = Date.now() + Math.random();
-                    this.particles.push({
-                        id,
-                        icon: icons[Math.floor(Math.random() * icons.length)],
-                        x: (Math.random() * 60) - 30
-                    });
-
-                    setTimeout(() => {
-                        this.particles = this.particles.filter(p => p.id !== id);
-                    }, 1200);
-
-                    clearTimeout(this.syncTimer);
-                    this.syncTimer = setTimeout(() => { this.syncEnergy(); }, 1500);
-                },
-
-                async syncEnergy() {
-                    if (this.pendingSync === 0) return;
-                    const count = this.pendingSync;
-                    this.pendingSync = 0;
-
-                    try {
-                        const r = await fetch('{{ route('cafes.energy', $cafe) }}', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                            body: JSON.stringify({ energy_count: count, visitor_id: this.visitorId })
-                        });
-                        const d = await r.json();
-                        if (d.new_total > this.totalEnergy) this.totalEnergy = d.new_total;
-                    } catch (e) {
-                        this.pendingSync += count;
-                    }
                 },
 
                 formatNumber(n) {

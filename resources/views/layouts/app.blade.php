@@ -17,8 +17,11 @@
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet">
 
-    <!-- Icons & Interactivity -->
+    <!-- Icons - Phosphor & Bootstrap (Original Set) -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -31,20 +34,21 @@
         <nav class="bottom-nav">
             <a href="{{ route('home') }}" class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
                 <i class="{{ request()->routeIs('home') ? 'ph-fill ph-house' : 'ph ph-house' }}"></i>
-                <span>Beranda</span>
+                <span>BERANDA</span>
             </a>
             <a href="{{ route('explore') }}" class="nav-item {{ request()->routeIs('explore') ? 'active' : '' }}">
                 <i class="{{ request()->routeIs('explore') ? 'ph-fill ph-compass' : 'ph ph-compass' }}"></i>
-                <span>Explore</span>
+                <span>EXPLORE</span>
             </a>
             <a href="{{ route('saved') }}" class="nav-item {{ request()->routeIs('saved') ? 'active' : '' }}">
                 <i
                     class="{{ request()->routeIs('saved') ? 'ph-fill ph-bookmark-simple' : 'ph ph-bookmark-simple' }}"></i>
-                <span>Simpan</span>
+                <span>SIMPAN</span>
             </a>
-            <a href="{{ route('profile') }}" class="nav-item {{ request()->routeIs('profile') ? 'active' : '' }}">
-                <i class="{{ request()->routeIs('profile') ? 'ph-fill ph-user' : 'ph ph-user' }}"></i>
-                <span>Profil</span>
+            <a href="{{ route('information') }}"
+                class="nav-item {{ request()->routeIs('information*') ? 'active' : '' }}">
+                <i class="{{ request()->routeIs('information*') ? 'ph-fill ph-newspaper' : 'ph ph-newspaper' }}"></i>
+                <span>INFO</span>
             </a>
         </nav>
     </div>
