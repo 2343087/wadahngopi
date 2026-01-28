@@ -1,0 +1,164 @@
+/* WadahNgopi Premium Dashboard Styles ☕️ */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+:root {
+    --fi-header-height: 4.5rem;
+}
+
+/* Luxury Glassmorphism */
+.fi-wi-widget>div,
+.fi-fo-section,
+.fi-ta-content {
+    border-radius: 1.75rem !important;
+    background: rgba(var(--gray-900), 0.2) !important;
+    backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5) !important;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.fi-wi-widget>div:hover {
+    transform: translateY(-8px) scale(1.01);
+    background: rgba(var(--gray-900), 0.3) !important;
+    border-color: rgba(var(--amber-500), 0.4) !important;
+    box-shadow: 0 20px 50px -15px rgba(var(--amber-950), 0.4) !important;
+}
+
+/* Tables Styling */
+.fi-ta-table {
+    border-collapse: separate !important;
+    border-spacing: 0 0.75rem !important;
+}
+
+.fi-ta-row {
+    background: rgba(var(--gray-900), 0.2) !important;
+    border-radius: 1.25rem !important;
+    transition: all 0.3s ease;
+}
+
+.fi-ta-row:hover {
+    background: rgba(var(--gray-800), 0.4) !important;
+    transform: scale(1.005);
+}
+
+.fi-ta-cell {
+    border: none !important;
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.25rem !important;
+}
+
+/* Sidebar & Navigation */
+.fi-sidebar {
+    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+    background: rgba(var(--gray-950), 0.8) !important;
+    backdrop-filter: blur(24px) !important;
+}
+
+.fi-sidebar-item-button {
+    border-radius: 1rem !important;
+    margin: 0.25rem 0.5rem !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.fi-sidebar-active {
+    background: linear-gradient(90deg, rgba(var(--amber-600), 0.1) 0%, rgba(var(--amber-600), 0.05) 100%) !important;
+    border-left: 3px solid rgba(var(--amber-500), 1) !important;
+}
+
+/* Buttons & Interactive Elements */
+.fi-btn {
+    border-radius: 1rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.01em !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Custom Branding for Welcome Banner */
+.welcome-banner-luxury {
+    background: #d97706 !important;
+    /* Fallback Amber 600 */
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
+    color: white !important;
+}
+
+.dark .welcome-banner-luxury {
+    background: linear-gradient(135deg, #92400e 0%, #78350f 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Button override for Welcome Banner to prevent white blobs */
+.welcome-banner-btn-secondary {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(8px);
+}
+
+.welcome-banner-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.25) !important;
+}
+
+.welcome-banner-btn-primary {
+    background: white !important;
+    color: #b45309 !important;
+    /* Amber 700 */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+.welcome-banner-btn-primary:hover {
+    background: #fff7ed !important;
+    /* Amber 50 */
+}
+
+.fi-btn-color-primary {
+    background: linear-gradient(135deg, rgba(var(--amber-500), 1) 0%, rgba(var(--amber-700), 1) 100%) !important;
+    box-shadow: 0 4px 15px -4px rgba(var(--amber-600), 0.5) !important;
+}
+
+.fi-btn-color-primary:hover {
+    box-shadow: 0 8px 25px -4px rgba(var(--amber-600), 0.7) !important;
+    transform: translateY(-2px);
+}
+
+/* Inputs & Form Fields */
+.fi-fo-field-wrp-label {
+    font-weight: 700 !important;
+    color: rgba(var(--gray-300), 1) !important;
+    margin-bottom: 0.5rem !important;
+}
+
+input,
+select,
+textarea {
+    border-radius: 1rem !important;
+    background: rgba(var(--gray-900), 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    transition: all 0.3s ease !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: rgba(var(--amber-500), 0.6) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 4px rgba(var(--amber-500), 0.1) !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(var(--gray-700), 0.5);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(var(--amber-500), 0.8);
+}

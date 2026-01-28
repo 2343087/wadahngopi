@@ -11,9 +11,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Rate limiting for web routes (60 requests per minute)
-        $middleware->throttleWithRedis();
-
         // Add security headers
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
     })

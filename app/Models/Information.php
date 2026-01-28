@@ -16,7 +16,9 @@ class Information extends Model
         'summary',
         'content',
         'category',
+        'source_name',
         'image_path',
+        'source_url',
         'is_published',
         'published_at',
     ];

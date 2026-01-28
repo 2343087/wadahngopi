@@ -26,6 +26,8 @@ class Cafe extends Model
         'closing_time',
         'owner_id',
         'status',
+        'social_links',
+        'menu_images',
     ];
 
     public function owner()
@@ -86,6 +88,8 @@ class Cafe extends Model
     {
         return [
             'images' => 'array',
+            'menu_images' => 'array',
+            'social_links' => 'array',
             'has_wifi' => 'boolean',
             'rating' => 'decimal:2',
             'latitude' => 'decimal:8',

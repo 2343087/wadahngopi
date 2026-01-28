@@ -15,29 +15,44 @@ class FacilityResource extends Resource
 {
     protected static ?string $model = Facility::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-swatch';
+
+    protected static ?string $navigationLabel = 'Fasilitas Cafe';
+
+    protected static ?string $modelLabel = 'Fasilitas';
+
+    protected static ?string $pluralModelLabel = 'Layanan Fasilitas';
+
+    protected static ?string $navigationGroup = 'Manajemen Warung';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                // Auto-fill cafe_id with the logged-in Owner's cafe
-                Forms\Components\Hidden::make('cafe_id')
-                    ->default(fn () => auth()->user()->cafes()->first()?->id)
-                    ->required()
-                    ->rules(
-                        fn () => auth()->user()->role === 'admin'
-                        ? ['exists:cafes,id']
-                        : ['exists:cafes,id,owner_id,'.auth()->id()]
-                    ),
+                Forms\Components\Section::make('Fasilitas Menarik 🛠️')
+                    ->description('Apa aja sih yang bikin betah di cafe kamu?')
+                    ->schema([
+                        // Auto-fill cafe_id with the logged-in Owner's cafe
+                        Forms\Components\Hidden::make('cafe_id')
+                            ->default(fn () => auth()->user()->cafes()->first()?->id)
+                            ->required()
+                            ->rules(
+                                fn () => auth()->user()->role === 'admin'
+                                ? ['exists:cafes,id']
+                                : ['exists:cafes,id,owner_id,'.auth()->id()]
+                            ),
 
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('icon')
-                    ->placeholder('bi-wifi')
-                    ->maxLength(255)
-                    ->helperText('Gunakan class icon Bootstrap Icons, misal: bi-wifi, bi-cup-hot'),
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->placeholder('Contoh: WiFi Kenceng, Area Rooftop')
+                            ->label('Nama Fasilitasnya'),
+                        Forms\Components\TextInput::make('icon')
+                            ->placeholder('bi-wifi')
+                            ->maxLength(255)
+                            ->label('Icon Bootstrap')
+                            ->helperText('Gunakan kode icon dari Bootstrap Icons, misal: bi-wifi, bi-cup-hot, bi-wind (buat AC)'),
+                    ])->columns(2),
             ]);
     }
 
@@ -45,8 +60,12 @@ class FacilityResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('icon'),
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable()
+                    ->weight('bold'),
+                Tables\Columns\TextColumn::make('icon')
+                    ->badge()
+                    ->color('gray'),
             ])
             ->filters([
                 //

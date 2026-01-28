@@ -56,7 +56,7 @@ test('home page escapes cafe name for JS injection', function () {
         'status' => 'published',
     ]);
 
-    $response = $this->get(route('home'));
+    $response = $this->get(route('explore'));
 
     $response->assertStatus(200);
     // Js::from() will escape the string properly (e.g. < becomes \u003C)

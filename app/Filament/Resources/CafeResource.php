@@ -16,71 +16,113 @@ class CafeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
 
+    protected static ?string $navigationLabel = 'Daftar Cafe Kita';
+
+    protected static ?string $modelLabel = 'Cafe';
+
+    protected static ?string $pluralModelLabel = 'Daftar Cafe';
+
+    protected static ?string $navigationGroup = 'Manajemen Warung';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 // SECTION: ADMIN CONTROL (Structural) - Hidden from Owner
-                Forms\Components\Section::make('Admin Control')
-                    ->description('Hanya Admin yang bisa mengatur ini.')
+                Forms\Components\Section::make('Kendali Admin 🛠️')
+                    ->description('Hanya tim internal yang bisa otir-atik bagian ini.')
                     ->schema([
                         Forms\Components\Select::make('owner_id')
                             ->relationship('owner', 'name')
                             ->searchable()
                             ->preload()
-                            ->label('Pemilik Cafe')
+                            ->label('Siapa Pemiliknya?')
+                            ->placeholder('Pilih bos cafe-nya...')
                             ->required(),
 
                         Forms\Components\Select::make('status')
                             ->options([
-                                'draft' => 'Draft',
-                                'review' => 'Under Review',
-                                'published' => 'Published',
+                                'draft' => 'Masih Draft',
+                                'review' => 'Lagi Di-Review',
+                                'published' => 'Udah Tayang',
                             ])
+                            ->label('Status Sekarang')
                             ->default('draft')
                             ->required(),
 
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255)
-                            ->label('Nama Cafe'),
+                            ->placeholder('Contoh: Kopi Malem Jumat')
+                            ->label('Nama Cafe-nya Apa?'),
 
                         Forms\Components\TextInput::make('rating')
                             ->numeric()
                             ->step(0.1)
                             ->minValue(0)
                             ->maxValue(5)
-                            ->label('Rating (Manual)'),
+                            ->placeholder('Misal: 4.8')
+                            ->label('Kasih Rating (Manual)'),
                     ])
                     ->columns(2)
-                    ->visible(fn () => auth()->user()->role === 'admin'),
+                    ->visible(fn() => auth()->user()->role === 'admin'),
 
                 // SECTION: OWNER CONTENT (Content) - Hidden from Admin
-                Forms\Components\Section::make('Informasi Cafe')
-                    ->description('Kelola detail cafe Anda di sini.')
+                Forms\Components\Section::make('Detail Kece Cafe Kamu ✨')
+                    ->description('Isi semua info biar orang-orang pada mampir!')
                     ->schema([
+                        Forms\Components\Section::make('Katalog / Lembaran Menu (Gambar) 📑')
+                            ->description('Cara paling gampang! Cukup upload foto daftar menu kamu (lembaran/katalog). User tinggal klik buat nge-zoom.')
+                            ->schema([
+                                Forms\Components\Repeater::make('menu_images')
+                                    ->label('Foto Daftar Menu')
+                                    ->schema([
+                                        Forms\Components\FileUpload::make('image')
+                                            ->image()
+                                            ->directory('cafes/menu-gallery')
+                                            ->visibility('public')
+                                            ->label('Upload Foto Menu')
+                                            ->required()
+                                            ->columnSpan(2),
+                                        Forms\Components\TextInput::make('tag')
+                                            ->label('Kategori')
+                                            ->placeholder('Misal: Menu Utama, Promo, Minuman')
+                                            ->required()
+                                            ->columnSpan(2),
+                                        Forms\Components\Toggle::make('is_active')
+                                            ->label('Aktif')
+                                            ->default(true)
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->columns(4)
+                                    ->reorderable()
+                                    ->addActionLabel('+ Tambah Halaman Menu')
+                                    ->columnSpanFull(),
+                            ]),
+
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255)
-                            ->readOnly() // Owner cannot change name provided by Admin
+                            ->readOnly()
                             ->label('Nama Cafe'),
 
                         Forms\Components\Select::make('status')
                             ->options([
-                                'review' => 'Ajukan Review',
-                                'published' => 'Publish Sekarang',
+                                'review' => 'Minta Approval Admin',
+                                'published' => 'Langsung Tayangin!',
                             ])
-                            ->label('Status Publikasi'),
+                            ->label('Mau Diapain?'),
 
                         Forms\Components\Textarea::make('description')
-                            ->label('Deskripsi')
+                            ->label('Tentang Cafe Kamu')
+                            ->placeholder('Ceritain dong apa yang bikin cafe kamu spesial...')
                             ->columnSpanFull(),
 
                         Forms\Components\FileUpload::make('image_path')
                             ->image()
                             ->directory('cafes')
                             ->visibility('public')
-                            ->label('Gambar Utama (Cover)'),
+                            ->label('Foto Profil Utama'),
 
                         Forms\Components\FileUpload::make('images')
                             ->image()
@@ -88,34 +130,70 @@ class CafeResource extends Resource
                             ->maxFiles(5)
                             ->directory('cafes/gallery')
                             ->visibility('public')
-                            ->label('Galeri Gambar (Max 5)')
+                            ->label('Galeri Foto (Biar Makin Estetik)')
+                            ->helperText('Maksimal 5 foto ya boss, usahain yang resolusinya mantap!')
                             ->reorderable()
                             ->columnSpanFull(),
 
-                        Forms\Components\Section::make('Lokasi & Kontak')
+                        Forms\Components\Section::make('Cara Kesini & Kontak 📍')
                             ->schema([
                                 Forms\Components\Textarea::make('address')
                                     ->required()
-                                    ->label('Alamat Lengkap')
+                                    ->label('Alamat Lengkapnya')
+                                    ->placeholder('Tulis alamat yang bener biar kaga nyasar...')
                                     ->columnSpanFull(),
                                 Forms\Components\TextInput::make('google_maps_url')
                                     ->url()
+                                    ->placeholder('https://maps.google.com/...')
                                     ->label('Link Google Maps'),
                                 Forms\Components\TextInput::make('whatsapp_number')
                                     ->tel()
-                                    ->label('Nomor WhatsApp'),
+                                    ->placeholder('0812xxxxxxxx')
+                                    ->label('Nomor WhatsApp (Aktif)'),
                             ])->columns(2),
 
-                        Forms\Components\Section::make('Jam Operasional & Koordinat')
+                        Forms\Components\Section::make('Nongkrong Jam Berapa? 🕒')
                             ->schema([
-                                Forms\Components\TimePicker::make('opening_time')->label('Buka'),
-                                Forms\Components\TimePicker::make('closing_time')->label('Tutup'),
-                                Forms\Components\TextInput::make('latitude')->numeric(),
-                                Forms\Components\TextInput::make('longitude')->numeric(),
+                                Forms\Components\TimePicker::make('opening_time')->label('Mulai Buka'),
+                                Forms\Components\TimePicker::make('closing_time')->label('Udah Tutup'),
+                                Forms\Components\TextInput::make('latitude')->numeric()->placeholder('Contoh: -6.xxxx'),
+                                Forms\Components\TextInput::make('longitude')->numeric()->placeholder('Contoh: 106.xxxx'),
                             ])->columns(2),
 
+                        Forms\Components\Section::make('Social Media 📱')
+                            ->description('Tambahin link sosmedmu biar makin gampang dikenal!')
+                            ->schema([
+                                Forms\Components\Repeater::make('social_links')
+                                    ->label('')
+                                    ->schema([
+                                        Forms\Components\Select::make('platform')
+                                            ->options([
+                                                'instagram' => 'Instagram',
+                                                'tiktok' => 'TikTok',
+                                                'facebook' => 'Facebook',
+                                                'twitter' => 'Twitter/X',
+                                            ])
+                                            ->required()
+                                            ->placeholder('Pilih platform...')
+                                            ->columnSpan(1),
+                                        Forms\Components\TextInput::make('url')
+                                            ->url()
+                                            ->placeholder('https://...')
+                                            ->columnSpan(2),
+                                        Forms\Components\Toggle::make('show')
+                                            ->label('Tampilkan')
+                                            ->default(true)
+                                            ->columnSpan(1),
+                                    ])
+                                    ->columns(4)
+                                    ->defaultItems(0)
+                                    ->maxItems(4)
+                                    ->addActionLabel('+ Tambah Sosmed')
+                                    ->reorderable(false)
+                                    ->columnSpanFull(),
+                            ]),
                     ])
-                    ->visible(fn () => auth()->user()->role !== 'admin'),
+                    ->visible(fn() => auth()->user()->role === 'admin' || auth()->user()->role === 'user'),
             ]);
     }
 
@@ -125,16 +203,19 @@ class CafeResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image_path')
                     ->label('Foto')
-                    ->visible(fn () => auth()->user()->role !== 'admin'), // Admin might not care about photo
+                    ->circular()
+                    ->visible(fn() => auth()->user()->role !== 'admin'),
 
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable()
+                    ->weight('bold')
                     ->label('Nama Cafe'),
 
                 Tables\Columns\TextColumn::make('owner.name')
                     ->label('Owner')
-                    ->visible(fn () => auth()->user()->role === 'admin'),
+                    ->toggleable()
+                    ->visible(fn() => auth()->user()->role === 'admin'),
 
                 Tables\Columns\BadgeColumn::make('status')
                     ->colors([
@@ -147,7 +228,8 @@ class CafeResource extends Resource
                 Tables\Columns\TextColumn::make('rating')
                     ->numeric()
                     ->sortable()
-                    ->visible(fn () => auth()->user()->role === 'admin'), // Only Admin cares about managing rating
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->visible(fn() => auth()->user()->role === 'admin'),
             ])
             ->filters([
                 //

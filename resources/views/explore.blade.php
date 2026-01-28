@@ -30,32 +30,76 @@
         {{-- Cafe List --}}
         <main class="luxury-grid" x-show="filteredCafes().length > 0">
             <template x-for="(cafe, index) in filteredCafes()" :key="cafe.id">
-                <a :href="cafe.url" class="luxury-cafe-card animate-up" :style="'animation-delay: ' + (index * 0.05) + 's'">
-                    <div class="luxury-image-wrapper">
+                <a :href="cafe.url" class="luxury-cafe-card animate-up group"
+                    :style="'animation-delay: ' + (index * 0.05) + 's'">
+                    <div class="luxury-image-wrapper relative overflow-hidden rounded-[24px]">
                         <img :src="cafe.image || 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800'"
-                            :alt="cafe.name" loading="lazy">
-                        <div class="luxury-badge">
-                            <span x-text="cafe.isOpen ? 'BUKA' : 'TUTUP'"></span>
+                            :alt="cafe.name" loading="lazy"
+                            class="w-full h-[220px] object-cover transition-transform duration-700 group-hover:scale-110">
+
+                        {{-- Top Right Status Badge (Glassmorphism) --}}
+                        <div class="absolute top-4 right-4 z-20">
+                            <div
+                                class="px-3 py-1.5 bg-black/40 backdrop-blur-md border border-white/20 rounded-full flex items-center gap-2 shadow-lg">
+                                {{-- Pulsing Dot Indicator --}}
+                                <div class="relative flex h-2 w-2">
+                                    <span :class="cafe.isOpen ? 'bg-emerald-400' : 'bg-rose-400'"
+                                        class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"></span>
+                                    <span :class="cafe.isOpen ? 'bg-emerald-500' : 'bg-rose-500'"
+                                        class="relative inline-flex rounded-full h-2 w-2"></span>
+                                </div>
+                                <span class="text-white text-[0.65rem] font-black tracking-widest uppercase"
+                                    x-text="cafe.isOpen ? 'Buka' : 'Tutup'"></span>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="luxury-card-info">
-                        <h3 x-text="cafe.name"></h3>
-                        <p x-text="cafe.address.split(',')[0]"></p>
+                        {{-- Cinematic Floating Info: No More Boxes --}}
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-5 h-full">
+                            <div class="flex flex-col gap-2">
+                                <div>
+                                    <h3 class="text-white text-[1.15rem] font-black leading-tight mb-1 drop-shadow-md"
+                                        x-text="cafe.name"></h3>
+                                    <p
+                                        class="text-gray-300/90 font-bold text-[0.7rem] flex items-center gap-1 drop-shadow-sm">
+                                        <i class="ph-bold ph-map-pin text-[--color-amber]"></i>
+                                        <span x-text="cafe.address.split(',')[0]"></span>
+                                    </p>
+                                </div>
 
-                        <div class="luxury-meta-row">
-                            <template x-if="userLat && activeFilter === 'terdekat'">
-                                <span
-                                    class="bg-blue-50 text-blue-600 text-[8px] font-extrabold px-1.5 py-0.5 rounded-md flex items-center gap-0.5 border border-blue-100">
-                                    <i class="ph-fill ph-navigation-arrow text-[9px]"></i>
-                                    <span x-text="formatDistance(getDistance(cafe.lat, cafe.lng))"></span>
-                                </span>
-                            </template>
-                            <template x-for="facility in (cafe.facilities || []).slice(0, 2)" :key="facility">
-                                <span
-                                    class="bg-slate-50 text-slate-500 text-[8px] font-extrabold px-1.5 py-0.5 rounded-md border border-slate-100"
-                                    x-text="facility"></span>
-                            </template>
+                                <div class="flex flex-wrap gap-1.5 mt-1">
+                                    <template x-if="userLat && activeFilter === 'terdekat'">
+                                        <span
+                                            class="bg-white/10 backdrop-blur-md text-white text-[8px] font-black px-2 py-0.5 rounded-md border border-white/10 flex items-center gap-1">
+                                            <i class="ph-fill ph-navigation-arrow"></i>
+                                            <span x-text="formatDistance(getDistance(cafe.lat, cafe.lng))"></span>
+                                        </span>
+                                    </template>
+                                    <template x-for="facility in (cafe.facilities || []).slice(0, 2)" :key="facility">
+                                        <span
+                                            class="bg-white/5 backdrop-blur-md text-gray-200 text-[8px] font-black px-2 py-0.5 rounded-md border border-white/10"
+                                            x-text="facility"></span>
+                                    </template>
+                                </div>
+
+                                {{-- Social Media Icons --}}
+                                <div class="flex gap-2 mt-2" x-show="cafe.socialLinks && cafe.socialLinks.length > 0">
+                                    <template x-for="social in (cafe.socialLinks || [])" :key="social.platform">
+                                        <a :href="social.url" target="_blank" rel="noopener noreferrer"
+                                            @click.stop
+                                            class="w-6 h-6 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/40 hover:scale-110 transition-all"
+                                            :title="social.platform">
+                                            <i class="text-white text-[0.7rem]"
+                                                :class="{
+                                                    'ph-fill ph-instagram-logo': social.platform === 'instagram',
+                                                    'ph-fill ph-tiktok-logo': social.platform === 'tiktok',
+                                                    'ph-fill ph-facebook-logo': social.platform === 'facebook',
+                                                    'ph-fill ph-x-logo': social.platform === 'twitter'
+                                                }"></i>
+                                        </a>
+                                    </template>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </a>
@@ -84,6 +128,7 @@
         'lat' => $c->latitude,
         'lng' => $c->longitude,
         'facilities' => $c->facilities->pluck('name'),
+        'socialLinks' => collect($c->social_links ?? [])->filter(fn($s) => ($s['show'] ?? false) && !empty($s['url']))->values(),
         'image' => $c->image_path ? Storage::url($c->image_path) : null,
         'url' => route('cafes.show', $c)
     ])) }};

@@ -10,7 +10,6 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -38,6 +37,10 @@ class AdminPanelProvider extends PanelProvider
                 'info' => Color::Sky,
             ])
             ->font('Plus Jakarta Sans')
+            ->renderHook(
+                'panels::head.done',
+                fn () => new \Illuminate\Support\HtmlString('<link rel="stylesheet" href="'.asset('css/filament-custom.css').'">'),
+            )
             ->darkMode(true)
             ->sidebarCollapsibleOnDesktop()
             ->spa()
@@ -47,8 +50,14 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->brandName('WadahNgopi ☕️')
+            ->favicon(asset('favicon.ico'))
+            ->font('Outfit', url: 'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap')
+            ->sidebarCollapsibleOnDesktop()
+            ->maxContentWidth('full')
             ->widgets([
-                Widgets\AccountWidget::class,
+                \App\Filament\Widgets\WelcomeBanner::class,
+                \App\Filament\Widgets\StatsOverview::class,
             ])
             ->middleware([
                 EncryptCookies::class,

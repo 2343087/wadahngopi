@@ -16,7 +16,13 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup = 'Admin Only';
+    protected static ?string $navigationLabel = 'Tim & Pelanggan';
+
+    protected static ?string $modelLabel = 'Pengguna';
+
+    protected static ?string $pluralModelLabel = 'Tim Kita';
+
+    protected static ?string $navigationGroup = 'Pengaturan Sistem';
 
     public static function canAccess(): bool
     {
@@ -27,26 +33,33 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->dehydrateStateUsing(fn($state) => filled($state) ? bcrypt($state) : null)
-                    ->required(fn(string $context): bool => $context === 'create')
-                    ->dehydrated(fn($state) => filled($state))
-                    ->maxLength(255),
-                Forms\Components\Select::make('role')
-                    ->options([
-                        'admin' => 'Admin',
-                        'user' => 'Owner',
-                    ])
-                    ->required()
-                    ->default('user'),
+                Forms\Components\Section::make('Info Pengguna 🧑‍💻')
+                    ->description('Data dasar biar saling kenal.')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->placeholder('Nama Lengkap Lengkapnya...')
+                            ->label('Nama Lengkap')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('email')
+                            ->email()
+                            ->required()
+                            ->placeholder('email@contoh.com')
+                            ->label('Alamat Email'),
+                        Forms\Components\TextInput::make('password')
+                            ->password()
+                            ->dehydrated(fn ($state) => filled($state))
+                            ->required(fn (string $context): bool => $context === 'create')
+                            ->placeholder('Ssttt... rahasia ya!')
+                            ->label('Kata Sandi'),
+                        Forms\Components\Select::make('role')
+                            ->options([
+                                'admin' => 'Super Admin (Bisa Semua)',
+                                'user' => 'Bos Cafe (Pemilik Toko)',
+                            ])
+                            ->label('Dikasih Akses Apa?')
+                            ->required(),
+                    ])->columns(2),
             ]);
     }
 
@@ -55,18 +68,20 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->weight('bold'),
                 Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('role')
                     ->searchable()
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'admin' => 'danger',
                         'user' => 'success',
                     }),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('d M Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
