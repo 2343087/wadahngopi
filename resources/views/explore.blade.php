@@ -25,22 +25,23 @@
                     <div class="sort-option-item" :class="activeSort === 'name_az' && !activeLetter ? 'active' : ''"
                         @click="if (activeSort === 'name_az' && !activeLetter) { activeSort = 'relevance'; } else { activeSort = 'name_az'; activeLetter = null; } showSortMenu = false">
                         <i class="ph ph-sort-ascending"></i>
-                        Nama (A-Z)
+                        (A-Z)
+                    </div>
+                    <div class="sort-option-item" :class="activeSort === 'name_za' ? 'active' : ''"
+                        @click="if (activeSort === 'name_za') { activeSort = 'relevance'; } else { activeSort = 'name_za'; activeLetter = null; } showSortMenu = false">
+                        <i class="ph ph-sort-descending"></i>
+                        (Z-A)
                     </div>
 
                     @foreach(range('A', 'Z') as $char)
                         <div class="sort-option-item" :class="activeLetter === '{{ $char }}' ? 'active' : ''"
                             @click="if (activeLetter === '{{ $char }}') { activeLetter = null; activeSort = 'relevance'; } else { activeLetter = '{{ $char }}'; activeSort = 'name_az'; } showSortMenu = false">
                             <i class="ph ph-text-aa"></i>
-                            Nama ({{ $char }})
+                            ({{ $char }})
                         </div>
                     @endforeach
 
-                    <div class="sort-option-item" :class="activeSort === 'name_za' ? 'active' : ''"
-                        @click="if (activeSort === 'name_za') { activeSort = 'relevance'; } else { activeSort = 'name_za'; activeLetter = null; } showSortMenu = false">
-                        <i class="ph ph-sort-descending"></i>
-                        Nama (Z-A)
-                    </div>
+
                 </div>
             </div>
 
@@ -103,11 +104,11 @@
                                 <a :href="social.url" target="_blank" rel="noopener noreferrer" @click.stop
                                     class="luxury-social-btn-v2">
                                     <i :class="{
-                                            'ph-bold ph-instagram-logo': social.platform === 'instagram',
-                                            'ph-bold ph-tiktok-logo': social.platform === 'tiktok',
-                                            'ph-bold ph-facebook-logo': social.platform === 'facebook',
-                                            'ph-bold ph-x-logo': social.platform === 'twitter'
-                                        }"></i>
+                                                'ph-bold ph-instagram-logo': social.platform === 'instagram',
+                                                'ph-bold ph-tiktok-logo': social.platform === 'tiktok',
+                                                'ph-bold ph-facebook-logo': social.platform === 'facebook',
+                                                'ph-bold ph-x-logo': social.platform === 'twitter'
+                                            }"></i>
                                 </a>
                             </template>
 
