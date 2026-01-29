@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Auth;
 
 class StatsOverview extends BaseWidget
 {
-    protected static ?string $pollingInterval = '15s'; // Real-time feel
+    protected static ?string $pollingInterval = '30s'; // Slightly slower for better heavy-load management
+
+    protected static bool $isLazy = true;
 
     protected function getStats(): array
     {
@@ -23,10 +25,9 @@ class StatsOverview extends BaseWidget
         $reviewQuery = Review::query();
 
         if (! $isAdmin) {
-            $cafeIds = Cafe::where('owner_id', $user->id)->pluck('id');
             $cafeQuery->where('owner_id', $user->id);
-            $menuQuery->whereIn('cafe_id', $cafeIds);
-            $reviewQuery->whereIn('cafe_id', $cafeIds);
+            $menuQuery->whereHas('cafe', fn ($q) => $q->where('owner_id', $user->id));
+            $reviewQuery->whereHas('cafe', fn ($q) => $q->where('owner_id', $user->id));
         }
 
         return [

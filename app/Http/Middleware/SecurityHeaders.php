@@ -17,8 +17,24 @@ class SecurityHeaders
     {
         $response = $next($request);
 
-        // Content Security Policy - Allow CDN scripts, styles, and FONTS
-        $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://unpkg.com https://cdn.jsdelivr.net; img-src 'self' data: https: blob:; connect-src 'self' ws: wss:; frame-ancestors 'self'");
+        // Content Security Policy - Balanced for security and Filament compatibility
+        // Note: unsafe-inline and unsafe-eval required for Alpine.js and Filament
+        $csp = implode('; ', [
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net",
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://cdn.jsdelivr.net",
+            "font-src 'self' https://fonts.gstatic.com https://unpkg.com https://cdn.jsdelivr.net",
+            "img-src 'self' data: https: blob:",
+            "connect-src 'self' ws: wss: https://maps.googleapis.com",
+            "frame-ancestors 'self'",
+            "base-uri 'self'",
+            "form-action 'self'",
+            "object-src 'none'",
+        ]);
+        $response->headers->set('Content-Security-Policy', $csp);
+
+        // HSTS - Force HTTPS for 1 year
+        $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
 
         // Prevent MIME type sniffing
         $response->headers->set('X-Content-Type-Options', 'nosniff');
@@ -32,8 +48,8 @@ class SecurityHeaders
         // Referrer Policy
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
-        // Permissions Policy
-        $response->headers->set('Permissions-Policy', 'geolocation=(self), camera=(), microphone=()');
+        // Permissions Policy - Restrict sensitive APIs
+        $response->headers->set('Permissions-Policy', 'geolocation=(self), camera=(), microphone=(), payment=(), usb=()');
 
         return $response;
     }

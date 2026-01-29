@@ -1,102 +1,143 @@
-# ☕️ WadahNgopi: Hyper-Local Coffee Portal
-> Portal Informasi Cafe & Berita Kopi Paling "Kekinian" di Indonesia.
+# ☕️ WadahNgopi
+> Portal Cafe Terbaik di Kalimantan
 
-**WadahNgopi** adalah platform aggregator dan direktori cafe modern yang dibangun dengan teknologi terbaru. Bukan cuma buat nyari tempat nongkrong, tapi juga buat dapet info fasilitas detail (Live Musik, WiFi, Outlets), Menu Digital yang estetik, sampe berita kopi terbaru yang ditarik otomatis dari berbagai portal berita besar.
-
----
-
-### 🚀 Tech Stack (Gak Kaleng-Kaleng)
-Proyek ini pake "senjata" paling mumpuni di dunia web dev saat ini:
-*   **Core**: Laravel 12 (Modern & Super Aman)
-*   **Runtime**: PHP 8.4.15 (Speed paling ngebut)
-*   **Admin Dashboard**: Filament v3 (Rapi & Mantap)
-*   **Mobile Ready**: PWA (Progressive Web App) dengan Offline Support.
-*   **Frontend UI**: Tailwind CSS v4 + Plus Jakarta Sans Font
-*   **Interactivity**: Alpine.js v3 (Lincah & Ringan)
-*   **Intelligence**: Manual Scraper (News Aggregator) via Symfony Dom-Crawler
+**WadahNgopi** adalah platform direktori cafe modern yang membantu kamu menemukan spot ngopi nyaman di Kalimantan. Dilengkapi dengan info fasilitas lengkap, menu digital, dan berita kopi terbaru dari berbagai portal berita.
 
 ---
 
-### 🛠️ Persiapan Perang (Prerequisites)
-Pastiin OS lu udah "sehat" dan udah ke-install barang-barang ini:
-1.  **PHP 8.4** (Paling wajib, di bawah ini bakal error)
-2.  **Composer** (Manajer paket PHP)
-3.  **Node.js & NPM** (Buat ngeracik UI)
-4.  **MySQL** atau **SQLite** (Buat database)
-5.  **Laravel Herd** (Sangat disaranin buat user Mac/Windows biar setup local domain `.test` gampang banget)
+## 🚀 Tech Stack
+
+| Komponen | Teknologi |
+|----------|-----------|
+| Backend | Laravel 12 + PHP 8.4 |
+| Admin Panel | Filament v3 |
+| Frontend | Tailwind CSS v4 + Alpine.js |
+| Font | Plus Jakarta Sans |
+| PWA | Offline Support Ready |
+| News Scraper | Symfony Dom-Crawler |
 
 ---
 
-### ⚡️ Cara Install (Langkah demi Langkah)
+## ✨ Fitur Utama
 
-Ikutin langkah ini satu-satu, jangan ada yang kelewat biar gak ada fitur yang "patah":
+- � **Explore Cafe** - Cari cafe berdasarkan lokasi terdekat, fasilitas, atau nama
+- 📍 **Integrasi Google Maps** - Lihat jarak real-time ke setiap cafe
+- 🏪 **Detail Lengkap** - Fasilitas, jam buka, menu, dan social media
+- 💾 **Simpan Favorit** - Bookmark cafe kesukaan di browser
+- 📰 **Berita Kopi** - Aggregator berita otomatis dari portal besar
+- 🚀 **Performa Optimal** - Built-in caching untuk load cepat
+- 📱 **Mobile First** - Desain responsif dengan bottom navigation
 
-#### 1. Clone & Masuk Folder
+---
+
+## 🛠️ Prerequisites
+
+Pastikan sudah terinstall:
+- PHP 8.4+
+- Composer
+- Node.js & NPM
+- MySQL/SQLite
+- [Laravel Herd](https://herd.laravel.com) (Recommended)
+
+---
+
+## ⚡️ Instalasi
+
+### 1. Clone Repository
 ```bash
 git clone https://github.com/2343087/wadahngopi.git
 cd wadahngopi
 ```
 
-#### 2. Install Bumbu-Bumbu (Backend & Frontend)
+### 2. Install Dependencies
 ```bash
 composer install
 npm install
 ```
 
-#### 3. Setup Environment
-Copy file dummy `.env` dan bikin key baru:
+### 3. Setup Environment
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
-*(Jangan lupa atur koneksi DB lu di file `.env` kalo bukan pake SQLite default)*
+*Sesuaikan konfigurasi database di file `.env`*
 
-#### 4. Migrasi & Suntik Data (Seeder)
-Biar web gak kosong melompong, kita migrasi database dan suntik data cafe & fasilitas default:
+### 4. Migrasi Database
 ```bash
 php artisan migrate --seed
 ```
-> **LOGIN ADMIN**: Setelah seeding, lu bisa login ke dashboard di `/admin` pake:
-> - **Email**: `admin@wadahngopi.test`
-> - **Password**: `password`
 
-#### 5. Linking Storage
-Biar gambar menu dan cafe tampil, kita perlu "nyambungin" folder storage:
+**Login Admin**:
+- URL: `/admin`
+- Email: `admin@wadahngopi.test`
+- Password: `password`
+
+### 5. Link Storage & Build Assets
 ```bash
 php artisan storage:link
-```
-
-#### 6. Kompilasi Asset UI
-Proyek ini pake Tailwind v4, jadi wajib di-build biar tampilannya "Premium":
-```bash
 npm run build
 ```
 
 ---
 
-### 🛰️ Fitur Spesial: News Scraper
-Web ini punya fitur auto-crawl berita kopi. Lu bisa jalanin manual buat ngetes:
+## 🛰️ News Scraper
+
+Jalankan scraper berita kopi secara manual:
 ```bash
 php artisan app:scrape-coffee-news
 ```
-*Script ini bakal keliling ke portal berita (Liputan6, Detik, dll) buat narik berita terbaru soal kopi.*
+
+Untuk otomatis, tambahkan ke cron:
+```bash
+* * * * * cd /path-to-project && php artisan schedule:run >> /dev/null 2>&1
+```
 
 ---
 
-### 👨‍💻 Development Mode
-Kalo lu mau ngutek-ngutek kodenya, jalanin ini di dua terminal terpisah:
-*   **Terminal 1**: `php artisan serve` (Jalanin server)
-*   **Terminal 2**: `npm run dev` (Pantau perubahan UI secara real-time)
+## 👨‍💻 Development
+
+```bash
+# Terminal 1 - Server
+php artisan serve
+
+# Terminal 2 - Asset Watcher
+npm run dev
+```
+
+Atau gunakan script gabungan:
+```bash
+composer run dev
+```
 
 ---
 
-### 🛡️ Bug Bounty & Best Practices
-Proyek ini udah di-review pake standar keamanan kelas dunia:
-*   **Linting**: Pake `vendor/bin/pint` biar kode seragam rapi.
-*   **Security**: Udah aman dari XSS, SQL Injection, dan IDOR (thanks to Laravel's core).
-*   **Maintainability**: Pake pola MVC Laravel yang solid.
+## � Struktur Penting
+
+```
+app/
+├── Filament/          # Admin panel resources
+├── Http/Controllers/  # Logic halaman publik
+├── Models/            # Eloquent models
+├── Traits/            # Reusable traits (OptimizesImages)
+└── Providers/         # Service providers
+
+resources/views/
+├── home.blade.php     # Landing page
+├── explore.blade.php  # Halaman explore cafe
+├── saved.blade.php    # Halaman favorit
+└── information/       # Halaman berita
+```
+
+---
+
+## 🎨 Design System
+
+- **Warna Utama**: Espresso (#2C1810), Amber (#D97706)
+- **Font**: Plus Jakarta Sans
+- **Icon**: Phosphor Icons
+- **Style**: Luxury Glassmorphism
 
 ---
 
 **☕ Selamat Ngopi & Happy Coding!**  
-*Dibuat dengan cinta dan kafein tinggi.*
+*Dibuat dengan cinta oleh AK Kreatif*

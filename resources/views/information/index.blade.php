@@ -25,46 +25,39 @@
                 @if($loop->first)
                     {{-- FEATURED HEADLINE CARD --}}
                     <div x-show="activeCategory === 'Semua' || activeCategory === '{{ $info->category }}'" class="animate-up">
-                        <a href="{{ route('information.show', $info) }}" class="featured-magazine-card group block">
-                            <div
-                                class="relative aspect-[16/10] overflow-hidden rounded-[32px] shadow-2xl transition-all duration-700 group-hover:shadow-[0_20px_60px_-15px_rgba(44,24,16,0.3)]">
+                        <a href="{{ route('information.show', $info) }}" class="featured-magazine-card-v2 group block">
+                            <div class="relative aspect-[16/9] overflow-hidden rounded-[2.5rem] shadow-xl">
                                 <img src="{{ $info->image_path && str_starts_with($info->image_path, 'http') ? $info->image_path : ($info->image_path ? Storage::url($info->image_path) : 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800') }}"
                                     class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                                     alt="{{ $info->title }}">
 
                                 {{-- Floating Category --}}
-                                <div class="absolute top-6 left-6 z-20">
+                                <div class="absolute top-5 left-5 z-20">
                                     <span
-                                        class="px-4 py-1.5 bg-white/20 backdrop-blur-md border border-white/30 text-white text-[0.65rem] font-black uppercase tracking-widest rounded-full shadow-lg">
+                                        class="px-4 py-1.5 bg-white/90 backdrop-blur-md text-[--color-espresso] text-[0.6rem] font-black uppercase tracking-widest rounded-xl shadow-lg border border-white">
                                         {{ $info->category }}
                                     </span>
                                 </div>
+                            </div>
 
-                                {{-- Floating Source Badge (New) --}}
-                                @if($info->source_name)
-                                    <div class="absolute top-6 right-6 z-20">
-                                        <div
-                                            class="px-3 py-1 bg-rose-600 text-white text-[0.6rem] font-black uppercase tracking-tighter rounded-lg shadow-xl shadow-rose-900/20 transform rotate-3">
-                                            {{ $info->source_name }}
-                                        </div>
-                                    </div>
-                                @endif
-
-                                {{-- Elegant Gradient Overlay --}}
-                                <div
-                                    class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8">
-                                    <h2
-                                        class="text-white text-[1.5rem] font-black leading-tight mb-3 drop-shadow-lg group-hover:text-[--color-amber] transition-colors line-clamp-2">
-                                        {{ $info->title }}
-                                    </h2>
-                                    <div class="flex items-center gap-4 text-white/70 text-[0.75rem] font-bold">
-                                        <div class="flex items-center gap-1.5">
-                                            <i class="ph-bold ph-calendar-blank"></i>
-                                            {{ $info->published_at?->format('d M Y') ?? $info->created_at->format('d M Y') }}
-                                        </div>
-                                        <span class="w-1 h-1 bg-white/40 rounded-full"></span>
-                                        <span class="uppercase">Berita Utama</span>
-                                    </div>
+                            <div class="mt-6 px-2">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="w-1.5 h-1.5 bg-[--color-amber] rounded-full animate-pulse"></span>
+                                    <span
+                                        class="text-[0.7rem] font-black text-[--color-text-muted] tracking-[0.2em] uppercase">Berita
+                                        Utama</span>
+                                </div>
+                                <h2
+                                    class="text-[--color-espresso] text-[1.4rem] font-black leading-tight mb-4 group-hover:text-[--color-amber] transition-colors">
+                                    {{ $info->title }}
+                                </h2>
+                                <div class="flex items-center gap-3 text-[--color-text-muted] text-[0.75rem] font-bold opacity-60">
+                                    <i class="ph ph-calendar-blank"></i>
+                                    {{ $info->published_at?->format('d M Y') ?? $info->created_at->format('d M Y') }}
+                                    @if($info->source_name)
+                                        <span class="w-1 h-1 bg-current rounded-full"></span>
+                                        <span class="text-rose-600 uppercase">{{ $info->source_name }}</span>
+                                    @endif
                                 </div>
                             </div>
                         </a>
@@ -95,7 +88,8 @@
                                     class="text-[0.6rem] font-black text-[--color-amber] uppercase tracking-wider">{{ $info->category }}</span>
                                 @if($info->source_name)
                                     <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
-                                    <span class="text-[0.6rem] font-black text-rose-600 bg-rose-50 px-1.5 rounded uppercase">{{ $info->source_name }}</span>
+                                    <span
+                                        class="text-[0.6rem] font-black text-rose-600 bg-rose-50 px-1.5 rounded uppercase">{{ $info->source_name }}</span>
                                 @endif
                                 <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
                                 <span

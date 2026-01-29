@@ -8,9 +8,40 @@
         <header class="px-6 pt-10 pb-6 flex flex-col gap-6">
             <h1 class="hero-luxury-title">Explore <span class="italic text-[--color-coffee]">Cafe</span></h1>
 
-            <div class="search-luxury-box !mt-0">
+            <div class="search-luxury-box !mt-0 relative" @click.away="showSortMenu = false">
                 <i class="ph-bold ph-magnifying-glass text-xl opacity-30"></i>
                 <input type="text" x-model="search" placeholder="Cari cafe idamanmu..." @keyup.escape="search = ''">
+
+                {{-- Sort Button --}}
+                <button class="sort-luxury-btn" @click="showSortMenu = !showSortMenu">
+                    <i class="ph-bold ph-sliders-horizontal"></i>
+                </button>
+
+                {{-- Sort Dropdown --}}
+                <div class="sort-luxury-menu" x-show="showSortMenu" x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+                    x-cloak>
+
+                    <div class="sort-option-item" :class="activeSort === 'name_az' && !activeLetter ? 'active' : ''"
+                        @click="if (activeSort === 'name_az' && !activeLetter) { activeSort = 'relevance'; } else { activeSort = 'name_az'; activeLetter = null; } showSortMenu = false">
+                        <i class="ph ph-sort-ascending"></i>
+                        Nama (A-Z)
+                    </div>
+
+                    @foreach(range('A', 'Z') as $char)
+                        <div class="sort-option-item" :class="activeLetter === '{{ $char }}' ? 'active' : ''"
+                            @click="if (activeLetter === '{{ $char }}') { activeLetter = null; activeSort = 'relevance'; } else { activeLetter = '{{ $char }}'; activeSort = 'name_az'; } showSortMenu = false">
+                            <i class="ph ph-text-aa"></i>
+                            Nama ({{ $char }})
+                        </div>
+                    @endforeach
+
+                    <div class="sort-option-item" :class="activeSort === 'name_za' ? 'active' : ''"
+                        @click="if (activeSort === 'name_za') { activeSort = 'relevance'; } else { activeSort = 'name_za'; activeLetter = null; } showSortMenu = false">
+                        <i class="ph ph-sort-descending"></i>
+                        Nama (Z-A)
+                    </div>
+                </div>
             </div>
 
             <div class="pills-container-luxury !px-0">
@@ -32,74 +63,58 @@
             <template x-for="(cafe, index) in filteredCafes()" :key="cafe.id">
                 <a :href="cafe.url" class="luxury-cafe-card animate-up group"
                     :style="'animation-delay: ' + (index * 0.05) + 's'">
-                    <div class="luxury-image-wrapper relative overflow-hidden rounded-[24px]">
+                    <div class="luxury-image-wrapper">
                         <img :src="cafe.image || 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800'"
-                            :alt="cafe.name" loading="lazy"
-                            class="w-full h-[220px] object-cover transition-transform duration-700 group-hover:scale-110">
+                            :alt="cafe.name" loading="lazy">
 
-                        {{-- Top Right Status Badge (Glassmorphism) --}}
-                        <div class="absolute top-4 right-4 z-20">
-                            <div
-                                class="px-3 py-1.5 bg-black/40 backdrop-blur-md border border-white/20 rounded-full flex items-center gap-2 shadow-lg">
-                                {{-- Pulsing Dot Indicator --}}
-                                <div class="relative flex h-2 w-2">
-                                    <span :class="cafe.isOpen ? 'bg-emerald-400' : 'bg-rose-400'"
-                                        class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"></span>
-                                    <span :class="cafe.isOpen ? 'bg-emerald-500' : 'bg-rose-500'"
-                                        class="relative inline-flex rounded-full h-2 w-2"></span>
+                        {{-- Floating Chips --}}
+                        <div class="absolute top-2.5 inset-x-2.5 flex justify-between items-start pointer-events-none">
+                            {{-- Distance Tag --}}
+                            <template x-if="userLat && cafe.distance">
+                                <div class="distance-tag-glass-v2">
+                                    <i class="ph-fill ph-navigation-arrow"></i>
+                                    <span x-text="formatDistance(cafe.distance)"></span>
                                 </div>
-                                <span class="text-white text-[0.65rem] font-black tracking-widest uppercase"
+                            </template>
+
+                            {{-- Status Badge --}}
+                            <div class="status-badge-glass-v2">
+                                <span :class="cafe.isOpen ? 'bg-emerald-400' : 'bg-rose-400'"
+                                    class="h-1.5 w-1.5 rounded-full inline-block"></span>
+                                <span class="text-[0.6rem] font-bold uppercase tracking-wider"
                                     x-text="cafe.isOpen ? 'Buka' : 'Tutup'"></span>
                             </div>
                         </div>
+                    </div>
 
-                        {{-- Cinematic Floating Info: No More Boxes --}}
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-5 h-full">
-                            <div class="flex flex-col gap-2">
-                                <div>
-                                    <h3 class="text-white text-[1.15rem] font-black leading-tight mb-1 drop-shadow-md"
-                                        x-text="cafe.name"></h3>
-                                    <p
-                                        class="text-gray-300/90 font-bold text-[0.7rem] flex items-center gap-1 drop-shadow-sm">
-                                        <i class="ph-bold ph-map-pin text-[--color-amber]"></i>
-                                        <span x-text="cafe.address.split(',')[0]"></span>
-                                    </p>
-                                </div>
+                    {{-- Card Info Below Image --}}
+                    <div class="luxury-card-content">
+                        <div class="flex flex-col gap-0.5">
+                            <h3 class="luxury-card-title-v2" x-text="cafe.name"></h3>
+                            <p class="luxury-card-location-v2">
+                                <i class="ph ph-map-pin"></i>
+                                <span x-text="cafe.address.split(',')[0]"></span>
+                            </p>
+                        </div>
 
-                                <div class="flex flex-wrap gap-1.5 mt-1">
-                                    <template x-if="userLat && activeFilter === 'terdekat'">
-                                        <span
-                                            class="bg-white/10 backdrop-blur-md text-white text-[8px] font-black px-2 py-0.5 rounded-md border border-white/10 flex items-center gap-1">
-                                            <i class="ph-fill ph-navigation-arrow"></i>
-                                            <span x-text="formatDistance(getDistance(cafe.lat, cafe.lng))"></span>
-                                        </span>
-                                    </template>
-                                    <template x-for="facility in (cafe.facilities || []).slice(0, 2)" :key="facility">
-                                        <span
-                                            class="bg-white/5 backdrop-blur-md text-gray-200 text-[8px] font-black px-2 py-0.5 rounded-md border border-white/10"
-                                            x-text="facility"></span>
-                                    </template>
-                                </div>
+                        <div class="flex flex-wrap gap-1 mt-2.5">
+                            {{-- Social Media Icons --}}
+                            <template x-for="social in (cafe.socialLinks || [])" :key="social.platform">
+                                <a :href="social.url" target="_blank" rel="noopener noreferrer" @click.stop
+                                    class="luxury-social-btn-v2">
+                                    <i :class="{
+                                            'ph-bold ph-instagram-logo': social.platform === 'instagram',
+                                            'ph-bold ph-tiktok-logo': social.platform === 'tiktok',
+                                            'ph-bold ph-facebook-logo': social.platform === 'facebook',
+                                            'ph-bold ph-x-logo': social.platform === 'twitter'
+                                        }"></i>
+                                </a>
+                            </template>
 
-                                {{-- Social Media Icons --}}
-                                <div class="flex gap-2 mt-2" x-show="cafe.socialLinks && cafe.socialLinks.length > 0">
-                                    <template x-for="social in (cafe.socialLinks || [])" :key="social.platform">
-                                        <a :href="social.url" target="_blank" rel="noopener noreferrer"
-                                            @click.stop
-                                            class="w-6 h-6 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/40 hover:scale-110 transition-all"
-                                            :title="social.platform">
-                                            <i class="text-white text-[0.7rem]"
-                                                :class="{
-                                                    'ph-fill ph-instagram-logo': social.platform === 'instagram',
-                                                    'ph-fill ph-tiktok-logo': social.platform === 'tiktok',
-                                                    'ph-fill ph-facebook-logo': social.platform === 'facebook',
-                                                    'ph-fill ph-x-logo': social.platform === 'twitter'
-                                                }"></i>
-                                        </a>
-                                    </template>
-                                </div>
-                            </div>
+                            {{-- Facilities/Tags --}}
+                            <template x-for="tag in (cafe.facilities || []).slice(0, 2)">
+                                <span class="luxury-tag-v2" x-text="tag"></span>
+                            </template>
                         </div>
                     </div>
                 </a>
@@ -137,13 +152,26 @@
             Alpine.data('exploreLogic', () => ({
                 search: '',
                 activeFilter: 'semua',
+                activeSort: 'relevance',
+                showSortMenu: false,
                 cafes: [],
                 userLat: null,
                 userLng: null,
                 isLocating: false,
+                distanceCache: {},
+                activeLetter: null,
 
                 initComponent() {
                     this.cafes = window.cafesData || [];
+
+                    // Coba ambil lokasi otomatis kalau user sebelumnya udah ngizinin
+                    if (navigator.permissions) {
+                        navigator.permissions.query({ name: 'geolocation' }).then(result => {
+                            if (result.state === 'granted') {
+                                this.getLocation();
+                            }
+                        });
+                    }
                 },
 
                 getLocation() {
@@ -155,6 +183,9 @@
                     this.isLocating = true;
                     navigator.geolocation.getCurrentPosition(
                         (position) => {
+                            if (this.userLat !== position.coords.latitude || this.userLng !== position.coords.longitude) {
+                                this.distanceCache = {}; // Clear cache if moved
+                            }
                             this.userLat = position.coords.latitude;
                             this.userLng = position.coords.longitude;
                             this.isLocating = false;
@@ -175,16 +206,28 @@
                 getDistance(lat2, lon2) {
                     if (!this.userLat || !this.userLng || !lat2 || !lon2) return null;
 
-                    const R = 6371; // Radius bumi dalam KM
-                    const phi1 = this.userLat * Math.PI / 180;
-                    const phi2 = lat2 * Math.PI / 180;
-                    const deltaLambda = (lon2 - this.userLng) * Math.PI / 180;
+                    const cacheKey = `${lat2},${lon2}`;
+                    if (this.distanceCache[cacheKey] !== undefined) return this.distanceCache[cacheKey];
 
-                    // Spherical Law of Cosines (Consistent with Backend)
-                    const d = Math.acos(Math.sin(phi1) * Math.sin(phi2) +
-                        Math.cos(phi1) * Math.cos(phi2) * Math.cos(deltaLambda)) * R;
+                    try {
+                        const R = 6371; // Radius bumi dalam KM
+                        const phi1 = this.userLat * Math.PI / 180;
+                        const phi2 = lat2 * Math.PI / 180;
+                        const deltaLambda = (lon2 - this.userLng) * Math.PI / 180;
 
-                    return d; // Hasil dalam KM
+                        // Spherical Law of Cosines
+                        let cosVal = Math.sin(phi1) * Math.sin(phi2) +
+                            Math.cos(phi1) * Math.cos(phi2) * Math.cos(deltaLambda);
+
+                        // Bound cosVal between -1 and 1
+                        cosVal = Math.max(-1, Math.min(1, cosVal));
+
+                        const d = Math.acos(cosVal) * R;
+                        this.distanceCache[cacheKey] = d;
+                        return d;
+                    } catch (e) {
+                        return null;
+                    }
                 },
 
                 formatDistance(d) {
@@ -208,13 +251,30 @@
                         results = results.filter(c => c.isOpen);
                     }
 
-                    // Handling Distance Sorting
-                    if (this.activeFilter === 'terdekat' && this.userLat) {
+                    if (this.activeLetter) {
+                        results = results.filter(c => c.name.charAt(0).toUpperCase() === this.activeLetter);
+                    }
+
+                    // Pre-calculate distance
+                    if (this.userLat) {
                         results.forEach(c => {
                             c.distance = this.getDistance(c.lat, c.lng);
                         });
+                    }
+
+                    if (this.activeFilter === 'terdekat' && this.userLat) {
                         results = results.filter(c => c.distance !== null);
-                        results.sort((a, b) => a.distance - b.distance);
+                    }
+
+                    // Determine Final Sorting
+                    const sortMode = this.activeSort === 'relevance' && this.activeFilter === 'terdekat' ? 'terdekat' : this.activeSort;
+
+                    if (sortMode === 'terdekat' && this.userLat) {
+                        results.sort((a, b) => (a.distance || 0) - (b.distance || 0));
+                    } else if (sortMode === 'name_az') {
+                        results.sort((a, b) => a.name.localeCompare(b.name));
+                    } else if (sortMode === 'name_za') {
+                        results.sort((a, b) => b.name.localeCompare(a.name));
                     }
 
                     return results;

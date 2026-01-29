@@ -114,6 +114,42 @@ class ScrapeCoffeeNews extends Command
         ],
     ];
 
+    /**
+     * Keywords to filter coffee-related news.
+     */
+    protected array $keywords = [
+        'kopi',
+        'coffee',
+        'kafe',
+        'cafe',
+        'kaffe',
+        'barista',
+        'robusta',
+        'arabica',
+        'beans',
+        'biji kopi',
+        'sangrai',
+        'roasting',
+        'roastery',
+        'brewing',
+        'v60',
+        'espresso',
+        'cappuccino',
+        'latte',
+        'manual brew',
+        'grinder',
+        'coffee maker',
+        'alat kopi',
+        'kedai kopi',
+        'warung kopi',
+        'teko leher angsa',
+        'paper filter',
+        'aeropress',
+        'chemex',
+        'moka pot',
+        'roast bean',
+    ];
+
     public function handle(): void
     {
         // Add User Agent to global Http requests for this command
@@ -178,6 +214,15 @@ class ScrapeCoffeeNews extends Command
                     }
                     $url = $linkNode->attr('href');
 
+                    $summary = $node->filter($config['selectors']['summary'])->count() > 0
+                        ? trim($node->filter($config['selectors']['summary'])->text())
+                        : '';
+
+                    // Niche Filtering Logic
+                    if (! $this->isCoffeeRelated($title, $summary)) {
+                        return;
+                    }
+
                     // Smart Image Discovery (Lazy Load support)
                     $image = null;
                     $imgNode = $node->filter($config['selectors']['image']);
@@ -192,10 +237,6 @@ class ScrapeCoffeeNews extends Command
                     if ($image && (str_contains(strtolower($image), 'logo') || str_contains(strtolower($image), 'icon'))) {
                         $image = null;
                     }
-
-                    $summary = $node->filter($config['selectors']['summary'])->count() > 0
-                        ? trim($node->filter($config['selectors']['summary'])->text())
-                        : '';
 
                     // Basic Validation
                     if (! $title || ! $url) {
@@ -240,5 +281,21 @@ class ScrapeCoffeeNews extends Command
         } catch (\Exception $e) {
             $this->error("Error scraping {$config['name']}: {$e->getMessage()}");
         }
+    }
+
+    /**
+     * Check if the article is related to coffee.
+     */
+    protected function isCoffeeRelated(string $title, string $summary): bool
+    {
+        $text = strtolower($title.' '.$summary);
+
+        foreach ($this->keywords as $keyword) {
+            if (str_contains($text, $keyword)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

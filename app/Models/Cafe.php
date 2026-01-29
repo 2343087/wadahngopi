@@ -24,7 +24,6 @@ class Cafe extends Model
         'longitude',
         'opening_time',
         'closing_time',
-        'owner_id',
         'status',
         'social_links',
         'menu_images',

@@ -57,7 +57,11 @@ class ExploreController extends Controller
         }
 
         $cafes = $query->with('facilities')->get();
-        $allFacilities = \App\Models\Facility::all();
+
+        // Cache facilities for 1 hour since they rarely change
+        $allFacilities = \Illuminate\Support\Facades\Cache::remember('all_facilities', now()->addHour(), function () {
+            return \App\Models\Facility::all();
+        });
 
         return view('explore', compact('cafes', 'allFacilities'));
     }

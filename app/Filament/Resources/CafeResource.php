@@ -65,7 +65,7 @@ class CafeResource extends Resource
                             ->label('Kasih Rating (Manual)'),
                     ])
                     ->columns(2)
-                    ->visible(fn() => auth()->user()->role === 'admin'),
+                    ->visible(fn () => auth()->user()->role === 'admin'),
 
                 // SECTION: OWNER CONTENT (Content) - Hidden from Admin
                 Forms\Components\Section::make('Detail Kece Cafe Kamu ✨')
@@ -83,6 +83,8 @@ class CafeResource extends Resource
                                             ->visibility('public')
                                             ->label('Upload Foto Menu')
                                             ->required()
+                                            ->imageResizeTargetWidth('1200')
+                                            ->imageEditor()
                                             ->columnSpan(2),
                                         Forms\Components\TextInput::make('tag')
                                             ->label('Kategori')
@@ -122,7 +124,9 @@ class CafeResource extends Resource
                             ->image()
                             ->directory('cafes')
                             ->visibility('public')
-                            ->label('Foto Profil Utama'),
+                            ->label('Foto Profil Utama')
+                            ->imageResizeTargetWidth('1200')
+                            ->imageEditor(),
 
                         Forms\Components\FileUpload::make('images')
                             ->image()
@@ -133,6 +137,8 @@ class CafeResource extends Resource
                             ->label('Galeri Foto (Biar Makin Estetik)')
                             ->helperText('Maksimal 5 foto ya boss, usahain yang resolusinya mantap!')
                             ->reorderable()
+                            ->imageResizeTargetWidth('1200')
+                            ->imageEditor()
                             ->columnSpanFull(),
 
                         Forms\Components\Section::make('Cara Kesini & Kontak 📍')
@@ -193,7 +199,7 @@ class CafeResource extends Resource
                                     ->columnSpanFull(),
                             ]),
                     ])
-                    ->visible(fn() => auth()->user()->role === 'admin' || auth()->user()->role === 'user'),
+                    ->visible(fn () => auth()->user()->role === 'admin' || auth()->user()->role === 'user'),
             ]);
     }
 
@@ -204,7 +210,7 @@ class CafeResource extends Resource
                 Tables\Columns\ImageColumn::make('image_path')
                     ->label('Foto')
                     ->circular()
-                    ->visible(fn() => auth()->user()->role !== 'admin'),
+                    ->visible(fn () => auth()->user()->role !== 'admin'),
 
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
@@ -215,7 +221,7 @@ class CafeResource extends Resource
                 Tables\Columns\TextColumn::make('owner.name')
                     ->label('Owner')
                     ->toggleable()
-                    ->visible(fn() => auth()->user()->role === 'admin'),
+                    ->visible(fn () => auth()->user()->role === 'admin'),
 
                 Tables\Columns\BadgeColumn::make('status')
                     ->colors([
@@ -229,7 +235,7 @@ class CafeResource extends Resource
                     ->numeric()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true)
-                    ->visible(fn() => auth()->user()->role === 'admin'),
+                    ->visible(fn () => auth()->user()->role === 'admin'),
             ])
             ->filters([
                 //
@@ -246,7 +252,7 @@ class CafeResource extends Resource
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        $query = parent::getEloquentQuery();
+        $query = parent::getEloquentQuery()->with(['owner']);
 
         if (auth()->user()->role !== 'admin') {
             $query->where('owner_id', auth()->id());

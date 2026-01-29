@@ -7,4 +7,4 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-\Illuminate\Support\Facades\Schedule::command('app:scrape-coffee-news')->dailyAt('05:00');
+\Illuminate\Support\Facades\Schedule::command('app:scrape-coffee-news')->twiceDaily(5, 17);

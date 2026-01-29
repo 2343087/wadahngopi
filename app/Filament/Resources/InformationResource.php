@@ -78,7 +78,11 @@ class InformationResource extends Resource
                             ->directory('information')
                             ->visibility('public')
                             ->maxSize(5120) // 5MB limit
-                            ->label('Foto Utama Postingan'),
+                            ->label('Foto Utama Postingan')
+                            ->imageResizeMode('cover')
+                            ->imageCropAspectRatio('16:9')
+                            ->imageResizeTargetWidth('1200')
+                            ->imageEditor(),
                         Forms\Components\Toggle::make('is_published')
                             ->label('Tayangin Langsung?')
                             ->default(true),

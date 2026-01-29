@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,4 +28,14 @@ class Information extends Model
         'is_published' => 'boolean',
         'published_at' => 'datetime',
     ];
+
+    /**
+     * Sanitize content automatically before saving.
+     */
+    protected function content(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => clean($value),
+        );
+    }
 }
