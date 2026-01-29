@@ -125,4 +125,4 @@ Kami sangat terbuka untuk kontribusi! Silahkan buat **Pull Request** atau **Issu
 ---
 
 **☕ Selamat Ngopi & Happy Coding!**  
-*Dibuat oleh Tim AK Kreatif (Antigravity Powered)*
+*Dibuat oleh (Tim AK Kreatif)*
