@@ -9,14 +9,22 @@
     "description": "Tempat ngopi terdekat dan terrekomendasi",
     "icons": [
         {
-            "src": "/icons/icon-192x192.png",
+            "src": "/wadahicon.jpg",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/jpeg",
+            "purpose": "any"
         },
         {
-            "src": "/icons/icon-512x512.png",
+            "src": "/wadahicon.jpg",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/jpeg",
+            "purpose": "any"
+        },
+        {
+            "src": "/wadahicon.jpg",
+            "sizes": "192x192",
+            "type": "image/jpeg",
+            "purpose": "maskable"
         }
     ]
 }

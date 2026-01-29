@@ -1,0 +1,374 @@
+﻿
+   PASS  Tests\Unit\ExampleTest
+  Ô£ô that true is true     0.01s  
+
+   PASS  Tests\Feature\ExampleTest
+  Ô£ô the application retuÔÇª 0.58s  
+
+   PASS  Tests\Feature\SecurityAuditTest
+  Ô£ô cannot view draft caÔÇª 0.11s  
+  Ô£ô can view published cÔÇª 0.09s  
+  Ô£ô saved cafes list excÔÇª 0.09s  
+  Ô£ô saved cafes list limÔÇª 0.11s  
+  Ô£ô home page escapes caÔÇª 0.10s  
+
+   FAIL  Tests\Feature\ZCafeFlowTest
+  Ô¿» it displays the listÔÇª 0.10s  
+  Ô£ô it displays the cafeÔÇª 0.09s  
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\ZCafÔÇª   
+  Expected: <!DOCTYPE html>\r\n
+<html lang="id">\r\n
+\r\n
+<head>\r\n
+    <meta charset="utf-8">\r\n
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">\r\n
+    <meta name="theme-color" content="#6F4E37">\r\n
+    <link rel="manifest" href="/manifest.json">\r\n
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">\r\n
+\r\n
+    <title>WadahNgopi - Portal Cafe Terbaik di Kalimantan</title>\r\n
+\r\n
+    <!-- Fonts - Modern & Premium -->\r\n
+    <link rel="preconnect" href="https://fonts.googleapis.com">\r\n
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\r\n
+    <link\r\n
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&display=swap"\r\n
+        rel="stylesheet">\r\n
+\r\n
+    <!-- Icons - Phosphor & Bootstrap (Original Set) -->\r\n
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>\r\n
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">\r\n
+\r\n
+    <!-- Alpine.js -->\r\n
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>\r\n
+\r\n
+    <link rel="preload" as="style" href="https://wadahngopi.test/build/assets/app-CD1q-ubn.css" /><link rel="modulepreload" as="script" href="https://wadahngopi.test/build/assets/app-CAiCLEjY.js" /><link rel="stylesheet" href="https://wadahngopi.test/build/assets/app-CD1q-ubn.css" data-navigate-track="reload" /><script type="module" src="https://wadahngopi.test/build/assets/app-CAiCLEjY.js" data-navigate-track="reload"></script></head>\r\n
+\r\n
+<body>\r\n
+    <div class="main-container">\r\n
+            <div class="landing-page min-h-screen bg-cream pb-32">\r\n
+        \r\n
+        <header class="relative px-6 pt-24 pb-16 text-center overflow-hidden">\r\n
+            <div\r\n
+                class="absolute -top-24 -right-24 w-80 h-80 bg-amber rounded-full blur-[120px] opacity-10 animate-pulse-slow">\r\n
+            </div>\r\n
+            <div class="absolute top-1/2 -left-24 w-64 h-64 bg-espresso rounded-full blur-[100px] opacity-10">\r\n
+            </div>\r\n
+\r\n
+            <div class="animate-up relative z-10 flex flex-col items-center">\r\n
+                \r\n
+                <div class="group relative mb-8">\r\n
+                    <div\r\n
+                        class="absolute inset-0 bg-espresso rounded-2xl blur-lg opacity-20 group-hover:opacity-40 transition-opacity">\r\n
+                    </div>\r\n
+                    <div\r\n
+                        class="relative w-16 h-16 bg-white border-2 border-espresso/5 rounded-2xl flex items-center justify-center shadow-xl transform group-hover:rotate-6 transition-transform">\r\n
+                        <img\r\n
+                            src="https://wadahngopi.test/wadahicon.jpg"\r\n
+                            alt="Logo WadahNgopi"\r\n
+                            class="w-12 h-12 object-contain select-none"\r\n
+                            loading="eager"\r\n
+                            draggable="false"\r\n
+                        >\r\n
+                    </div>\r\n
+                    <div\r\n
+                        class="mt-3 bg-espresso text-cream px-3 py-1 rounded-full text-[0.6rem] font-black tracking-widest uppercase shadow-lg">\r\n
+                        BY : AK KREATIF\r\n
+                    </div>\r\n
+                </div>\r\n
+\r\n
+                <h1 class="text-5xl font-black text-espresso leading-[1] tracking-tighter mb-4">\r\n
+                    Wadah<span class="text-amber">Ngopi</span>\r\n
+                </h1>\r\n
+                <p class="text-slate-600 font-bold text-[1.1rem] leading-relaxed max-w-[320px] mx-auto opacity-90">\r\n
+                    Mempermudah buanmu mencari spot ngopi nyaman di Kalimantan.\r\n
+                </p>\r\n
+            </div>\r\n
+        </header>\r\n
+\r\n
+        \r\n
+        <section class="px-6 py-10 relative">\r\n
+            <div class="mission-luxury-card animate-up">\r\n
+                <div class="flex items-center gap-3 mb-6">\r\n
+                    <div class="w-1.5 h-8 bg-amber rounded-full shadow-[0_0_15px_rgba(217,119,6,0.5)]"></div>\r\n
+                    <div>\r\n
+                        <span class="text-[0.65rem] font-bold text-amber uppercase tracking-[0.3em]">Tentang\r\n
+                            Kami</span>\r\n
+                        <h2 class="text-2xl font-black text-white tracking-tight">Lebih dari Sekadar Kopi</h2>\r\n
+                    </div>\r\n
+                </div>\r\n
+\r\n
+                <div class="space-y-6">\r\n
+                    <p class="text-cream-dark text-[1.05rem] font-semibold leading-relaxed opacity-90">\r\n
+                        Di WadahNgopi, secangkir kopi adalah awal kolaborasi. Kami bukan sekadar tempat singgah, melainkan\r\n
+                        ruang untuk merajut silaturahmi dan menyatukan ide para pelaku usaha.\r\n
+                    </p>\r\n
+                    <p class="text-cream-dark text-[1.05rem] font-semibold leading-relaxed opacity-90">\r\n
+                        Setiap meja adalah peluang bagi buanmu untuk tumbuh dan maju bersama.\r\n
+                    </p>\r\n
+                </div>\r\n
+\r\n
+                <div class="mt-10 pt-8 border-t border-white/10">\r\n
+                    <h3 class="text-lg font-black text-amber mb-3">Harmoni Komunitas</h3>\r\n
+                    <p class="text-white/70 text-[0.95rem] font-bold leading-relaxed mb-6">\r\n
+                        Setiap "Wadah" punya cerita. Kami hadir untuk memastikan setiap cerita lokal di Kalimantan terdengar\r\n
+                        dan diapresiasi oleh buanmu semua.\r\n
+                    </p>\r\n
+\r\n
+                    <div class="flex items-center gap-3 py-4 bg-white/5 rounded-2xl px-5 border border-white/5">\r\n
+                        <i class="ph-bold ph-paint-brush-broad text-amber text-2xl"></i>\r\n
+                        <div>\r\n
+                            <h4 class="text-white text-xs font-black uppercase tracking-wider mb-0.5">Kearifan Lokal</h4>\r\n
+                            <p class="text-white/60 text-[0.8rem] font-bold">Menghangatkan buanmu dengan spot kopi terbaik.\r\n
+                            </p>\r\n
+                        </div>\r\n
+                    </div>\r\n
+                </div>\r\n
+            </div>\r\n
+        </section>\r\n
+\r\n
+        \r\n
+        <section class="px-6 py-12 text-center">\r\n
+            <div class="animate-up mb-8">\r\n
+                <span\r\n
+                    class="inline-block px-4 py-1.5 bg-espresso/5 text-espresso text-[0.6rem] font-black uppercase tracking-[0.3em] rounded-full border border-espresso/10">\r\n
+                    Sapa Developer Kami\r\n
+                </span>\r\n
+            </div>\r\n
+\r\n
+            <div class="grid grid-cols-2 gap-4 animate-up">\r\n
+                <a href="https://www.instagram.com/ak_kreatif/" target="_blank" class="social-admin-card group">\r\n
+                    <div\r\n
+                        class="admin-icon-box bg-[#E1306C]/10 text-[#E1306C] group-hover:bg-[#E1306C] group-hover:text-white transition-all shadow-sm">\r\n
+                        <i class="ph-bold ph-instagram-logo"></i>\r\n
+                    </div>\r\n
+                    <span class="text-[0.7rem] font-black text-espresso uppercase tracking-widest">Instagram</span>\r\n
+                </a>\r\n
+                <a href="https://www.instagram.com/ak_kreatif/" target="_blank" class="social-admin-card group">\r\n
+                    <div\r\n
+                        class="admin-icon-box bg-black/10 text-black group-hover:bg-black group-hover:text-white transition-all shadow-sm">\r\n
+                        <i class="ph-bold ph-tiktok-logo"></i>\r\n
+                    </div>\r\n
+                    <span class="text-[0.7rem] font-black text-espresso uppercase tracking-widest">TikTok</span>\r\n
+                </a>\r\n
+                <a href="https://www.instagram.com/ak_kreatif/" target="_blank" class="social-admin-card group">\r\n
+                    <div\r\n
+                        class="admin-icon-box bg-[#FF0000]/10 text-[#FF0000] group-hover:bg-[#FF0000] group-hover:text-white transition-all shadow-sm">\r\n
+                        <i class="ph-bold ph-youtube-logo"></i>\r\n
+                    </div>\r\n
+                    <span class="text-[0.7rem] font-black text-espresso uppercase tracking-widest">YouTube</span>\r\n
+                </a>\r\n
+                <a href="https://www.instagram.com/ak_kreatif/" target="_blank" class="social-admin-card group">\r\n
+                    <div\r\n
+                        class="admin-icon-box bg-[#25D366]/10 text-[#25D366] group-hover:bg-[#25D366] group-hover:text-white transition-all shadow-sm">\r\n
+                        <i class="ph-bold ph-whatsapp-logo"></i>\r\n
+                    </div>\r\n
+                    <span class="text-[0.7rem] font-black text-espresso uppercase tracking-widest">WhatsApp</span>\r\n
+                </a>\r\n
+            </div>\r\n
+        </section>\r\n
+\r\n
+        \r\n
+        <section class="px-6 py-10 relative">\r\n
+            <div class="flex items-center gap-3 mb-8 animate-up">\r\n
+                <div class="w-1.5 h-7 bg-espresso rounded-full"></div>\r\n
+                <h2 class="text-2xl font-black text-espresso tracking-tight">Fitur Unggulan</h2>\r\n
+            </div>\r\n
+\r\n
+            <div class="grid grid-cols-1 gap-5">\r\n
+                <div class="premium-feature-card-v2 animate-up" style="animation-delay: 0.2s">\r\n
+                    <div class="feature-icon-v2 bg-espresso/5 text-espresso">\r\n
+                        <i class="ph-bold ph-navigation-arrow"></i>\r\n
+                    </div>\r\n
+                    <div>\r\n
+                        <h3 class="text-[1.1rem] font-black text-espresso mb-1">Cari Tempat Nongkrong Anti Bingung</h3>\r\n
+                        <p class="text-slate-500 font-bold text-[0.85rem] leading-snug">Cek lokasi Dan Jarak Wadah Tanpa Bingung\r\n
+                            pake Google Maps!</p>\r\n
+                    </div>\r\n
+                </div>\r\n
+\r\n
+                <div class="premium-feature-card-v2 animate-up" style="animation-delay: 0.3s">\r\n
+                    <div class="feature-icon-v2 bg-amber/10 text-amber">\r\n
+                        <i class="ph-bold ph-info"></i>\r\n
+                    </div>\r\n
+                    <div>\r\n
+                        <h3 class="text-[1.1rem] font-black text-espresso mb-1">Info Jelas & Lengkap</h3>\r\n
+                        <p class="text-slate-500 font-bold text-[0.85rem] leading-snug">Fasilitas, menu, sampai jam buka ada\r\n
+                            barataan.</p>\r\n
+                    </div>\r\n
+                </div>\r\n
+\r\n
+                <div class="premium-feature-card-v2 animate-up" style="animation-delay: 0.4s">\r\n
+                    <div class="feature-icon-v2 bg-coffee/10 text-coffee">\r\n
+                        <i class="ph-bold ph-heart"></i>\r\n
+                    </div>\r\n
+                    <div>\r\n
+                        <h3 class="text-[1.1rem] font-black text-espresso mb-1">Simpan Wadah Favorit</h3>\r\n
+                        <p class="text-slate-500 font-bold text-[0.85rem] leading-snug">Simpan yang buanmu suka biar gampang\r\n
+                            dicari lagi.</p>\r\n
+                    </div>\r\n
+                </div>\r\n
+            </div>\r\n
+        </section>\r\n
+\r\n
+        \r\n
+        <div class="px-6 pt-16 pb-24 text-center">\r\n
+            <div class="animate-up relative z-10">\r\n
+                <a href="https://wadahngopi.test/explore"\r\n
+                    class="group inline-flex items-center gap-4 px-12 py-5 bg-espresso text-white rounded-[24px] font-black text-[1.1rem] shadow-[0_20px_50px_-15px_rgba(44,24,16,0.6)] hover:shadow-[0_25px_60px_-15px_rgba(44,24,16,0.7)] hover:scale-[1.05] active:scale-95 transition-all">\r\n
+                    JELAJAH <span class="flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">Ayo\r\n
+                        Cari Cafe <i class="ph-bold ph-arrow-right"></i></span>\r\n
+                </a>\r\n
+            </div>\r\n
+\r\n
+            <div class="mt-16 animate-up">\r\n
+                <p class="text-[0.65rem] font-black text-slate-400 tracking-[0.4em] uppercase opacity-60">\r\n
+                    WADAHNGOPI.COM &copy; 2026\r\n
+                </p>\r\n
+            </div>\r\n
+        </div>\r\n
+    </div>\r\n
+\r\n
+    <style>\r\n
+        .mission-luxury-card {\r\n
+            padding: 40px;\r\n
+            background: linear-gradient(135deg, #2C1810 0%, #3E2723 100%) !important;\r\n
+            border-radius: 45px;\r\n
+            color: white;\r\n
+            overflow: hidden;\r\n
+            position: relative;\r\n
+            box-shadow: 0 25px 60px -15px rgba(44, 24, 16, 0.4);\r\n
+            border: 1px solid rgba(255, 255, 255, 0.05);\r\n
+        }\r\n
+\r\n
+        .social-admin-card {\r\n
+            background: white;\r\n
+            padding: 20px 15px;\r\n
+            border-radius: 28px;\r\n
+            display: flex;\r\n
+            flex-direction: column;\r\n
+            align-items: center;\r\n
+            gap: 12px;\r\n
+            border: 1px solid rgba(44, 24, 16, 0.04);\r\n
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);\r\n
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);\r\n
+        }\r\n
+\r\n
+        .social-admin-card:hover {\r\n
+            transform: translateY(-8px) scale(1.02);\r\n
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);\r\n
+            border-color: var(--color-espresso);\r\n
+        }\r\n
+\r\n
+        .admin-icon-box {\r\n
+            width: 52px;\r\n
+            height: 52px;\r\n
+            border-radius: 18px;\r\n
+            display: flex;\r\n
+            align-items: center;\r\n
+            justify-content: center;\r\n
+            font-size: 1.5rem;\r\n
+        }\r\n
+\r\n
+        .premium-feature-card-v2 {\r\n
+            background: white;\r\n
+            padding: 24px;\r\n
+            border-radius: 32px;\r\n
+            border: 1px solid rgba(44, 24, 16, 0.03);\r\n
+            display: flex;\r\n
+            align-items: center;\r\n
+            gap: 20px;\r\n
+            box-shadow: 0 12px 35px -12px rgba(44, 24, 16, 0.08);\r\n
+            transition: all 0.4s ease;\r\n
+        }\r\n
+\r\n
+        .premium-feature-card-v2:hover {\r\n
+            transform: scale(1.02);\r\n
+            border-color: var(--color-amber);\r\n
+            box-shadow: 0 20px 45px -15px rgba(217, 119, 6, 0.15);\r\n
+        }\r\n
+\r\n
+        .feature-icon-v2 {\r\n
+            width: 60px;\r\n
+            height: 60px;\r\n
+            border-radius: 20px;\r\n
+            display: flex;\r\n
+            align-items: center;\r\n
+            justify-content: center;\r\n
+            font-size: 1.8rem;\r\n
+            flex-shrink: 0;\r\n
+        }\r\n
+\r\n
+        .animate-pulse-slow {\r\n
+            animation: pulse-slow 6s ease-in-out infinite;\r\n
+        }\r\n
+\r\n
+        @keyframes pulse-slow {\r\n
+\r\n
+            0%,\r\n
+            100% {\r\n
+                opacity: 0.1;\r\n
+                transform: scale(1);\r\n
+            }\r\n
+\r\n
+            50% {\r\n
+                opacity: 0.2;\r\n
+                transform: scale(1.15);\r\n
+            }\r\n
+        }\r\n
+    </style>\r\n
+\r\n
+        <nav class="bottom-nav">\r\n
+            <a href="https://wadahngopi.test" class="nav-item active">\r\n
+                <i class="ph-fill ph-house"></i>\r\n
+                <span>BERANDA</span>\r\n
+            </a>\r\n
+            <a href="https://wadahngopi.test/explore" class="nav-item ">\r\n
+                <i class="ph ph-compass"></i>\r\n
+                <span>EXPLORE</span>\r\n
+            </a>\r\n
+            <a href="https://wadahngopi.test/saved" class="nav-item ">\r\n
+                <i\r\n
+                    class="ph ph-bookmark-simple"></i>\r\n
+                <span>SIMPAN</span>\r\n
+            </a>\r\n
+            <a href="https://wadahngopi.test/information"\r\n
+                class="nav-item ">\r\n
+                <i class="ph ph-newspaper"></i>\r\n
+                <span>INFO</span>\r\n
+            </a>\r\n
+        </nav>\r\n
+    </div>\r\n
+\r\n
+    <script>\r\n
+        // Register Service Worker\r\n
+        if ('serviceWorker' in navigator) {\r\n
+            navigator.serviceWorker.getRegistrations().then(registrations => {\r\n
+                for (let registration of registrations) {\r\n
+                    registration.unregister();\r\n
+                }\r\n
+            });\r\n
+        }\r\n
+    </script>\r\n
+    </body>\r\n
+\r\n
+</html>
+
+  To contain: Wadah Kopi Pusat
+
+  at tests\Feature\ZCafeFlowTest.php:12
+      8Ôûò 
+      9Ôûò     $response = $this->get('/');
+     10Ôûò 
+     11Ôûò     $response->assertStatus(200);
+  Ô×£  12Ôûò     $response->assertSee('Wadah Kopi Pusat');
+     13Ôûò });
+     14Ôûò 
+     15Ôûò it('displays the cafe detail page', function () {
+     16Ôûò     $cafe = Cafe::factory()->create(['name' => 'Kopi Sore', 'status' => 'published']);
+
+
+  Tests:    1 failed, 8 passed (16 assertions)
+  Duration: 1.45s
+

@@ -11,7 +11,7 @@ class CreateCafe extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        if (auth()->user()->role !== 'admin') {
+        if (auth()->user()?->role !== 'admin') {
             $data['owner_id'] = auth()->id();
         }
 

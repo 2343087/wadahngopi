@@ -34,12 +34,12 @@ class FacilityResource extends Resource
                     ->schema([
                         // Auto-fill cafe_id with the logged-in Owner's cafe
                         Forms\Components\Hidden::make('cafe_id')
-                            ->default(fn () => auth()->user()->cafes()->first()?->id)
+                            ->default(fn() => auth()->user()->cafes()->first()?->id)
                             ->required()
                             ->rules(
-                                fn () => auth()->user()->role === 'admin'
+                                fn() => auth()->user()?->role === 'developer'
                                 ? ['exists:cafes,id']
-                                : ['exists:cafes,id,owner_id,'.auth()->id()]
+                                : ['exists:cafes,id,owner_id,' . auth()->id()]
                             ),
 
                         Forms\Components\TextInput::make('name')
@@ -84,7 +84,7 @@ class FacilityResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
-        if (auth()->user()->role !== 'admin') {
+        if (auth()->user()?->role === 'admin') {
             // Only show facilities belonging to the Owner's cafe
             $query->whereHas('cafe', function (Builder $q) {
                 $q->where('owner_id', auth()->id());

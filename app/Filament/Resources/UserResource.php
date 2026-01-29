@@ -26,7 +26,7 @@ class UserResource extends Resource
 
     public static function canAccess(): bool
     {
-        return auth()->user()?->role === 'admin';
+        return auth()->user()?->role === 'developer';
     }
 
     public static function form(Form $form): Form
@@ -54,10 +54,10 @@ class UserResource extends Resource
                             ->label('Kata Sandi'),
                         Forms\Components\Select::make('role')
                             ->options([
-                                'admin' => 'Super Admin (Bisa Semua)',
-                                'user' => 'Bos Cafe (Pemilik Toko)',
+                                'developer' => 'Developer (Super Admin)',
+                                'admin' => 'Admin (Cafe Owner)',
                             ])
-                            ->label('Dikasih Akses Apa?')
+                            ->label('Role Akses')
                             ->required(),
                     ])->columns(2),
             ]);
@@ -77,8 +77,8 @@ class UserResource extends Resource
                     ->searchable()
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'admin' => 'danger',
-                        'user' => 'success',
+                        'developer' => 'danger',
+                        'admin' => 'success',
                     }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('d M Y')

@@ -24,12 +24,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if (app()->isLocal()) {
-            URL::forceScheme('https');
+            //
         }
 
         // Rate limiting for web requests (60 requests per minute per IP)
         RateLimiter::for('web', function (Request $request) {
-            return Limit::perMinute(60)->by($request->ip());
+            return Limit::perMinute(300)->by($request->ip());
         });
 
         // Stricter rate limiting for login attempts (5 attempts per minute)

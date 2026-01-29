@@ -12,36 +12,36 @@ class CafePolicy
      */
     public function viewAny(User $user): bool
     {
-        return true; // Filtered by scope in Resource, so allow entry
+        return true;
     }
 
     public function view(User $user, Cafe $cafe): bool
     {
-        return $user->role === 'admin' || $user->id === $cafe->owner_id;
+        return $user->role === 'developer' || ($user->role === 'admin' && $user->id === $cafe->owner_id);
     }
 
     public function create(User $user): bool
     {
-        return $user->role === 'admin';
+        return $user->role === 'developer';
     }
 
     public function update(User $user, Cafe $cafe): bool
     {
-        return $user->role === 'admin' || $user->id === $cafe->owner_id;
+        return $user->role === 'developer' || ($user->role === 'admin' && $user->id === $cafe->owner_id);
     }
 
     public function delete(User $user, Cafe $cafe): bool
     {
-        return $user->role === 'admin';
+        return $user->role === 'developer';
     }
 
     public function restore(User $user, Cafe $cafe): bool
     {
-        return $user->role === 'admin';
+        return $user->role === 'developer';
     }
 
     public function forceDelete(User $user, Cafe $cafe): bool
     {
-        return $user->role === 'admin';
+        return $user->role === 'developer';
     }
 }

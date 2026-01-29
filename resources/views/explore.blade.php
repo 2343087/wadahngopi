@@ -6,7 +6,12 @@
     <div x-data="exploreLogic()" x-init="initComponent()" class="flex flex-col flex-1">
         {{-- Glass Header with Search --}}
         <header class="px-6 pt-10 pb-6 flex flex-col gap-6">
-            <h1 class="hero-luxury-title">Explore <span class="italic text-[--color-coffee]">Cafe</span></h1>
+            <div class="flex items-center justify-between">
+                <h1 class="hero-luxury-title">Explore <span class="italic text-[--color-coffee]">Cafe</span></h1>
+                <div class="w-10 h-10 bg-white border border-espresso/5 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+                    <img src="{{ asset('wadahicon.jpg') }}" alt="Logo" class="w-full h-full object-cover">
+                </div>
+            </div>
 
             <div class="search-luxury-box !mt-0 relative" @click.away="showSortMenu = false">
                 <i class="ph-bold ph-magnifying-glass text-xl opacity-30"></i>

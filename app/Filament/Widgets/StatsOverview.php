@@ -3,7 +3,6 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Cafe;
-use App\Models\Menu;
 use App\Models\Review;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -18,16 +17,17 @@ class StatsOverview extends BaseWidget
     protected function getStats(): array
     {
         $user = Auth::user();
-        $isAdmin = $user->role === 'admin';
+        if (!$user) {
+            return [];
+        }
+        $isDeveloper = $user->role === 'developer';
 
         $cafeQuery = Cafe::query();
-        $menuQuery = Menu::query();
         $reviewQuery = Review::query();
 
-        if (! $isAdmin) {
+        if (!$isDeveloper) {
             $cafeQuery->where('owner_id', $user->id);
-            $menuQuery->whereHas('cafe', fn ($q) => $q->where('owner_id', $user->id));
-            $reviewQuery->whereHas('cafe', fn ($q) => $q->where('owner_id', $user->id));
+            $reviewQuery->whereHas('cafe', fn($q) => $q->where('owner_id', $user->id));
         }
 
         return [
@@ -36,12 +36,6 @@ class StatsOverview extends BaseWidget
                 ->descriptionIcon('heroicon-m-building-storefront')
                 ->color('warning')
                 ->chart([7, 2, 10, 3, 15, 4, 17]),
-
-            Stat::make('Menu Tersedia', $menuQuery->count())
-                ->description('Koleksi rasa yang siap dinikmati')
-                ->descriptionIcon('heroicon-m-cake')
-                ->color('success')
-                ->chart([3, 10, 5, 12, 8, 15, 10]),
 
             Stat::make('Rating Rata-rata', number_format($reviewQuery->avg('rating') ?? 0, 1))
                 ->description('Kata mereka soal WadahNgopi')

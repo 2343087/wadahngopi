@@ -1,9 +1,7 @@
 <?php
 
 use App\Models\Cafe;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
 
 test('cannot view draft cafe directly', function () {
     $cafe = Cafe::factory()->create(['status' => 'draft']);

@@ -17,13 +17,13 @@ class Cafe extends Model
         'google_maps_url',
         'whatsapp_number',
         'has_wifi',
-        'rating',
         'image_path',
         'images',
         'latitude',
         'longitude',
         'opening_time',
         'closing_time',
+        'owner_id',
         'status',
         'social_links',
         'menu_images',
@@ -32,16 +32,6 @@ class Cafe extends Model
     public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');
-    }
-
-    /**
-     * Get the menus for the cafe.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Menu, $this>
-     */
-    public function menus()
-    {
-        return $this->hasMany(Menu::class);
     }
 
     /**
@@ -64,7 +54,7 @@ class Cafe extends Model
      */
     public function getIsOpenAttribute(): bool
     {
-        if (! $this->opening_time || ! $this->closing_time) {
+        if (!$this->opening_time || !$this->closing_time) {
             return false;
         }
 
@@ -90,7 +80,6 @@ class Cafe extends Model
             'menu_images' => 'array',
             'social_links' => 'array',
             'has_wifi' => 'boolean',
-            'rating' => 'decimal:2',
             'latitude' => 'decimal:8',
             'longitude' => 'decimal:8',
         ];

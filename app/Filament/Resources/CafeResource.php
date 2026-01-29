@@ -56,16 +56,9 @@ class CafeResource extends Resource
                             ->placeholder('Contoh: Kopi Malem Jumat')
                             ->label('Nama Cafe-nya Apa?'),
 
-                        Forms\Components\TextInput::make('rating')
-                            ->numeric()
-                            ->step(0.1)
-                            ->minValue(0)
-                            ->maxValue(5)
-                            ->placeholder('Misal: 4.8')
-                            ->label('Kasih Rating (Manual)'),
                     ])
                     ->columns(2)
-                    ->visible(fn () => auth()->user()->role === 'admin'),
+                    ->visible(fn() => auth()->user()?->role === 'developer'),
 
                 // SECTION: OWNER CONTENT (Content) - Hidden from Admin
                 Forms\Components\Section::make('Detail Kece Cafe Kamu ✨')
@@ -199,7 +192,7 @@ class CafeResource extends Resource
                                     ->columnSpanFull(),
                             ]),
                     ])
-                    ->visible(fn () => auth()->user()->role === 'admin' || auth()->user()->role === 'user'),
+                    ->visible(fn() => auth()->user()?->role === 'admin'),
             ]);
     }
 
@@ -209,8 +202,7 @@ class CafeResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image_path')
                     ->label('Foto')
-                    ->circular()
-                    ->visible(fn () => auth()->user()->role !== 'admin'),
+                    ->visible(fn() => auth()->user()?->role === 'admin'),
 
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
@@ -221,7 +213,7 @@ class CafeResource extends Resource
                 Tables\Columns\TextColumn::make('owner.name')
                     ->label('Owner')
                     ->toggleable()
-                    ->visible(fn () => auth()->user()->role === 'admin'),
+                    ->visible(fn() => auth()->user()?->role === 'developer'),
 
                 Tables\Columns\BadgeColumn::make('status')
                     ->colors([
@@ -231,11 +223,6 @@ class CafeResource extends Resource
                     ])
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('rating')
-                    ->numeric()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->visible(fn () => auth()->user()->role === 'admin'),
             ])
             ->filters([
                 //
@@ -254,7 +241,7 @@ class CafeResource extends Resource
     {
         $query = parent::getEloquentQuery()->with(['owner']);
 
-        if (auth()->user()->role !== 'admin') {
+        if (auth()->user()?->role === 'admin') {
             $query->where('owner_id', auth()->id());
         }
 

@@ -10,9 +10,8 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('menus', function (Blueprint $table) {
-            $table->boolean('is_active')->default(true)->after('image_path');
-            $table->string('type')->change();
+        Schema::table('cafes', function (Blueprint $table) {
+            $table->dropColumn('rating');
         });
     }
 
@@ -21,9 +20,8 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('menus', function (Blueprint $table) {
-            $table->dropColumn('is_active');
-            $table->enum('type', ['coffee', 'non-coffee', 'food'])->change();
+        Schema::table('cafes', function (Blueprint $table) {
+            $table->decimal('rating', 3, 2)->nullable()->after('has_wifi');
         });
     }
 };

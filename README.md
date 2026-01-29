@@ -1,143 +1,128 @@
 # ☕️ WadahNgopi
-> Portal Cafe Terbaik di Kalimantan
+> **Portal Cafe Terbaik di Kalimantan - Modern, Luxury, & Minimalist**
 
-**WadahNgopi** adalah platform direktori cafe modern yang membantu kamu menemukan spot ngopi nyaman di Kalimantan. Dilengkapi dengan info fasilitas lengkap, menu digital, dan berita kopi terbaru dari berbagai portal berita.
+[![Laravel 12](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel)](https://laravel.com)
+[![PHP 8.4](https://img.shields.io/badge/PHP-8.4-777BB4?style=for-the-badge&logo=php)](https://php.net)
+[![Filament v3](https://img.shields.io/badge/Filament-v3-EEBB0B?style=for-the-badge&logo=filament)](https://filamentphp.com)
+[![Tailwind v4](https://img.shields.io/badge/Tailwind_CSS-v4.0-06B6D4?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com)
 
----
-
-## 🚀 Tech Stack
-
-| Komponen | Teknologi |
-|----------|-----------|
-| Backend | Laravel 12 + PHP 8.4 |
-| Admin Panel | Filament v3 |
-| Frontend | Tailwind CSS v4 + Alpine.js |
-| Font | Plus Jakarta Sans |
-| PWA | Offline Support Ready |
-| News Scraper | Symfony Dom-Crawler |
+**WadahNgopi** adalah platform direktori cafe modern yang dirancang khusus untuk mengeksplorasi spot-spot kopi terbaik di Kalimantan. Dibangun dengan estetika *Luxury Glassmorphism*, aplikasi ini memberikan pengalaman pengguna yang premium, responsif, dan fungsional.
 
 ---
 
-## ✨ Fitur Utama
+## ✨ Fitur Unggulan
 
-- � **Explore Cafe** - Cari cafe berdasarkan lokasi terdekat, fasilitas, atau nama
-- 📍 **Integrasi Google Maps** - Lihat jarak real-time ke setiap cafe
-- 🏪 **Detail Lengkap** - Fasilitas, jam buka, menu, dan social media
-- 💾 **Simpan Favorit** - Bookmark cafe kesukaan di browser
-- 📰 **Berita Kopi** - Aggregator berita otomatis dari portal besar
-- 🚀 **Performa Optimal** - Built-in caching untuk load cepat
-- 📱 **Mobile First** - Desain responsif dengan bottom navigation
-
----
-
-## 🛠️ Prerequisites
-
-Pastikan sudah terinstall:
-- PHP 8.4+
-- Composer
-- Node.js & NPM
-- MySQL/SQLite
-- [Laravel Herd](https://herd.laravel.com) (Recommended)
+- 🔍 **Smart Explorer** - Temukan cafe berdasarkan nama, kategori, atau fasilitas (WiFi, Parking, Indoor/Outdoor).
+- 📍 **Geolocation Ready** - Cari cafe terdekat dari posisimu dengan kalkulasi jarak real-time.
+- 📱 **PWA Support** - Install aplikasi langsung ke Smartphone kamu dari browser. Offline-ready!
+- 🗂️ **Digital Menu v4** - Lihat katalog produk cafe dengan visual yang bersih dan interaktif.
+- � **News Coffee Aggregator** - Update otomatis berita kopi harian dari berbagai portal berita besar (Symfony Scraper).
+- 🛠️ **Powerful Admin Panel** - Manajemen data cafe, fasilitas, dan berita yang mudah dengan Filament v3.
+- 💾 **Safe Bookmark** - Simpan cafe idamanmu tanpa ribet login (Local Storage based).
 
 ---
 
-## ⚡️ Instalasi
+## � Tech Stack & Design
 
-### 1. Clone Repository
+| Komponen | Teknologi | Detail |
+| :--- | :--- | :--- |
+| **Backend** | Laravel 12 | Core Framework with PHP 8.4 |
+| **Admin** | Filament v3 | High-performance dashboard |
+| **Styling** | Tailwind CSS v4 | Pre-alpha performance with JIT |
+| **Frontend** | Alpine.js | Reactive components & Light-weight |
+| **Database** | MySQL / PostgreSQL | Robust data layers |
+| **Aesthetics** | Luxury Minimalist | Dark-mode ready & Glass-theme |
+
+---
+
+## 🛠️ Instalasi (Local Development)
+
+### 1. Persiapan Awal
+Pastikan environment kamu sudah siap:
+- PHP >= 8.4
+- MySQL 8.x
+- Composer & Node.js (Latest stable)
+
+### 2. Setup Projek
 ```bash
+# Clone repository
 git clone https://github.com/2343087/wadahngopi.git
 cd wadahngopi
-```
 
-### 2. Install Dependencies
-```bash
+# Install dependencies
 composer install
 npm install
-```
 
-### 3. Setup Environment
-```bash
+# Setup environtment
 cp .env.example .env
 php artisan key:generate
-```
-*Sesuaikan konfigurasi database di file `.env`*
 
-### 4. Migrasi Database
-```bash
+# Migrasi & Seeding (PENTING)
 php artisan migrate --seed
 ```
 
-**Login Admin**:
-- URL: `/admin`
-- Email: `admin@wadahngopi.test`
-- Password: `password`
-
-### 5. Link Storage & Build Assets
+### 3. Konfigurasi Aset
 ```bash
+# Link storage folder
 php artisan storage:link
-npm run build
+
+# Compile assets
+npm run dev # development
+# atau
+npm run build # production
 ```
 
 ---
 
-## 🛰️ News Scraper
+## 🛰️ Coffee News Worker
 
-Jalankan scraper berita kopi secara manual:
+Projek ini dilengkapi dengan berita otomatis. Kamu bisa menjalankannya secara manual atau terjadwal:
+
 ```bash
+# Jalankan scraper sekali
 php artisan app:scrape-coffee-news
-```
 
-Untuk otomatis, tambahkan ke cron:
-```bash
-* * * * * cd /path-to-project && php artisan schedule:run >> /dev/null 2>&1
-```
-
----
-
-## 👨‍💻 Development
-
-```bash
-# Terminal 1 - Server
-php artisan serve
-
-# Terminal 2 - Asset Watcher
-npm run dev
-```
-
-Atau gunakan script gabungan:
-```bash
-composer run dev
+# Jalankan via Scheduler (Task Scheduling)
+php artisan schedule:work
 ```
 
 ---
 
-## � Struktur Penting
+## 📂 Struktur Penting
 
 ```
-app/
-├── Filament/          # Admin panel resources
-├── Http/Controllers/  # Logic halaman publik
-├── Models/            # Eloquent models
-├── Traits/            # Reusable traits (OptimizesImages)
-└── Providers/         # Service providers
-
-resources/views/
-├── home.blade.php     # Landing page
-├── explore.blade.php  # Halaman explore cafe
-├── saved.blade.php    # Halaman favorit
-└── information/       # Halaman berita
+.
+├── app/
+│   ├── Filament/          # Konfigurasi Admin Panel (Resources, Widgets, Pages)
+│   ├── Http/Controllers/  # Logic Public Facing (Cafe, News, Saved)
+│   ├── Models/            # Eloquent Models (Cafe, Review, Information)
+│   └── Traits/            # Utility Helper (OptimizesImages)
+├── public/
+│   └── wadahicon.jpg      # Branding Logo Utama
+├── resources/
+│   ├── css/               # Tailwind v4 Configuration & Custom CSS
+│   └── views/             # Blade Templates (Explore, Home, Show)
+└── routes/
+    └── web.php            # Main Routes
 ```
 
 ---
 
-## 🎨 Design System
+## 🔐 Admin Access
+Setelah seeding selesai, akses panel admin di:
+- **URL**: `your-domain.test/admin`
+- **User**: `admin@wadahngopi.test`
+- **Pass**: `password`
 
-- **Warna Utama**: Espresso (#2C1810), Amber (#D97706)
-- **Font**: Plus Jakarta Sans
-- **Icon**: Phosphor Icons
-- **Style**: Luxury Glassmorphism
+---
+
+## 🤝 Kontribusi & Lisensi
+
+Kami sangat terbuka untuk kontribusi! Silahkan buat **Pull Request** atau **Issue** jika menemukan bug atau ingin menambah fitur baru.
+
+**Lisensi**: MIT License - silakan gunakan untuk keperluan personal maupun edukasi.
 
 ---
 
 **☕ Selamat Ngopi & Happy Coding!**  
-*Dibuat dengan cinta oleh AK Kreatif*
+*Dibuat oleh Tim AK Kreatif (Antigravity Powered)*

@@ -12,61 +12,36 @@ class FacilityPolicy
      */
     public function viewAny(User $user): bool
     {
-        // Admin cannot see facilities
-        if ($user->role === 'admin') {
-            return false;
-        }
-
-        return true;
+        return in_array($user->role, ['developer', 'admin']);
     }
 
     public function view(User $user, Facility $facility): bool
     {
-        if ($user->role === 'admin') {
-            return false;
-        }
-
-        return $user->id === $facility->cafe->owner_id;
+        return $user->role === 'developer' || ($user->role === 'admin' && $user->id === $facility->cafe->owner_id);
     }
 
     public function create(User $user): bool
     {
-        if ($user->role === 'admin') {
-            return false;
-        }
-
-        return $user->role === 'user' && $user->cafes()->exists();
+        return $user->role === 'developer' || ($user->role === 'admin' && $user->cafes()->exists());
     }
 
     public function update(User $user, Facility $facility): bool
     {
-        if ($user->role === 'admin') {
-            return false;
-        }
-
-        return $user->id === $facility->cafe->owner_id;
+        return $user->role === 'developer' || ($user->role === 'admin' && $user->id === $facility->cafe->owner_id);
     }
 
     public function delete(User $user, Facility $facility): bool
     {
-        if ($user->role === 'admin') {
-            return false;
-        }
-
-        return $user->id === $facility->cafe->owner_id;
+        return $user->role === 'developer' || ($user->role === 'admin' && $user->id === $facility->cafe->owner_id);
     }
 
     public function restore(User $user, Facility $facility): bool
     {
-        if ($user->role === 'admin') {
-            return false;
-        }
-
-        return $user->id === $facility->cafe->owner_id;
+        return $user->role === 'developer';
     }
 
     public function forceDelete(User $user, Facility $facility): bool
     {
-        return false;
+        return $user->role === 'developer';
     }
 }

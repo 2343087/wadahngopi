@@ -2,7 +2,7 @@
 
 return [
     'temporary_file_upload' => [
-        'disk' => null,
+        'disk' => 'public',
         'directory' => 'livewire-tmp',
     ],
 ];

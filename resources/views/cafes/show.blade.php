@@ -3,141 +3,175 @@
 @section('title', $cafe->name . ' - WadahNgopi.Com')
 
 @section('content')
-@php
-    use Illuminate\Support\Facades\Storage;
+    @php
+        use Illuminate\Support\Facades\Storage;
 
-    $rawImages = collect([$cafe->image_path])
-        ->merge($cafe->images ?? [])
-        ->filter()
-        ->map(function ($img) {
-            return str_starts_with($img, 'http') ? $img : Storage::url($img);
-        })
-        ->values()
-        ->all();
+        $rawImages = collect([$cafe->image_path])
+            ->merge($cafe->images ?? [])
+            ->filter()
+            ->map(function ($img) {
+                return str_starts_with($img, 'http') ? $img : Storage::url($img);
+            })
+            ->values()
+            ->all();
 
-    $galleryImages = empty($rawImages)
-        ? ['https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=1200']
-        : $rawImages;
+        $galleryImages = empty($rawImages)
+            ? ['https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=1200']
+            : $rawImages;
 
-    // PRECOMPUTE CATEGORIES
-    $activeMenus = $cafe->menus()->where('is_active', true)->get();
-    $menuCats = $activeMenus->pluck('type')->unique();
-    $activeGalleryImages = collect($cafe->menu_images)->filter(fn($img) => ($img['is_active'] ?? true) === true);
-    $galleryCats = $activeGalleryImages->pluck('tag')->unique();
-    $allCats = $menuCats->merge($galleryCats)->filter()->unique()->values()->all();
-    $defaultTab = !empty($allCats) ? $allCats[0] : '';
-@endphp
+        // PRECOMPUTE CATEGORIES
+        $menuImages = $cafe->menu_images ?? [];
+        $activeGalleryImages = collect($menuImages)->filter(fn($img) => is_array($img) && ($img['is_active'] ?? true) === true);
+        $allCats = $activeGalleryImages->pluck('tag')->unique()->filter()->values()->all();
+        $defaultTab = !empty($allCats) ? $allCats[0] : '';
+    @endphp
 
-<style>
-    /* EMERGENCY PROTECTIVE STYLES - Ensure these load even if app.css fails */
-    .menu-section-v4 {
-        margin-bottom: 5rem;
-    }
-    .modern-grid-v4 {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 16px !important;
-        width: 100% !important;
-    }
-    @media (min-width: 768px) {
-        .modern-grid-v4 {
-            grid-template-columns: repeat(3, 1fr) !important;
-            gap: 24px !important;
+    <style>
+        /* MODERN CLEAN DESIGN SYSTEM */
+        .menu-section-v4 {
+            margin-bottom: 5rem;
+            padding-top: 2rem;
         }
-    }
-    .luxury-card-v4 {
-        background: #ffffff;
-        border-radius: 24px;
-        padding: 12px;
-        border: 1px solid rgba(0,0,0,0.06);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .luxury-card-v4:active {
-        transform: scale(0.97);
-    }
-    .card-img-wrapper-v4 {
-        width: 100%;
-        aspect-ratio: 1/1;
-        border-radius: 16px;
-        overflow: hidden;
-        background: #f8fafc;
-        position: relative;
-    }
-    .card-img-v4 {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    .price-badge-v4 {
-        font-weight: 900;
-        color: #D97706; /* color-amber */
-        font-size: 0.95rem;
-    }
-    .name-text-v4 {
-        font-weight: 800;
-        color: #2C1810; /* color-espresso */
-        font-size: 0.85rem;
-        line-height: 1.3;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        height: 2.6em;
-        margin-bottom: 4px;
-    }
-    .pill-nav-v4 {
-        display: flex;
-        gap: 10px;
-        overflow-x: auto;
-        padding-bottom: 15px;
-        margin-bottom: 20px;
-        scrollbar-width: none;
-    }
-    .pill-nav-v4::-webkit-scrollbar { display: none; }
-    
-    .pill-v4 {
-        padding: 10px 20px;
-        border-radius: 100px;
-        background: #fff;
-        border: 1px solid rgba(0,0,0,0.08);
-        color: #2C1810;
-        font-weight: 800;
-        font-size: 0.8rem;
-        white-space: nowrap;
-        transition: all 0.3s ease;
-    }
-    .pill-v4.active {
-        background: #2C1810;
-        color: #fff;
-        border-color: #2C1810;
-        box-shadow: 0 4px 15px rgba(44, 24, 16, 0.2);
-    }
-    .placeholder-v4 {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: #cbd5e0;
-        background: #f1f5f9;
-        font-size: 0.7rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-    }
-</style>
+
+        .section-header-v5 {
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .section-tag-v5 {
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: #D97706;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .section-title-v5 {
+            font-size: 2.25rem;
+            font-weight: 900;
+            color: #2C1810;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .modern-grid-v4 {
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 20px !important;
+            width: 100% !important;
+        }
+
+        @media (min-width: 768px) {
+            .modern-grid-v4 {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 24px !important;
+            }
+        }
+
+        /* Card: Clean & Premium */
+        .luxury-card-v4 {
+            background: #ffffff;
+            border-radius: 30px;
+            padding: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            box-shadow: 0 4px 20px -2px rgba(44, 24, 16, 0.03);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .luxury-card-v4:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px -10px rgba(44, 24, 16, 0.08);
+            border-color: rgba(44, 24, 16, 0.1);
+        }
+
+        .card-img-wrapper-v4 {
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: 22px;
+            overflow: hidden;
+            background: #fdfcfb;
+            position: relative;
+        }
+
+        .card-img-v4 {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 1s ease;
+        }
+
+        .luxury-card-v4:hover .card-img-v4 {
+            transform: scale(1.15);
+        }
+
+        .name-text-v4 {
+            font-weight: 800;
+            color: #2C1810;
+            font-size: 0.95rem;
+            line-height: 1.3;
+            padding: 0 4px 4px;
+            text-align: center;
+        }
+
+        /* Pill Navigation: Minimalist */
+        .pill-nav-v4 {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            scrollbar-width: none;
+        }
+
+        .pill-nav-v4::-webkit-scrollbar {
+            display: none;
+        }
+
+        .pill-v4 {
+            padding: 12px 24px;
+            border-radius: 100px;
+            background: #f8fafc;
+            border: 1px solid transparent;
+            color: #64748b;
+            font-weight: 700;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .pill-v4.active {
+            background: #2C1810;
+            color: #ffffff;
+            box-shadow: 0 8px 16px -4px rgba(44, 24, 16, 0.25);
+        }
+
+        .placeholder-v4 {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #cbd5e0;
+            background: #f1f5f9;
+            font-size: 0.7rem;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+    </style>
 
     <div class="detail-wrapper" x-data='cafeDetailComponent({
-                                    id: {{ $cafe->id }},
-                                    images: {!! json_encode($galleryImages) !!},
-                                    allCategories: {!! json_encode($allCats) !!},
-                                    defaultTab: {!! json_encode($defaultTab) !!}
-                                })'>
+                                                        id: {{ $cafe->id }},
+                                                        images: {!! json_encode($galleryImages) !!},
+                                                        allCategories: {!! json_encode($allCats) !!},
+                                                        defaultTab: {!! json_encode($defaultTab) !!}
+                                                    })'>
 
         {{-- Hero Slider Section --}}
         <div class="detail-hero-luxury" @touchstart="touchStart($event)" @touchend="touchEnd($event)">
@@ -231,94 +265,51 @@
 
             {{-- Menu Section --}}
             <section class="menu-section-v4">
-                <div class="flex flex-col mb-8">
-                    <span class="text-[10px] font-black text-[#D97706] tracking-[0.4em] uppercase mb-2">Exclusive Selection</span>
-                    <h2 class="text-[2rem] font-black text-[#2C1810] leading-tight">Daftar Menu & Katalog</h2>
-                </div>
-
-                {{-- Horizontal Categories --}}
-                <div class="pill-nav-v4" x-show="allCategories.length > 0">
-                    <template x-for="cat in allCategories" :key="cat">
-                        <button class="pill-v4 transition-all" 
-                            :class="currentTab === cat ? 'active' : ''"
-                            @click="currentTab = cat" x-text="cat.replace(/-/g, ' ')">
-                        </button>
-                    </template>
+                <div class="section-header-v5">
+                    <h2 class="section-title-v5">Daftar Menu</h2>
                 </div>
 
                 {{-- Unified Grid --}}
                 <div class="modern-grid-v4">
                     {{-- Gallery Images First --}}
                     @foreach($activeGalleryImages as $img)
-                        <div class="luxury-card-v4 group"
-                            x-show="currentTab === '{{ $img['tag'] }}'"
+                        <div class="luxury-card-v4 group" x-show="currentTab === '{{ $img['tag'] }}'"
                             @click="openLightbox('{{ Storage::url($img['image']) }}')">
-                            
+
                             <div class="card-img-wrapper-v4">
-                                <img src="{{ Storage::url($img['image']) }}" class="card-img-v4" alt="{{ $img['tag'] }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                                <img src="{{ Storage::url($img['image']) }}" class="card-img-v4" alt="{{ $img['tag'] }}"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
                                 <div class="placeholder-v4" style="display:none">
-                                    <i class="ph-bold ph-image text-2xl mb-1"></i>
-                                    <span>Preview</span>
+                                    <i class="ph-bold ph-image text-3xl mb-1"></i>
+                                    <span>Gallery</span>
                                 </div>
-                                <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-wider text-[#2C1810]">
+                                <div
+                                    class="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-[#2C1810] shadow-sm">
                                     {{ $img['tag'] }}
                                 </div>
                             </div>
-                            <div class="py-1">
-                                <h4 class="name-text-v4">Lihat Katalog {{ $img['tag'] }}</h4>
-                            </div>
-                        </div>
-                    @endforeach
-
-                    {{-- Individual Menu Items --}}
-                    @foreach($activeMenus as $menu)
-                        @php
-                            $menuImg = $menu->image_path && str_starts_with($menu->image_path, 'http')
-                                ? $menu->image_path
-                                : ($menu->image_path ? Storage::url($menu->image_path) : null);
-                        @endphp
-                        <div class="luxury-card-v4 group"
-                            x-show="currentTab === '{{ $menu->type }}'" 
-                            @click="openLightbox('{{ $menuImg ?? 'https://placehold.co/600x600?text=Menu' }}')">
-
-                            <div class="card-img-wrapper-v4">
-                                @if($menuImg)
-                                    <img src="{{ $menuImg }}" class="card-img-v4" alt="{{ $menu->name }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-                                    <div class="placeholder-v4" style="display:none">
-                                        <i class="ph-bold ph-coffee text-2xl mb-1"></i>
-                                        <span>No Photo</span>
-                                    </div>
-                                @else
-                                    <div class="placeholder-v4">
-                                        <i class="ph-bold ph-coffee text-2xl mb-1"></i>
-                                        <span>No Photo</span>
-                                    </div>
-                                @endif
-                            </div>
-
-                            <div class="pt-1">
-                                <h4 class="name-text-v4">{{ $menu->name }}</h4>
-                                <div class="price-badge-v4">
-                                    Rp {{ number_format($menu->price, 0, ',', '.') }}
-                                </div>
+                            <div class="pt-2">
+                                <h4 class="name-text-v4"> {{ $img['tag'] }}</h4>
                             </div>
                         </div>
                     @endforeach
                 </div>
 
                 {{-- Empty State --}}
-                <div x-show="allCategories.length === 0" class="py-20 text-center bg-white rounded-[32px] border border-dashed border-slate-200">
+                <div x-show="allCategories.length === 0"
+                    class="py-20 text-center bg-white rounded-[32px] border border-dashed border-slate-200">
                     <i class="ph ph-coffee text-5xl text-slate-200 mb-4"></i>
                     <p class="text-slate-400 font-bold">Katalog menu segera hadir.</p>
                 </div>
 
                 {{-- Simple Lightbox --}}
-                <div x-show="lightboxOpen" 
+                <div x-show="lightboxOpen"
                     class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
                     @click="lightboxOpen = false" x-trap.noscroll="lightboxOpen" x-cloak>
                     <div class="relative max-w-4xl w-full" @click.stop>
                         <img :src="lightboxImg" class="w-full h-auto rounded-3xl shadow-2xl">
-                        <button @click="lightboxOpen = false" class="absolute -top-4 -right-4 w-12 h-12 rounded-full bg-white text-black shadow-lg flex items-center justify-center">
+                        <button @click="lightboxOpen = false"
+                            class="absolute -top-4 -right-4 w-12 h-12 rounded-full bg-white text-black shadow-lg flex items-center justify-center">
                             <i class="ph ph-x ph-bold text-2xl"></i>
                         </button>
                     </div>

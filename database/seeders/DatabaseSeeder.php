@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        dd('seeding');
         $samarindaCafes = [
             ['name' => 'Coffee & Co. - SOUL', 'address' => 'City Centrum Mall, 1st Floor, Samarinda', 'rating' => 4.9, 'image_path' => 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=800', 'has_wifi' => true, 'latitude' => -0.502812, 'longitude' => 117.151240],
             ['name' => 'Coffee & Co', 'address' => 'Jl. Mulawarman No.171, Samarinda', 'rating' => 4.9, 'image_path' => 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800', 'has_wifi' => true, 'latitude' => -0.501582, 'longitude' => 117.153890],
@@ -38,16 +39,28 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Saqa Coffee House And Space', 'address' => 'Jl. Wijaya Kusuma 9A No.4, Samarinda', 'rating' => 4.7, 'image_path' => 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800', 'has_wifi' => true, 'latitude' => -0.476789, 'longitude' => 117.111234],
         ];
 
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@wadahngopi.test'],
+            [
+                'name' => 'WadahNgopi Admin',
+                'role' => 'admin',
+                'password' => bcrypt('password'),
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'dev@wadahngopi.test'],
+            [
+                'name' => 'WadahNgopi Developer',
+                'role' => 'developer',
+                'password' => bcrypt('developer123'),
+            ]
+        );
+
         foreach ($samarindaCafes as $cafeData) {
             \App\Models\Cafe::factory()
-                ->hasMenus(fake()->numberBetween(5, 10))
                 ->hasReviews(fake()->numberBetween(3, 5))
-                ->create($cafeData);
+                ->create(array_merge($cafeData, ['owner_id' => $admin->id]));
         }
-
-        User::factory()->create([
-            'name' => 'WadahNgopi Admin',
-            'email' => 'admin@wadahngopi.test',
-        ]);
     }
 }
