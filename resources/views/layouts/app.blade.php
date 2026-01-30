@@ -38,7 +38,7 @@
             </a>
             <a href="{{ route('explore') }}" class="nav-item {{ request()->routeIs('explore') ? 'active' : '' }}">
                 <i class="{{ request()->routeIs('explore') ? 'ph-fill ph-compass' : 'ph ph-compass' }}"></i>
-                <span>EXPLORE</span>
+                <span>JELAJAHI</span>
             </a>
             <a href="{{ route('saved') }}" class="nav-item {{ request()->routeIs('saved') ? 'active' : '' }}">
                 <i
