@@ -58,12 +58,12 @@
     </style>
 
     <div class="detail-wrapper" x-data='cafeDetailComponent({
-                                                                                                                        id: {{ $cafe->id }},
-                                                                                                                        images: {!! json_encode($galleryImages) !!},
-                                                                                                                        allCategories: {!! json_encode($allCats) !!},
-                                                                                                                        defaultTab: {!! json_encode($defaultTab) !!},
-                                                                                                                        menuImages: {!! json_encode($activeGalleryImages->map(fn($img) => ["url" => Storage::url($img["image"]), "tag" => $img["tag"]])->values()) !!}
-                                                                                                                    })'>
+                                                                                                id: {{ $cafe->id }},
+                                                                                                images: {!! json_encode($galleryImages) !!},
+                                                                                                allCategories: {!! json_encode($allCats) !!},
+                                                                                                defaultTab: {!! json_encode($defaultTab) !!},
+                                                                                                menuImages: {!! json_encode($activeGalleryImages->map(fn($img) => ["url" => Storage::url($img["image"]), "tag" => $img["tag"]])->values()) !!}
+                                                                                            })'>
 
         {{-- Hero Slider Section --}}
         <div class="detail-hero-luxury" @touchstart="touchStart($event)" @touchend="touchEnd($event)">
@@ -143,7 +143,7 @@
                         <div class="grid grid-cols-2 gap-3 mb-4">
                             @if($hasGoogleMaps)
                                 <a href="{{ e($cafe->google_maps_url) }}" target="_blank" rel="noopener noreferrer"
-                                    class="flex items-center gap-3 p-3.5 rounded-2xl border border-espresso/10 bg-espresso/5 active:scale-[0.98] transition-transform">
+                                    class="flex items-center gap-3 p-3.5 rounded-2xl border border-espresso/10 bg-espresso/5 active:scale-[0.98] transition-transform no-underline">
                                     <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-amber-500">
                                         <i class="ph-bold ph-map-pin text-white text-base"></i>
                                     </div>
@@ -157,7 +157,7 @@
                             @if($hasWhatsApp)
                                 <a href="https://wa.me/{{ e(preg_replace('/[^0-9]/', '', $cafe->whatsapp_number)) }}" target="_blank"
                                     rel="noopener noreferrer"
-                                    class="flex items-center gap-3 p-3.5 rounded-2xl border border-espresso/10 bg-espresso/5 active:scale-[0.98] transition-transform">
+                                    class="flex items-center gap-3 p-3.5 rounded-2xl border border-espresso/10 bg-espresso/5 active:scale-[0.98] transition-transform no-underline">
                                     <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-green-500">
                                         <i class="ph-bold ph-whatsapp-logo text-white text-base"></i>
                                     </div>
@@ -194,7 +194,7 @@
                                     };
                                 @endphp
                                 <a href="{{ e($link['url']) }}" target="_blank" rel="noopener noreferrer"
-                                    class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-espresso/10 bg-espresso/5 text-espresso active:scale-95 transition-transform">
+                                    class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-espresso/10 bg-espresso/5 text-espresso active:scale-95 transition-transform no-underline">
                                     <i class="ph-bold {{ $iconClass }} text-sm"></i>
                                     <span class="text-xs font-medium">{{ $label }}</span>
                                 </a>
@@ -203,8 +203,6 @@
                     @endif
                 </section>
             @endif
-
-
 
             {{-- Features Section --}}
             <section class="mb-12">
@@ -232,10 +230,6 @@
                         <h2 class="section-title-v5">Daftar Menu</h2>
                         <p class="text-slate-400 text-[11px] font-black mt-2 uppercase tracking-[0.25em]">Cita rasa dalam
                             setiap pilihan</p>
-                    </div>
-                    <div class="flex gap-1.5 mb-2">
-                        <div class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></div>
-                        <div class="w-1.5 h-1.5 rounded-full bg-slate-200"></div>
                     </div>
                 </div>
 

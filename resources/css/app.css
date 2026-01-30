@@ -470,25 +470,6 @@ img {
     transform: translateY(-2px);
 }
 
-.search-luxury-box {
-    background: white;
-    padding: 16px 24px;
-    border-radius: 22px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    box-shadow: var(--shadow-soft);
-    transition: var(--transition-smooth);
-    margin-top: 24px;
-    border: 1px solid rgba(0, 0, 0, 0.03);
-}
-
-.search-luxury-box:focus-within {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-premium);
-    border-color: var(--color-coffee-light);
-}
-
 header {
     position: relative;
     z-index: 10000;

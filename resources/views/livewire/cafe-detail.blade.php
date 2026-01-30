@@ -8,7 +8,7 @@
                 <span
                     class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-emerald-500 text-white shadow-lg">
                     <span class="h-2 w-2 bg-white rounded-full animate-pulse"></span>
-                    BUKA SEKARANG
+                    SEDANG BUKA
                 </span>
             @else
                 <span

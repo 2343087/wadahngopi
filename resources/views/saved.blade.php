@@ -12,25 +12,9 @@
                     Koleksi cafe pilihan kamu yang siap dikunjungi.
                 </p>
             </div>
-        </main>
-
-        {{-- Undo Toast Notification (High Contrast Fix) --}}
-        <div x-show="showUndoToast" x-cloak
-             x-transition:enter="transition ease-out duration-300 transform"
-             x-transition:enter-start="translate-y-20 opacity-0"
-             x-transition:enter-end="translate-y-0 opacity-100"
-             x-transition:leave="transition ease-in duration-200 transform"
-             x-transition:leave-start="translate-y-0 opacity-100"
-             x-transition:leave-end="translate-y-20 opacity-0"
-             class="fixed bottom-28 left-1/2 -translate-x-1/2 z-[100] w-[calc(100%-48px)] max-w-[400px]">
-            <div class="bg-[#2C1810] text-white px-5 py-4 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center justify-between border border-white/10 ring-1 ring-white/20">
-                <div class="flex items-center gap-3">
-                    <div class="w-2 h-2 bg-rose-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(251,113,133,0.8)]"></div>
-                    <span class="text-[0.85rem] font-black tracking-tight text-white">Kafe dihapus</span>
-                </div>
-                <button @click="undoRemove()" class="text-[0.75rem] font-black text-[#D97706] tracking-widest uppercase active:scale-90 transition-transform hover:brightness-125">
-                    BATALKAN
-                </button>
+            <div
+                class="w-12 h-12 bg-white/80 backdrop-blur-md border border-espresso/5 rounded-2xl flex items-center justify-center shadow-premium overflow-hidden">
+                <img src="{{ asset('wadahicon.png') }}" alt="Logo" class="w-full h-full object-cover">
             </div>
         </div>
     </header>

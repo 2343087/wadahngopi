@@ -108,12 +108,6 @@ php artisan schedule:work
 
 ---
 
-## 🔐 Admin Access
-Setelah seeding selesai, akses panel admin di:
-- **URL**: `your-domain.test/admin`
-- **User**: `admin@wadahngopi.test`
-- **Pass**: `password`
-
 ---
 
 ## 🤝 Kontribusi & Lisensi

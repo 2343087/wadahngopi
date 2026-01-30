@@ -51,8 +51,8 @@
                 </div>
 
                 <div class="grid grid-cols-4 gap-1 p-1 mt-2">
-                    @foreach(range('A', 'Z') as $char)
-                        <div class="w-full aspect-square flex items-center justify-center rounded-lg text-[0.7rem] font-bold cursor-pointer transition-all"
+                    @foreach (range('A', 'Z') as $char)
+                        <div class="w-full aspect-square flex items-center justify-center rounded-xl text-[0.7rem] font-bold cursor-pointer transition-all"
                             :class="activeLetter === '{{ $char }}' ? 'bg-espresso text-white shadow-lg' : 'hover:bg-espresso/5'"
                             @click="if (activeLetter === '{{ $char }}') { activeLetter = null; activeSort = 'relevance'; } else { activeLetter = '{{ $char }}'; activeSort = 'name_az'; } showSortMenu = false">
                             {{ $char }}
@@ -124,7 +124,7 @@
                                 <span class="luxury-tag-v2" x-text="tag"></span>
                             </template>
                         </div>
-                        
+
                         <div class="flex justify-end gap-1.5 border-t border-espresso/5 pt-3">
                             {{-- Social Media Icons --}}
                             <template x-for="social in (cafe.socialLinks || [])" :key="social.platform">
