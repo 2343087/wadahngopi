@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        dd('seeding');
+
         $samarindaCafes = [
             ['name' => 'Coffee & Co. - SOUL', 'address' => 'City Centrum Mall, 1st Floor, Samarinda', 'rating' => 4.9, 'image_path' => 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=800', 'has_wifi' => true, 'latitude' => -0.502812, 'longitude' => 117.151240],
             ['name' => 'Coffee & Co', 'address' => 'Jl. Mulawarman No.171, Samarinda', 'rating' => 4.9, 'image_path' => 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800', 'has_wifi' => true, 'latitude' => -0.501582, 'longitude' => 117.153890],
@@ -58,9 +58,25 @@ class DatabaseSeeder extends Seeder
         );
 
         foreach ($samarindaCafes as $cafeData) {
-            \App\Models\Cafe::factory()
-                ->hasReviews(fake()->numberBetween(3, 5))
+            $rating = $cafeData['rating'] ?? null;
+            unset($cafeData['rating']);
+
+            $cafe = \App\Models\Cafe::factory()
                 ->create(array_merge($cafeData, ['owner_id' => $admin->id]));
+
+            if ($rating) {
+                \App\Models\Review::factory()->create([
+                    'cafe_id' => $cafe->id,
+                    'rating' => $rating,
+                    'user_name' => 'Wadah Hunter',
+                    'comment' => 'Tempat yang sangat direkomendasikan!',
+                ]);
+            }
+
+            // Add more random reviews
+            \App\Models\Review::factory()->count(fake()->numberBetween(2, 4))->create([
+                'cafe_id' => $cafe->id,
+            ]);
         }
     }
 }

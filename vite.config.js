@@ -11,6 +11,10 @@ export default defineConfig({
         tailwindcss(),
     ],
     server: {
+        host: 'wadahngopi.test',
+        hmr: {
+            host: 'wadahngopi.test',
+        },
         watch: {
             ignored: ['**/storage/framework/views/**'],
         },
