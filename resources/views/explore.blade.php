@@ -1,14 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Explore - WadahNgopi.Com')
+@section('title', 'JELAJAH - WadahNgopi.Com')
 
 @section('content')
     <div x-data="exploreLogic()" x-init="initComponent()" class="flex flex-col flex-1">
         {{-- Glass Header with Search --}}
         <header class="px-6 pt-10 pb-6 flex flex-col gap-6">
             <div class="flex items-center justify-between">
-                <h1 class="hero-luxury-title">Explore <span class="italic text-[--color-coffee]">Cafe</span></h1>
-                <div class="w-10 h-10 bg-white border border-espresso/5 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+                <h1 class="hero-luxury-title">JELAJAH <span class="italic text-[--color-coffee]">Cafe</span></h1>
+                <div
+                    class="w-10 h-10 bg-white border border-espresso/5 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
                     <img src="{{ asset('wadahicon.jpg') }}" alt="Logo" class="w-full h-full object-cover">
                 </div>
             </div>
@@ -109,11 +110,11 @@
                                 <a :href="social.url" target="_blank" rel="noopener noreferrer" @click.stop
                                     class="luxury-social-btn-v2">
                                     <i :class="{
-                                                'ph-bold ph-instagram-logo': social.platform === 'instagram',
-                                                'ph-bold ph-tiktok-logo': social.platform === 'tiktok',
-                                                'ph-bold ph-facebook-logo': social.platform === 'facebook',
-                                                'ph-bold ph-x-logo': social.platform === 'twitter'
-                                            }"></i>
+                                                    'ph-bold ph-instagram-logo': social.platform === 'instagram',
+                                                    'ph-bold ph-tiktok-logo': social.platform === 'tiktok',
+                                                    'ph-bold ph-facebook-logo': social.platform === 'facebook',
+                                                    'ph-bold ph-x-logo': social.platform === 'twitter'
+                                                }"></i>
                                 </a>
                             </template>
 
@@ -150,7 +151,7 @@
         'lng' => $c->longitude,
         'facilities' => $c->facilities->pluck('name'),
         'socialLinks' => collect($c->social_links ?? [])->filter(fn($s) => ($s['show'] ?? false) && !empty($s['url']))->values(),
-        'image' => $c->image_path ? Storage::url($c->image_path) : null,
+        'image' => $c->image_path && str_starts_with($c->image_path, 'http') ? $c->image_path : ($c->image_path ? Storage::url($c->image_path) : null),
         'url' => route('cafes.show', $c)
     ])) }};
 
