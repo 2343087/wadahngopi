@@ -8,7 +8,7 @@
         <div class="hero-fancy !pb-4">
             <h1 class="hero-luxury-title">Info Kopi</h1>
             <p class="text-[--color-text-muted] text-[1.1rem] font-semibold opacity-80 mt-1">
-                Magazine digital seputar lifestyle dan edukasi kopi.
+                Informasi dan edukasi kopi.
             </p>
 
             <div class="pills-container-luxury mt-8">

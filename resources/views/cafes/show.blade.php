@@ -38,16 +38,6 @@
             position: relative;
         }
 
-        .section-tag-v5 {
-            font-size: 0.65rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: #D97706;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
         .section-title-v5 {
             font-size: 2.25rem;
             font-weight: 900;
@@ -56,122 +46,24 @@
             line-height: 1.1;
         }
 
-        .modern-grid-v4 {
-            display: grid !important;
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 20px !important;
-            width: 100% !important;
-        }
-
-        @media (min-width: 768px) {
-            .modern-grid-v4 {
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: 24px !important;
-            }
-        }
-
-        /* Card: Clean & Premium */
-        .luxury-card-v4 {
-            background: #ffffff;
-            border-radius: 30px;
-            padding: 10px;
-            border: 1px solid rgba(0, 0, 0, 0.04);
-            box-shadow: 0 4px 20px -2px rgba(44, 24, 16, 0.03);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        }
-
-        .luxury-card-v4:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 20px 40px -10px rgba(44, 24, 16, 0.08);
-            border-color: rgba(44, 24, 16, 0.1);
-        }
-
-        .card-img-wrapper-v4 {
-            width: 100%;
-            aspect-ratio: 1/1;
-            border-radius: 22px;
-            overflow: hidden;
-            background: #fdfcfb;
-            position: relative;
-        }
-
-        .card-img-v4 {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 1s ease;
-        }
-
-        .luxury-card-v4:hover .card-img-v4 {
-            transform: scale(1.15);
-        }
-
-        .name-text-v4 {
-            font-weight: 800;
-            color: #2C1810;
-            font-size: 0.95rem;
-            line-height: 1.3;
-            padding: 0 4px 4px;
-            text-align: center;
-        }
-
-        /* Pill Navigation: Minimalist */
-        .pill-nav-v4 {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-            scrollbar-width: none;
-        }
-
-        .pill-nav-v4::-webkit-scrollbar {
+        /* Utils */
+        .scrollbar-hide::-webkit-scrollbar {
             display: none;
         }
 
-        .pill-v4 {
-            padding: 12px 24px;
-            border-radius: 100px;
-            background: #f8fafc;
-            border: 1px solid transparent;
-            color: #64748b;
-            font-weight: 700;
-            font-size: 0.85rem;
-            white-space: nowrap;
-            transition: all 0.3s ease;
-        }
-
-        .pill-v4.active {
-            background: #2C1810;
-            color: #ffffff;
-            box-shadow: 0 8px 16px -4px rgba(44, 24, 16, 0.25);
-        }
-
-        .placeholder-v4 {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #cbd5e0;
-            background: #f1f5f9;
-            font-size: 0.7rem;
-            font-weight: 900;
-            text-transform: uppercase;
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 
     <div class="detail-wrapper" x-data='cafeDetailComponent({
-                                                        id: {{ $cafe->id }},
-                                                        images: {!! json_encode($galleryImages) !!},
-                                                        allCategories: {!! json_encode($allCats) !!},
-                                                        defaultTab: {!! json_encode($defaultTab) !!}
-                                                    })'>
+                                                                                                                        id: {{ $cafe->id }},
+                                                                                                                        images: {!! json_encode($galleryImages) !!},
+                                                                                                                        allCategories: {!! json_encode($allCats) !!},
+                                                                                                                        defaultTab: {!! json_encode($defaultTab) !!},
+                                                                                                                        menuImages: {!! json_encode($activeGalleryImages->map(fn($img) => ["url" => Storage::url($img["image"]), "tag" => $img["tag"]])->values()) !!}
+                                                                                                                    })'>
 
         {{-- Hero Slider Section --}}
         <div class="detail-hero-luxury" @touchstart="touchStart($event)" @touchend="touchEnd($event)">
@@ -206,9 +98,7 @@
 
             {{-- Slider Info Overlay --}}
             <div class="absolute bottom-16 left-6 right-6 z-20">
-                <span class="status-label-luxury {{ $cafe->is_open ? 'status-open' : 'status-closed' }} mb-3 inline-block">
-                    {{ $cafe->is_open ? 'Buka Sekarang' : 'Tutup' }}
-                </span>
+                <livewire:cafe-detail :cafe-id="$cafe->id" />
                 <h1 class="text-4xl font-black text-white leading-tight drop-shadow-lg">{{ $cafe->name }}</h1>
                 <div class="flex items-center gap-2 text-white/80 font-bold text-sm mt-3">
                     <i class="ph-fill ph-map-pin text-[--color-amber]"></i>
@@ -232,17 +122,89 @@
                 {{ $cafe->description }}
             </div>
 
-            {{-- Action Buttons --}}
-            <div class="flex gap-3 mb-12">
-                <a href="{{ $cafe->google_maps_url }}" target="_blank"
-                    class="flex-1 btn btn-primary py-4 h-14 text-sm shadow-xl">
-                    <i class="ph-fill ph-navigation-arrow text-lg"></i>Maps
-                </a>
-                <a href="https://wa.me/{{ $cafe->whatsapp_number }}" target="_blank"
-                    class="flex-1 btn bg-[#10B981] text-white py-4 h-14 text-sm shadow-xl shadow-emerald-500/20">
-                    <i class="ph-fill ph-whatsapp-logo text-xl"></i>WhatsApp
-                </a>
-            </div>
+            {{-- Kontak & Sosmed Section --}}
+            @php
+                // Filter active social links using the correct 'show' field
+                $activeSocialLinks = collect($cafe->social_links ?? [])->filter(fn($link) => !empty($link['show']) && !empty($link['url']));
+                $hasGoogleMaps = !empty($cafe->google_maps_url);
+                $hasWhatsApp = !empty($cafe->whatsapp_number);
+            @endphp
+
+            @if($hasGoogleMaps || $hasWhatsApp || $activeSocialLinks->isNotEmpty())
+                <section class="mb-8">
+                    {{-- Section Title --}}
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="ph-bold ph-phone text-amber-600 text-base"></i>
+                        <h3 class="text-espresso text-sm font-bold">Hubungi & Follow</h3>
+                    </div>
+
+                    {{-- Action Buttons --}}
+                    @if($hasGoogleMaps || $hasWhatsApp)
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            @if($hasGoogleMaps)
+                                <a href="{{ e($cafe->google_maps_url) }}" target="_blank" rel="noopener noreferrer"
+                                    class="flex items-center gap-3 p-3.5 rounded-2xl border border-espresso/10 bg-espresso/5 active:scale-[0.98] transition-transform">
+                                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-amber-500">
+                                        <i class="ph-bold ph-map-pin text-white text-base"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <span class="text-espresso text-sm font-semibold block">Lokasi</span>
+                                        <span class="text-espresso/50 text-[10px]">Google Maps</span>
+                                    </div>
+                                </a>
+                            @endif
+
+                            @if($hasWhatsApp)
+                                <a href="https://wa.me/{{ e(preg_replace('/[^0-9]/', '', $cafe->whatsapp_number)) }}" target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="flex items-center gap-3 p-3.5 rounded-2xl border border-espresso/10 bg-espresso/5 active:scale-[0.98] transition-transform">
+                                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-green-500">
+                                        <i class="ph-bold ph-whatsapp-logo text-white text-base"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <span class="text-espresso text-sm font-semibold block">Chat</span>
+                                        <span class="text-espresso/50 text-[10px]">WhatsApp</span>
+                                    </div>
+                                </a>
+                            @endif
+                        </div>
+                    @endif
+
+                    {{-- Social Media Links --}}
+                    @if($activeSocialLinks->isNotEmpty())
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($activeSocialLinks as $link)
+                                @php
+                                    $platform = strtolower($link['platform'] ?? '');
+                                    $iconClass = match ($platform) {
+                                        'instagram' => 'ph-instagram-logo',
+                                        'tiktok' => 'ph-tiktok-logo',
+                                        'facebook' => 'ph-facebook-logo',
+                                        'x', 'twitter' => 'ph-x-logo',
+                                        'youtube' => 'ph-youtube-logo',
+                                        default => 'ph-globe'
+                                    };
+                                    $label = match ($platform) {
+                                        'instagram' => 'Instagram',
+                                        'tiktok' => 'TikTok',
+                                        'facebook' => 'Facebook',
+                                        'x', 'twitter' => 'X',
+                                        'youtube' => 'YouTube',
+                                        default => 'Web'
+                                    };
+                                @endphp
+                                <a href="{{ e($link['url']) }}" target="_blank" rel="noopener noreferrer"
+                                    class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-espresso/10 bg-espresso/5 text-espresso active:scale-95 transition-transform">
+                                    <i class="ph-bold {{ $iconClass }} text-sm"></i>
+                                    <span class="text-xs font-medium">{{ $label }}</span>
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+                </section>
+            @endif
+
+
 
             {{-- Features Section --}}
             <section class="mb-12">
@@ -263,56 +225,61 @@
                 </div>
             </section>
 
-            {{-- Menu Section --}}
-            <section class="menu-section-v4">
-                <div class="section-header-v5">
-                    <h2 class="section-title-v5">Daftar Menu</h2>
+            {{-- Menu Section (Refined Masonry) --}}
+            <section class="menu-section-v4" x-data="{ showAllMenu: false }">
+                <div class="section-header-v5 flex items-end justify-between mb-8">
+                    <div>
+                        <h2 class="section-title-v5">Daftar Menu</h2>
+                        <p class="text-slate-400 text-[11px] font-black mt-2 uppercase tracking-[0.25em]">Cita rasa dalam
+                            setiap pilihan</p>
+                    </div>
+                    <div class="flex gap-1.5 mb-2">
+                        <div class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-slate-200"></div>
+                    </div>
                 </div>
 
-                {{-- Unified Grid --}}
-                <div class="modern-grid-v4">
-                    {{-- Gallery Images First --}}
-                    @foreach($activeGalleryImages as $img)
-                        <div class="luxury-card-v4 group" x-show="currentTab === '{{ $img['tag'] }}'"
-                            @click="openLightbox('{{ Storage::url($img['image']) }}')">
+                {{-- Premium Grid (Masonry) --}}
+                <div class="columns-2 md:columns-3 gap-4 space-y-4">
+                    @foreach($activeGalleryImages as $index => $img)
+                        <div class="menu-card-v10 group break-inside-avoid"
+                            x-show="showAllMenu || {{ $index < 6 ? 'true' : 'false' }}"
+                            x-transition:enter="transition ease-out duration-500"
+                            x-transition:enter-start="opacity-0 translate-y-8"
+                            x-transition:enter-end="opacity-100 translate-y-0">
+                            <div
+                                class="relative overflow-hidden rounded-[2.5rem] bg-white border border-slate-100 p-2 transition-all duration-500 group-hover:border-amber-200 group-hover:shadow-2xl group-hover:shadow-amber-900/10 active:scale-95">
+                                <img src="{{ Storage::url($img['image']) }}"
+                                    class="w-full h-auto rounded-[2rem] transition-transform duration-1000 group-hover:scale-110"
+                                    alt="{{ $img['tag'] }}">
 
-                            <div class="card-img-wrapper-v4">
-                                <img src="{{ Storage::url($img['image']) }}" class="card-img-v4" alt="{{ $img['tag'] }}"
-                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-                                <div class="placeholder-v4" style="display:none">
-                                    <i class="ph-bold ph-image text-3xl mb-1"></i>
-                                    <span>Gallery</span>
-                                </div>
                                 <div
-                                    class="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-[#2C1810] shadow-sm">
-                                    {{ $img['tag'] }}
+                                    class="absolute bottom-3.5 left-3.5 right-3.5 bg-black/40 backdrop-blur-xl border border-white/20 px-3 py-2 rounded-2xl shadow-xl transform transition-all duration-500 group-hover:bg-white group-hover:border-amber-100">
+                                    <span
+                                        class="text-[0.6rem] font-black uppercase tracking-widest text-white group-hover:text-[#2C1810] block text-center truncate">
+                                        {{ $img['tag'] }}
+                                    </span>
                                 </div>
-                            </div>
-                            <div class="pt-2">
-                                <h4 class="name-text-v4"> {{ $img['tag'] }}</h4>
                             </div>
                         </div>
                     @endforeach
                 </div>
 
-                {{-- Empty State --}}
-                <div x-show="allCategories.length === 0"
-                    class="py-20 text-center bg-white rounded-[32px] border border-dashed border-slate-200">
-                    <i class="ph ph-coffee text-5xl text-slate-200 mb-4"></i>
-                    <p class="text-slate-400 font-bold">Katalog menu segera hadir.</p>
-                </div>
-
-                {{-- Simple Lightbox --}}
-                <div x-show="lightboxOpen"
-                    class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
-                    @click="lightboxOpen = false" x-trap.noscroll="lightboxOpen" x-cloak>
-                    <div class="relative max-w-4xl w-full" @click.stop>
-                        <img :src="lightboxImg" class="w-full h-auto rounded-3xl shadow-2xl">
-                        <button @click="lightboxOpen = false"
-                            class="absolute -top-4 -right-4 w-12 h-12 rounded-full bg-white text-black shadow-lg flex items-center justify-center">
-                            <i class="ph ph-x ph-bold text-2xl"></i>
+                {{-- "Show More" Button --}}
+                @if($activeGalleryImages->count() > 6)
+                    <div class="flex justify-center mt-12" x-show="!showAllMenu">
+                        <button @click="showAllMenu = true"
+                            class="px-8 py-4 bg-white border border-slate-100 text-[#2C1810] font-black text-xs uppercase tracking-widest rounded-3xl shadow-lg hover:shadow-2xl transition-all active:scale-90 flex items-center gap-3">
+                            <i class="ph-bold ph-plus text-amber-500"></i>Lihat Menu Lengkap
                         </button>
                     </div>
+                @endif
+
+                {{-- Empty State --}}
+                <div x-show="menuImages.length === 0"
+                    class="py-20 text-center bg-white rounded-[40px] border border-dashed border-slate-200">
+                    <i class="ph-bold ph-book-open text-4xl text-slate-100 mb-4 block"></i>
+                    <p class="text-slate-400 font-bold uppercase tracking-widest text-[0.7rem]">Menu belum tersedia</p>
                 </div>
             </section>
 
@@ -323,9 +290,11 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('cafeDetailComponent', (props) => ({
-                currentSlide: 0, currentTab: '', allCategories: [], lightboxOpen: false, lightboxImg: '', images: [], isBookmarked: false, visitorId: '', tx: 0,
+                currentSlide: 0, currentTab: '', allCategories: [], images: [], isBookmarked: false, visitorId: '', tx: 0,
+                menuImages: [], touchStartX: 0,
                 init() {
                     this.allCategories = props.allCategories || []; this.images = props.images || []; this.currentTab = props.defaultTab || '';
+                    this.menuImages = props.menuImages || [];
                     if (!this.currentTab && this.allCategories.length > 0) { this.currentTab = this.allCategories[0]; }
                     try {
                         let vid = localStorage.getItem('wadah-visitor-id'); if (!vid) { vid = 'visitor-' + Math.random().toString(36).substr(2, 9) + Date.now(); localStorage.setItem('wadah-visitor-id', vid); } this.visitorId = vid;
@@ -333,7 +302,6 @@
                     } catch (e) { }
                     setInterval(() => { this.nextSlide(); }, 6000);
                 },
-                openLightbox(img) { if (img) { this.lightboxImg = img; this.lightboxOpen = true; } },
                 nextSlide() { const len = this.images.length; if (len > 0) this.currentSlide = (this.currentSlide + 1) % len; },
                 prevSlide() { const len = this.images.length; if (len > 0) this.currentSlide = (this.currentSlide - 1 + len) % len; },
                 touchStart(e) { this.tx = e.touches[0].clientX; }, touchEnd(e) { const dx = this.tx - e.changedTouches[0].clientX; if (Math.abs(dx) > 40) { dx > 0 ? this.nextSlide() : this.prevSlide(); } },

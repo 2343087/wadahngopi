@@ -27,9 +27,9 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandName('WadahNgopi')
-            ->brandLogo(asset('wadahicon.jpg'))
-            ->brandLogoHeight('3rem')
-            ->favicon(asset('wadahicon.jpg'))
+            ->brandLogo(asset('wadahicon.png'))
+            ->brandLogoHeight('3.5rem')
+            ->favicon(asset('wadahicon.png'))
             ->colors([
                 'primary' => Color::Amber,
                 'gray' => Color::Stone,
@@ -41,7 +41,14 @@ class AdminPanelProvider extends PanelProvider
             ->font('Plus Jakarta Sans')
             ->renderHook(
                 'panels::head.done',
-                fn() => new \Illuminate\Support\HtmlString('<link rel="stylesheet" href="' . asset('css/filament-custom.css') . '">'),
+                fn () => new \Illuminate\Support\HtmlString('
+                    <link rel="stylesheet" href="'.asset('css/filament-custom.css').'">
+                    <meta name="theme-color" content="#09090b">
+                    <style>
+                        .fi-main-ctn { background: #09090b !important; }
+                        .fi-topbar { background: rgba(9, 9, 11, 0.7) !important; backdrop-filter: blur(20px) !important; border-bottom: 1px solid rgba(255,255,255,0.05) !important; }
+                    </style>
+                '),
             )
             ->darkMode(true)
             ->sidebarCollapsibleOnDesktop()

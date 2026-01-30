@@ -1,7 +1,8 @@
 <?php
 
 use App\Models\Cafe;
-beforeEach(fn() => Cache::flush());
+
+beforeEach(fn () => Cache::flush());
 
 it('displays the landing page', function () {
     $response = $this->get('/');
@@ -16,15 +17,14 @@ it('displays the list of cafes on the explore page', function () {
     $response = $this->get('/explore');
 
     $response->assertStatus(200);
-    $response->assertSee('Wadah Kopi Pusat');
+    $response->assertSeeHtml('Wadah Kopi Pusat');
 });
 
 it('displays the cafe detail page', function () {
     $cafe = Cafe::factory()->create(['name' => 'Kopi Sore', 'status' => 'published']);
 
-    $this->withoutExceptionHandling();
     $response = $this->get("/cafes/{$cafe->id}");
 
     $response->assertStatus(200);
-    $response->assertSee('Kopi Sore');
+    $response->assertSeeHtml('Kopi Sore');
 });

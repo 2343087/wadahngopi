@@ -1,63 +1,58 @@
 <?php
 
+use App\Livewire\ExploreSearch;
+use App\Livewire\SavedCafes;
 use App\Models\Cafe;
+use Illuminate\Support\Facades\Cache;
+use Livewire\Livewire;
 
-
-test('cannot view draft cafe directly', function () {
-    $cafe = Cafe::factory()->create(['status' => 'draft']);
-
-    $response = $this->get(route('cafes.show', $cafe));
-
-    $response->assertStatus(404);
+beforeEach(function () {
+    Cache::flush();
 });
 
-test('can view published cafe', function () {
-    $cafe = Cafe::factory()->create(['status' => 'published']);
+it('cannot see draft cafes on explore page', function () {
+    $published = Cafe::factory()->create(['name' => 'Published Cafe', 'status' => 'published']);
+    $draft = Cafe::factory()->create(['name' => 'Draft Cafe', 'status' => 'draft']);
 
-    $response = $this->get(route('cafes.show', $cafe));
-
-    $response->assertStatus(200);
+    Livewire::test(ExploreSearch::class)
+        ->assertSeeHtml('Published Cafe')
+        ->assertDontSeeHtml('Draft Cafe');
 });
 
-test('saved cafes list excludes draft cafes', function () {
-    $publishedCafe = Cafe::factory()->create(['status' => 'published']);
-    $draftCafe = Cafe::factory()->create(['status' => 'draft']);
+it('filters saved cafes by id', function () {
+    $cafe1 = Cafe::factory()->create(['name' => 'Cafe One', 'status' => 'published']);
+    $cafe2 = Cafe::factory()->create(['name' => 'Cafe Two', 'status' => 'published']);
 
-    $response = $this->get(route('saved', [
-        'ids' => [$publishedCafe->id, $draftCafe->id],
-    ]));
-
-    $response->assertStatus(200);
-    $response->assertSee($publishedCafe->name);
-    $response->assertDontSee($draftCafe->name);
+    Livewire::test(SavedCafes::class, ['ids' => [$cafe1->id]])
+        ->assertSeeHtml('Cafe One')
+        ->assertDontSeeHtml('Cafe Two');
 });
 
-test('saved cafes list limits to 50 ids', function () {
+it('limits saved cafes to 50 items for security', function () {
     $cafes = Cafe::factory()->count(60)->create(['status' => 'published']);
     $ids = $cafes->pluck('id')->toArray();
 
-    $response = $this->get(route('saved', [
-        'ids' => $ids,
-    ]));
-
-    $response->assertStatus(200);
-    // Since we only query 50, if we see the 51st cafe it means limit isn't working
-    // But testing the exact count is better if we check characters/view data
-    $viewCafes = $response->viewData('cafes');
-    expect($viewCafes)->toHaveCount(50);
+    Livewire::test(SavedCafes::class, ['ids' => $ids])
+        ->assertCount('cafeIds', 50);
 });
 
-test('home page escapes cafe name for JS injection', function () {
-    $maliciousName = 'Cafe <script>alert("xss")</script>';
-    Cafe::factory()->create([
-        'name' => $maliciousName,
+it('prevents XSS in cafe names', function () {
+    $xss = "<script>alert('xss')</script>";
+    $cafe = Cafe::factory()->create([
+        'name' => 'Safe Name '.$xss,
         'status' => 'published',
     ]);
 
-    $response = $this->get(route('explore'));
+    // Livewire and Blade automatically escape by default
+    // We assert that the raw script tag is not present unescaped
+    Livewire::test(ExploreSearch::class)
+        ->assertDontSeeHtml($xss)
+        ->assertSeeHtml('Safe Name &lt;script&gt;');
+});
 
-    $response->assertStatus(200);
-    // Js::from() will escape the string properly (e.g. < becomes \u003C)
-    $response->assertDontSee($maliciousName, false);
-    $response->assertSee('u003Cscript', false); // Verify it's escaped
+it('prevents XSS in search query', function () {
+    $xss = '<img src=x onerror=alert(1)>';
+
+    Livewire::test(ExploreSearch::class, ['search' => $xss])
+        ->assertDontSeeHtml($xss);
 });

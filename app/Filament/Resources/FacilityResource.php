@@ -34,12 +34,12 @@ class FacilityResource extends Resource
                     ->schema([
                         // Auto-fill cafe_id with the logged-in Owner's cafe
                         Forms\Components\Hidden::make('cafe_id')
-                            ->default(fn() => auth()->user()->cafes()->first()?->id)
+                            ->default(fn () => auth()->user()->cafes()->first()?->id)
                             ->required()
                             ->rules(
-                                fn() => auth()->user()?->role === 'developer'
+                                fn () => auth()->user()?->role === 'developer'
                                 ? ['exists:cafes,id']
-                                : ['exists:cafes,id,owner_id,' . auth()->id()]
+                                : ['exists:cafes,id,owner_id,'.auth()->id()]
                             ),
 
                         Forms\Components\TextInput::make('name')
@@ -80,6 +80,11 @@ class FacilityResource extends Resource
             ]);
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->role === 'admin';
+    }
+
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
@@ -89,6 +94,9 @@ class FacilityResource extends Resource
             $query->whereHas('cafe', function (Builder $q) {
                 $q->where('owner_id', auth()->id());
             });
+        } else {
+            // Developer and others see nothing
+            $query->whereRaw('1 = 0');
         }
 
         return $query;

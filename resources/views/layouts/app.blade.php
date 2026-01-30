@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="theme-color" content="#6F4E37">
     <link rel="manifest" href="/manifest.json?v=2">
-    <link rel="icon" type="image/jpg" href="{{ asset('wadahicon.jpg') }}">
-    <link rel="apple-touch-icon" href="{{ asset('wadahicon.jpg') }}">
+    <link rel="icon" type="image/png" href="{{ asset('wadahicon.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('wadahicon.png') }}">
 
     <title>@yield('title', 'WadahNgopi')</title>
 
@@ -22,8 +22,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Alpine.js -->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -39,7 +38,7 @@
             </a>
             <a href="{{ route('explore') }}" class="nav-item {{ request()->routeIs('explore') ? 'active' : '' }}">
                 <i class="{{ request()->routeIs('explore') ? 'ph-fill ph-compass' : 'ph ph-compass' }}"></i>
-                <span>EXPLORE</span>
+                <span>JELAJAHI</span>
             </a>
             <a href="{{ route('saved') }}" class="nav-item {{ request()->routeIs('saved') ? 'active' : '' }}">
                 <i

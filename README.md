@@ -98,7 +98,7 @@ php artisan schedule:work
 │   ├── Models/            # Eloquent Models (Cafe, Review, Information)
 │   └── Traits/            # Utility Helper (OptimizesImages)
 ├── public/
-│   └── wadahicon.jpg      # Branding Logo Utama
+│   └── wadahicon.png      # Branding Logo Utama
 ├── resources/
 │   ├── css/               # Tailwind v4 Configuration & Custom CSS
 │   └── views/             # Blade Templates (Explore, Home, Show)

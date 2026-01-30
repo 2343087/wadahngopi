@@ -20,13 +20,8 @@
                     </div>
                     <div
                         class="relative w-16 h-16 bg-white border-2 border-espresso/5 rounded-2xl flex items-center justify-center shadow-xl transform group-hover:rotate-6 transition-transform">
-                        <img
-                            src="{{ asset('wadahicon.jpg') }}"
-                            alt="Logo WadahNgopi"
-                            class="w-12 h-12 object-contain select-none"
-                            loading="eager"
-                            draggable="false"
-                        >
+                        <img src="{{ asset('wadahicon.png') }}" alt="Logo WadahNgopi"
+                            class="w-12 h-12 object-contain select-none" loading="eager" draggable="false">
                     </div>
                     <div
                         class="mt-3 bg-espresso text-cream px-3 py-1 rounded-full text-[0.6rem] font-black tracking-widest uppercase shadow-lg">
@@ -66,17 +61,16 @@
                 </div>
 
                 <div class="mt-10 pt-8 border-t border-white/10">
-                    <h3 class="text-lg font-black text-amber mb-3">Harmoni Komunitas</h3>
-                    <p class="text-white/70 text-[0.95rem] font-bold leading-relaxed mb-6">
-                        Setiap "Wadah" punya cerita. Kami hadir untuk memastikan setiap cerita lokal di Kalimantan terdengar
-                        dan diapresiasi oleh buanmu semua.
-                    </p>
+
 
                     <div class="flex items-center gap-3 py-4 bg-white/5 rounded-2xl px-5 border border-white/5">
                         <i class="ph-bold ph-paint-brush-broad text-amber text-2xl"></i>
                         <div>
-                            <h4 class="text-white text-xs font-black uppercase tracking-wider mb-0.5">Kearifan Lokal</h4>
-                            <p class="text-white/60 text-[0.8rem] font-bold">Menghangatkan buanmu dengan spot kopi terbaik.
+                            <h3 class="text-lg font-black text-amber mb-3">Harmoni Komunitas</h3>
+                            <p class="text-white/70 text-[0.95rem] font-bold leading-relaxed mb-6">
+                                Setiap "Wadah" punya cerita. Kami hadir untuk memastikan setiap cerita lokal di Kalimantan
+                                terdengar
+                                dan diapresiasi oleh buanmu semua.
                             </p>
                         </div>
                     </div>
@@ -89,7 +83,7 @@
             <div class="animate-up mb-8">
                 <span
                     class="inline-block px-4 py-1.5 bg-espresso/5 text-espresso text-[0.6rem] font-black uppercase tracking-[0.3em] rounded-full border border-espresso/10">
-                    Sapa Developer Kami
+                    Sosial Media WadahNgopi
                 </span>
             </div>
 
@@ -139,7 +133,8 @@
                     </div>
                     <div>
                         <h3 class="text-[1.1rem] font-black text-espresso mb-1">Cari Tempat Nongkrong Anti Bingung</h3>
-                        <p class="text-slate-500 font-bold text-[0.85rem] leading-snug">Cek lokasi Dan Jarak Wadah Tanpa Bingung
+                        <p class="text-slate-500 font-bold text-[0.85rem] leading-snug">Cek lokasi Dan Jarak Wadah Tanpa
+                            Bingung
                             pake Google Maps!</p>
                     </div>
                 </div>
@@ -188,90 +183,90 @@
 
     <style>
         .mission-luxury-card {
-            padding: 40px;
-            background: linear-gradient(135deg, #2C1810 0%, #3E2723 100%) !important;
-            border-radius: 45px;
+            padding: 44px;
+            background: linear-gradient(145deg, var(--color-espresso) 0%, var(--color-coffee-dark) 100%) !important;
+            border-radius: 48px;
             color: white;
             overflow: hidden;
             position: relative;
-            box-shadow: 0 25px 60px -15px rgba(44, 24, 16, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: var(--shadow-premium);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .mission-luxury-card::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: -50px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, var(--color-amber) 0%, transparent 70%);
+            opacity: 0.1;
+            filter: blur(40px);
         }
 
         .social-admin-card {
             background: white;
-            padding: 20px 15px;
-            border-radius: 28px;
+            padding: 24px 16px;
+            border-radius: 32px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
-            border: 1px solid rgba(44, 24, 16, 0.04);
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            gap: 14px;
+            border: 1px solid rgba(26, 15, 10, 0.03);
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition-bounce);
         }
 
         .social-admin-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: var(--shadow-premium);
             border-color: var(--color-espresso);
         }
 
         .admin-icon-box {
-            width: 52px;
-            height: 52px;
-            border-radius: 18px;
+            width: 56px;
+            height: 56px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
+            transition: var(--transition-bounce);
         }
 
         .premium-feature-card-v2 {
             background: white;
-            padding: 24px;
-            border-radius: 32px;
-            border: 1px solid rgba(44, 24, 16, 0.03);
+            padding: 28px;
+            border-radius: 36px;
+            border: 1px solid rgba(26, 15, 10, 0.03);
             display: flex;
             align-items: center;
-            gap: 20px;
-            box-shadow: 0 12px 35px -12px rgba(44, 24, 16, 0.08);
-            transition: all 0.4s ease;
+            gap: 24px;
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition-bounce);
         }
 
         .premium-feature-card-v2:hover {
-            transform: scale(1.02);
+            transform: translateY(-4px) scale(1.02);
             border-color: var(--color-amber);
-            box-shadow: 0 20px 45px -15px rgba(217, 119, 6, 0.15);
+            box-shadow: 0 20px 48px -15px rgba(245, 158, 11, 0.15);
         }
 
         .feature-icon-v2 {
-            width: 60px;
-            height: 60px;
-            border-radius: 20px;
+            width: 64px;
+            height: 64px;
+            border-radius: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.8rem;
             flex-shrink: 0;
+            transition: var(--transition-bounce);
         }
 
-        .animate-pulse-slow {
-            animation: pulse-slow 6s ease-in-out infinite;
-        }
-
-        @keyframes pulse-slow {
-
-            0%,
-            100% {
-                opacity: 0.1;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.2;
-                transform: scale(1.15);
-            }
+        .shadow-glow-amber {
+            box-shadow: var(--glow-amber);
         }
     </style>
 @endsection
