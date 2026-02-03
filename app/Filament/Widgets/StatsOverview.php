@@ -32,16 +32,16 @@ class StatsOverview extends BaseWidget
 
         return [
             Stat::make('Cafe Terdaftar', $cafeQuery->count())
-                ->description('Total cafe yang udah join')
+                ->description('Total cafe yang udah join 🏠')
                 ->descriptionIcon('heroicon-m-building-storefront')
                 ->color('warning')
-                ->chart([7, 2, 10, 3, 15, 4, 17]),
+                ->chart([7, 2, 10, 3, 15, 4, 18, 5, 20]),
 
-            Stat::make('Rating Rata-rata', number_format($reviewQuery->avg('rating') ?? 0, 1))
-                ->description('Kata mereka soal WadahNgopi')
+            Stat::make('Rating Rata-rata', number_format((float) ($reviewQuery->avg('rating') ?? 0), 1))
+                ->description('Kata mereka soal WadahNgopi ⭐')
                 ->descriptionIcon('heroicon-m-star')
                 ->color('amber')
-                ->chart([4, 4.5, 3, 5, 4.2, 4.8, 5]),
+                ->chart([4, 4.5, 3, 5, 4.2, 4.8, 5, 4.9, 5]),
         ];
     }
 }

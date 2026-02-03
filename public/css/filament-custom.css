@@ -1,227 +1,126 @@
-/* WadahNgopi Premium Dashboard Styles ☕️ */
+/* 🚀 ANTIGRAVITY GOD TIER DASHBOARD STYLES 🚀 */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&family=Outfit:wght@100..900&display=swap');
 
 :root {
-    --fi-header-height: 4.5rem;
-    --glass-bg: rgba(var(--gray-950), 0.35);
-    --glass-border: rgba(255, 255, 255, 0.08);
+    --fi-header-height: 5rem;
+    --dashboard-bg: #F8F7F5;
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --card-border: rgba(0, 0, 0, 0.05);
+    --accent-primary: #D97706;
+    /* Amber-600 */
+    --espresso: #1A0F0A;
 }
 
+.dark {
+    --dashboard-bg: #09090b;
+    --card-bg: rgba(18, 18, 22, 0.6);
+    --card-border: rgba(255, 255, 255, 0.08);
+}
+
+/* Global Reset */
 body {
-    background: #09090b !important;
-}
-
-/* Luxury Glassmorphism 2.0 */
-.fi-wi-widget>div,
-.fi-fo-section,
-.fi-ta-content,
-.fi-section {
-    border-radius: 2rem !important;
-    background: var(--glass-bg) !important;
-    backdrop-filter: blur(16px) !important;
-    border: 1px solid var(--glass-border) !important;
-    box-shadow:
-        0 8px 32px 0 rgba(0, 0, 0, 0.3),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
-    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.fi-wi-widget>div:hover {
-    transform: translateY(-8px) scale(1.02);
-    background: rgba(var(--gray-950), 0.5) !important;
-    border-color: rgba(var(--amber-500), 0.4) !important;
-    box-shadow:
-        0 25px 50px -12px rgba(0, 0, 0, 0.5),
-        0 0 20px rgba(var(--amber-500), 0.15) !important;
-}
-
-/* Tables Revamp - "Tidier & More Spaced" */
-.fi-ta-table {
-    border-collapse: separate !important;
-    border-spacing: 0 1rem !important;
-    padding: 0 1rem !important;
-}
-
-.fi-ta-row {
-    background: rgba(var(--gray-900), 0.25) !important;
-    border-radius: 1.5rem !important;
-    border: 1px solid rgba(255, 255, 255, 0.03) !important;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.fi-ta-row:hover {
-    background: rgba(var(--gray-800), 0.45) !important;
-    transform: translateX(10px) scale(1.01);
-    border-color: rgba(var(--amber-500), 0.2) !important;
-}
-
-.fi-ta-cell {
-    border: none !important;
-    padding-top: 1.75rem !important;
-    padding-bottom: 1.75rem !important;
-}
-
-/* Sidebar & Navigation - "Mobile First & Clean" */
-.fi-sidebar {
-    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
-    background: rgba(9, 9, 11, 0.9) !important;
-    backdrop-filter: blur(40px) !important;
-}
-
-.fi-sidebar-nav {
-    padding-top: 1.5rem !important;
-}
-
-.fi-sidebar-item-button {
-    border-radius: 1.25rem !important;
-    margin: 0.5rem 0.75rem !important;
-    padding: 0.75rem 1rem !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.fi-sidebar-item-active {
-    background: linear-gradient(135deg, rgba(var(--amber-600), 0.15) 0%, rgba(var(--amber-600), 0.02) 100%) !important;
-    color: rgba(var(--amber-400), 1) !important;
-    border: 1px solid rgba(var(--amber-500), 0.2) !important;
-}
-
-/* Buttons - "Tactile & Premium" */
-.fi-btn {
-    border-radius: 1.25rem !important;
-    padding: 0.75rem 1.75rem !important;
-    font-weight: 800 !important;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-}
-
-.fi-btn-color-primary {
-    background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%) !important;
-    box-shadow: 0 10px 20px -8px rgba(217, 119, 6, 0.4) !important;
-}
-
-.fi-btn-color-primary:hover {
-    transform: translateY(-3px) scale(1.05) !important;
-    box-shadow: 0 15px 30px -10px rgba(217, 119, 6, 0.6) !important;
-}
-
-/* Login Page Revamp */
-.fi-layout-auth {
-    background: #09090b !important;
-    position: relative;
-    overflow: hidden;
-}
-
-.fi-layout-auth::before {
-    content: "";
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 80%;
-    height: 150%;
-    background: radial-gradient(circle, rgba(var(--amber-600), 0.1) 0%, transparent 70%);
-    filter: blur(120px);
-    z-index: 0;
-    animation: auth-float 20s infinite alternate linear;
-}
-
-.fi-layout-auth-card {
-    background: rgba(255, 255, 255, 0.03) !important;
-    backdrop-filter: blur(24px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 3rem !important;
-    padding: 3rem !important;
-    box-shadow: 0 32px 64px -16px rgba(0, 0, 0, 0.6) !important;
-    z-index: 1;
-}
-
-@keyframes auth-float {
-    0% {
-        transform: translate(0, 0) rotate(0deg);
-    }
-
-    100% {
-        transform: translate(-10%, 10%) rotate(10deg);
-    }
-}
-
-/* Inputs & Form Fields */
-.fi-fo-field-wrp-label {
-    font-family: 'Outfit', sans-serif !important;
-    font-weight: 800 !important;
-    text-transform: uppercase;
-    font-size: 0.75rem !important;
-    letter-spacing: 0.1em;
-    color: rgba(var(--amber-200), 0.8) !important;
-}
-
-input,
-select,
-textarea {
-    background: rgba(0, 0, 0, 0.3) !important;
-    border-radius: 1.25rem !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    padding: 0.875rem 1.25rem !important;
+    background: var(--dashboard-bg) !important;
     font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-    border-color: #f59e0b !important;
-    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1) !important;
-    background: rgba(0, 0, 0, 0.4) !important;
+/* Premium Glassmorphism 3.0 */
+.fi-wi-widget>div,
+.fi-section,
+.fi-fo-section,
+.fi-ta-content {
+    background: var(--card-bg) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid var(--card-border) !important;
+    border-radius: 2.5rem !important;
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* Stats Widget Optimization */
+.dark .fi-wi-widget>div,
+.dark .fi-section,
+.dark .fi-fo-section,
+.dark .fi-ta-content {
+    box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Luxury Banner Override - ALWAYS DARK BLOCK */
+.welcome-banner-luxury {
+    background: linear-gradient(135deg, #1A0F0A 0%, #261710 100%) !important;
+    color: white !important;
+    border: 1px solid rgba(217, 119, 6, 0.4) !important;
+    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Ensure text inside luxury banner is ALWAYS high contrast */
+.welcome-banner-luxury h2,
+.welcome-banner-luxury p,
+.welcome-banner-luxury div,
+.welcome-banner-luxury span {
+    color: white !important;
+}
+
+.welcome-banner-luxury .text-amber-400,
+.welcome-banner-luxury .text-amber-100,
+.welcome-banner-luxury .text-amber-200 {
+    color: #fbbf24 !important;
+    /* Force true amber */
+}
+
+/* Animations */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Stats Widgets Revamp */
 .fi-wi-stats-overview-stat {
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    padding: 1.5rem !important;
+    padding: 2rem !important;
 }
 
 .fi-wi-stats-overview-stat-label {
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
     font-weight: 800 !important;
-    letter-spacing: 0.05em !important;
-    color: rgba(var(--gray-400), 1) !important;
+    font-size: 0.7rem !important;
+    color: var(--accent-primary) !important;
 }
 
 .fi-wi-stats-overview-stat-value {
     font-family: 'Outfit', sans-serif !important;
     font-weight: 900 !important;
-    font-size: 2.5rem !important;
-    background: linear-gradient(135deg, white 0%, rgba(255, 255, 255, 0.5) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-size: 3rem !important;
+    letter-spacing: -0.02em !important;
+    color: inherit !important;
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
 }
 
-/* Custom Scrollbar - "Sleek" */
-::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+.dark .fi-wi-stats-overview-stat-value {
+    color: white !important;
 }
 
-::-webkit-scrollbar-track {
-    background: transparent;
+/* Sidebar & Nav Improvement */
+.fi-sidebar {
+    background: var(--dashboard-bg) !important;
+    border-right: 1px solid var(--card-border) !important;
 }
 
-::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.05);
-    border: 3px solid transparent;
-    background-clip: content-box;
-    border-radius: 10px;
+.fi-sidebar-item-button {
+    border-radius: 1.25rem !important;
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(var(--amber-500), 0.2);
-    background-clip: content-box;
-}
-
-/* Modal Styling */
-.fi-modal-window {
-    border-radius: 3rem !important;
-    background: rgba(9, 9, 11, 0.85) !important;
-    backdrop-filter: blur(40px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.7) !important;
+.fi-sidebar-item-active {
+    background: rgba(217, 119, 6, 0.1) !important;
+    color: var(--accent-primary) !important;
 }

@@ -14,12 +14,23 @@ class ExploreSearch extends Component
 
     public array $cafes = [];
 
+    public array $cities = [];
+
+    public ?int $cityId = null;
+
     public function mount(): void
     {
+        $this->cities = \App\Models\City::orderBy('name')->get()->toArray();
         $this->loadCafes();
     }
 
     public function updatedSearch(): void
+    {
+        $this->loadCafes();
+        $this->dispatch('cafes-updated', cafes: $this->cafes);
+    }
+
+    public function updatedCityId(): void
     {
         $this->loadCafes();
         $this->dispatch('cafes-updated', cafes: $this->cafes);
@@ -35,11 +46,15 @@ class ExploreSearch extends Component
     {
         $query = Cafe::query()
             ->where('status', 'published')
-            ->with('facilities');
+            ->with(['facilities', 'city']);
+
+        if ($this->cityId) {
+            $query->where('city_id', $this->cityId);
+        }
 
         if ($this->search) {
             $search = str_replace(['%', '_'], ['\\%', '\\_'], $this->search);
-            $query->where('name', 'like', '%'.$search.'%');
+            $query->where('name', 'like', '%' . $search . '%');
         }
 
         if ($this->filter === 'buka') {
@@ -59,22 +74,23 @@ class ExploreSearch extends Component
             });
         }
 
-        $this->cafes = $query->latest()->get()->map(fn ($c) => [
+        $this->cafes = $query->latest()->get()->map(fn($c) => [
             'id' => $c->id,
             'name' => $c->name ?? 'Unnamed Cafe',
+            'city' => $c->city?->name ?? 'Lokasi',
             'address' => $c->address ?? '',
             'isOpen' => (bool) $c->is_open,
             'lat' => $c->latitude,
             'lng' => $c->longitude,
             'facilities' => $c->facilities->pluck('name')->toArray(),
             'socialLinks' => collect($c->social_links ?? [])
-                ->filter(fn ($s) => ($s['show'] ?? false) && ! empty($s['url']))
-                ->map(fn ($s) => ['platform' => $s['platform'], 'url' => $s['url']])
+                ->filter(fn($s) => filter_var($s['show'] ?? false, FILTER_VALIDATE_BOOLEAN) && !empty($s['url']))
+                ->map(fn($s) => ['platform' => $s['platform'], 'url' => $s['url']])
                 ->values()
                 ->toArray(),
             'image' => $c->image_path ? (str_starts_with($c->image_path, 'http') ? $c->image_path : Storage::url($c->image_path)) : null,
             'url' => route('cafes.show', $c),
-        ])->toArray();
+        ])->values()->toArray();
     }
 
     public function render()

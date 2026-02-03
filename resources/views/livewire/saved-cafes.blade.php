@@ -42,8 +42,9 @@
                     </div>
                 </div>
 
-                {{-- Right: Delete Action --}}
-                <div style="padding-left: 12px; border-left: 1px solid rgba(26,15,10,0.05); flex-shrink: 0;">
+                {{-- Right: Actions --}}
+                <div
+                    style="padding-left: 12px; border-left: 1px solid rgba(26,15,10,0.05); flex-shrink: 0; display: flex; flex-direction: column; gap: 8px;">
                     <button @click.prevent.stop="removeFromSaved(cafe.id)"
                         class="flex items-center justify-center transition-all active:scale-90"
                         style="width: 44px; height: 44px; border: none; background: #FEF2F2; color: #EF4444; border-radius: 16px; cursor: pointer;">
@@ -88,6 +89,20 @@
         removeFromSaved(id) {
             this.savedIds = this.savedIds.filter(i => i != id);
             localStorage.setItem('wadah-bookmarks', JSON.stringify(this.savedIds));
+        },
+        shareCafe(cafe) {
+            const shareData = {
+                title: cafe.name + ' - WadahNgopi',
+                text: 'Cek cafe estetik ini di WadahNgopi: ' + cafe.name,
+                url: cafe.url.startsWith('http') ? cafe.url : window.location.origin + cafe.url
+            };
+            if (navigator.share) {
+                navigator.share(shareData).catch(err => console.log('Error sharing:', err));
+            } else {
+                navigator.clipboard.writeText(shareData.url).then(() => {
+                    window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Link disalin ke clipboard!', type: 'success' } }));
+                });
+            }
         }
     }));
 </script>

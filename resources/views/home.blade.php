@@ -3,270 +3,421 @@
 @section('title', 'WadahNgopi - Portal Cafe Terbaik di Kalimantan')
 
 @section('content')
-    <div class="landing-page min-h-screen bg-cream pb-32">
-        {{-- High-Contrast Hero --}}
-        <header class="relative px-6 pt-24 pb-16 text-center overflow-hidden">
-            <div
-                class="absolute -top-24 -right-24 w-80 h-80 bg-amber rounded-full blur-[120px] opacity-10 animate-pulse-slow">
+    <div class="home-wrapper">
+        {{-- Hero --}}
+        <header class="hero">
+            <div class="logo-box">
+                <img src="{{ asset('wadahicon.png') }}" alt="WadahNgopi">
             </div>
-            <div class="absolute top-1/2 -left-24 w-64 h-64 bg-espresso rounded-full blur-[100px] opacity-10">
-            </div>
-
-            <div class="animate-up relative z-10 flex flex-col items-center">
-                {{-- Developer Logo Slot --}}
-                <div class="group relative mb-8">
-                    <div
-                        class="absolute inset-0 bg-espresso rounded-2xl blur-lg opacity-20 group-hover:opacity-40 transition-opacity">
-                    </div>
-                    <div
-                        class="relative w-16 h-16 bg-white border-2 border-espresso/5 rounded-2xl flex items-center justify-center shadow-xl transform group-hover:rotate-6 transition-transform">
-                        <img src="{{ asset('wadahicon.png') }}" alt="Logo WadahNgopi"
-                            class="w-12 h-12 object-contain select-none" loading="eager" draggable="false">
-                    </div>
-                    <div
-                        class="mt-3 bg-espresso text-cream px-3 py-1 rounded-full text-[0.6rem] font-black tracking-widest uppercase shadow-lg">
-                        BY : AK KREATIF
-                    </div>
-                </div>
-
-                <h1 class="text-5xl font-black text-espresso leading-[1] tracking-tighter mb-4">
-                    Wadah<span class="text-amber">Ngopi</span>
-                </h1>
-                <p class="text-slate-600 font-bold text-[1.1rem] leading-relaxed max-w-[320px] mx-auto opacity-90">
-                    Mempermudah buanmu mencari spot ngopi nyaman di Kalimantan.
-                </p>
-            </div>
+            <span class="badge">BY : AK KREATIF</span>
+            <h1 class="brand">Wadah<span>Ngopi</span></h1>
+            <p class="tagline">Mempermudah buanmu mencari spot ngopi nyaman di Samarinda.</p>
         </header>
 
-        {{-- About Section (Tentang Kami) --}}
-        <section class="px-6 py-10 relative">
-            <div class="mission-luxury-card animate-up">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-1.5 h-8 bg-amber rounded-full shadow-[0_0_15px_rgba(217,119,6,0.5)]"></div>
-                    <div>
-                        <span class="text-[0.65rem] font-bold text-amber uppercase tracking-[0.3em]">Tentang
-                            Kami</span>
-                        <h2 class="text-2xl font-black text-white tracking-tight">Lebih dari Sekadar Kopi</h2>
-                    </div>
-                </div>
-
-                <div class="space-y-6">
-                    <p class="text-cream-dark text-[1.05rem] font-semibold leading-relaxed opacity-90">
-                        Di WadahNgopi, secangkir kopi adalah awal kolaborasi. Kami bukan sekadar tempat singgah, melainkan
-                        ruang untuk merajut silaturahmi dan menyatukan ide para pelaku usaha.
-                    </p>
-                    <p class="text-cream-dark text-[1.05rem] font-semibold leading-relaxed opacity-90">
-                        Setiap meja adalah peluang bagi buanmu untuk tumbuh dan maju bersama.
-                    </p>
-                </div>
-
-                <div class="mt-10 pt-8 border-t border-white/10">
-
-
-                    <div class="flex items-center gap-3 py-4 bg-white/5 rounded-2xl px-5 border border-white/5">
-                        <i class="ph-bold ph-paint-brush-broad text-amber text-2xl"></i>
-                        <div>
-                            <h3 class="text-lg font-black text-amber mb-3">Harmoni Komunitas</h3>
-                            <p class="text-white/70 text-[0.95rem] font-bold leading-relaxed mb-6">
-                                Setiap "Wadah" punya cerita. Kami hadir untuk memastikan setiap cerita lokal di Kalimantan
-                                terdengar
-                                dan diapresiasi oleh buanmu semua.
-                            </p>
-                        </div>
-                    </div>
+        {{-- Main Card --}}
+        <main class="main-card">
+            {{-- Header --}}
+            <div class="c-head">
+                <div class="c-bar"></div>
+                <div class="c-titles">
+                    <span>TENTANG KAMI</span>
+                    <h2>Lebih dari Sekadar Kopi</h2>
                 </div>
             </div>
-        </section>
 
-        {{-- Admin Social Grid --}}
-        <section class="px-6 py-12 text-center">
-            <div class="animate-up mb-8">
-                <span
-                    class="inline-block px-4 py-1.5 bg-espresso/5 text-espresso text-[0.6rem] font-black uppercase tracking-[0.3em] rounded-full border border-espresso/10">
-                    Sosial Media WadahNgopi
-                </span>
-            </div>
+            {{-- Body --}}
+            <p class="c-text">Di WadahNgopi, secangkir kopi adalah awal kolaborasi. Kami bukan sekadar tempat singgah,
+                melainkan ruang untuk merajut silaturahmi.</p>
 
-            <div class="grid grid-cols-2 gap-4 animate-up">
-                <a href="https://www.instagram.com/ak_kreatif/" target="_blank" class="social-admin-card group">
-                    <div
-                        class="admin-icon-box bg-[#E1306C]/10 text-[#E1306C] group-hover:bg-[#E1306C] group-hover:text-white transition-all shadow-sm">
-                        <i class="ph-bold ph-instagram-logo"></i>
-                    </div>
-                    <span class="text-[0.7rem] font-black text-espresso uppercase tracking-widest">Instagram</span>
+            {{-- Social Media --}}
+            <div class="c-socials">
+                <a href="https://www.instagram.com/ak_kreatif/" target="_blank" class="soc soc-ig">
+                    <i class="ph-fill ph-instagram-logo"></i>
+                    <span>INSTAGRAM</span>
                 </a>
-                <a href="https://www.instagram.com/ak_kreatif/" target="_blank" class="social-admin-card group">
-                    <div
-                        class="admin-icon-box bg-black/10 text-black group-hover:bg-black group-hover:text-white transition-all shadow-sm">
-                        <i class="ph-bold ph-tiktok-logo"></i>
-                    </div>
-                    <span class="text-[0.7rem] font-black text-espresso uppercase tracking-widest">TikTok</span>
+                <a href="#" class="soc soc-tt">
+                    <i class="ph-fill ph-tiktok-logo"></i>
+                    <span>TIKTOK</span>
                 </a>
-                <a href="https://www.instagram.com/ak_kreatif/" target="_blank" class="social-admin-card group">
-                    <div
-                        class="admin-icon-box bg-[#FF0000]/10 text-[#FF0000] group-hover:bg-[#FF0000] group-hover:text-white transition-all shadow-sm">
-                        <i class="ph-bold ph-youtube-logo"></i>
-                    </div>
-                    <span class="text-[0.7rem] font-black text-espresso uppercase tracking-widest">YouTube</span>
+                <a href="#" class="soc soc-yt">
+                    <i class="ph-fill ph-youtube-logo"></i>
+                    <span>YOUTUBE</span>
                 </a>
-                <a href="https://www.instagram.com/ak_kreatif/" target="_blank" class="social-admin-card group">
-                    <div
-                        class="admin-icon-box bg-[#25D366]/10 text-[#25D366] group-hover:bg-[#25D366] group-hover:text-white transition-all shadow-sm">
-                        <i class="ph-bold ph-whatsapp-logo"></i>
-                    </div>
-                    <span class="text-[0.7rem] font-black text-espresso uppercase tracking-widest">WhatsApp</span>
-                </a>
-            </div>
-        </section>
-
-        {{-- Featured Features (Fitur Unggulan) --}}
-        <section class="px-6 py-10 relative">
-            <div class="flex items-center gap-3 mb-8 animate-up">
-                <div class="w-1.5 h-7 bg-espresso rounded-full"></div>
-                <h2 class="text-2xl font-black text-espresso tracking-tight">Fitur Unggulan</h2>
-            </div>
-
-            <div class="grid grid-cols-1 gap-5">
-                <div class="premium-feature-card-v2 animate-up" style="animation-delay: 0.2s">
-                    <div class="feature-icon-v2 bg-espresso/5 text-espresso">
-                        <i class="ph-bold ph-navigation-arrow"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-[1.1rem] font-black text-espresso mb-1">Cari Tempat Nongkrong Anti Bingung</h3>
-                        <p class="text-slate-500 font-bold text-[0.85rem] leading-snug">Cek lokasi Dan Jarak Wadah Tanpa
-                            Bingung
-                            pake Google Maps!</p>
-                    </div>
-                </div>
-
-                <div class="premium-feature-card-v2 animate-up" style="animation-delay: 0.3s">
-                    <div class="feature-icon-v2 bg-amber/10 text-amber">
-                        <i class="ph-bold ph-info"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-[1.1rem] font-black text-espresso mb-1">Info Jelas & Lengkap</h3>
-                        <p class="text-slate-500 font-bold text-[0.85rem] leading-snug">Fasilitas, menu, sampai jam buka ada
-                            barataan.</p>
-                    </div>
-                </div>
-
-                <div class="premium-feature-card-v2 animate-up" style="animation-delay: 0.4s">
-                    <div class="feature-icon-v2 bg-coffee/10 text-coffee">
-                        <i class="ph-bold ph-heart"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-[1.1rem] font-black text-espresso mb-1">Simpan Wadah Favorit</h3>
-                        <p class="text-slate-500 font-bold text-[0.85rem] leading-snug">Simpan yang buanmu suka biar gampang
-                            dicari lagi.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        {{-- CTA Section --}}
-        <div class="px-6 pt-16 pb-24 text-center">
-            <div class="animate-up relative z-10">
-                <a href="{{ route('explore') }}"
-                    class="group inline-flex items-center gap-4 px-12 py-5 bg-espresso text-white rounded-[24px] font-black text-[1.1rem] shadow-[0_20px_50px_-15px_rgba(44,24,16,0.6)] hover:shadow-[0_25px_60px_-15px_rgba(44,24,16,0.7)] hover:scale-[1.05] active:scale-95 transition-all">
-                    JELAJAH <span class="flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">Ayo
-                        Cari Cafe <i class="ph-bold ph-arrow-right"></i></span>
+                <a href="#" class="soc soc-wa">
+                    <i class="ph-fill ph-whatsapp-logo"></i>
+                    <span>WHATSAPP</span>
                 </a>
             </div>
 
-            <div class="mt-16 animate-up">
-                <p class="text-[0.65rem] font-black text-slate-400 tracking-[0.4em] uppercase opacity-60">
-                    WADAHNGOPI.COM &copy; 2026
-                </p>
+            {{-- CTA Buttons --}}
+            <div class="c-actions">
+                <a href="{{ route('explore') }}" class="cta cta-primary">
+                    <div class="cta-icon">
+                        <i class="ph-bold ph-compass"></i>
+                    </div>
+                    <div class="cta-text">
+                        <strong>JELAJAHI</strong>
+                        <span>Ayo Cari Kopi Favoritmu</span>
+                    </div>
+                    <i class="ph-bold ph-caret-right cta-arrow"></i>
+                </a>
+
+                <a href="{{ route('information') }}" class="cta cta-ghost">
+                    <div class="cta-icon">
+                        <i class="ph-bold ph-newspaper"></i>
+                    </div>
+                    <div class="cta-text">
+                        <strong>INFORMASI</strong>
+                        <span>Berita & Event Terbaru</span>
+                    </div>
+                    <i class="ph-bold ph-caret-right cta-arrow"></i>
+                </a>
             </div>
-        </div>
+
+            {{-- Footer --}}
+            <div class="c-footer">
+                <span>WADAHNGOPI.COM &copy; 2026</span>
+            </div>
+        </main>
     </div>
 
     <style>
-        .mission-luxury-card {
-            padding: 44px;
-            background: linear-gradient(145deg, var(--color-espresso) 0%, var(--color-coffee-dark) 100%) !important;
-            border-radius: 48px;
-            color: white;
-            overflow: hidden;
-            position: relative;
-            box-shadow: var(--shadow-premium);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-        }
-
-        .mission-luxury-card::after {
-            content: '';
-            position: absolute;
-            bottom: -50px;
-            left: -50px;
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle, var(--color-amber) 0%, transparent 70%);
-            opacity: 0.1;
-            filter: blur(40px);
-        }
-
-        .social-admin-card {
-            background: white;
-            padding: 24px 16px;
-            border-radius: 32px;
+        /* Clean Premium Homepage */
+        .home-wrapper {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 14px;
-            border: 1px solid rgba(26, 15, 10, 0.03);
-            box-shadow: var(--shadow-soft);
-            transition: var(--transition-bounce);
+            min-height: calc(100vh - 100px);
+            min-height: calc(100dvh - 100px);
+            padding: 16px 20px 20px;
+            background: #FFFDFB;
         }
 
-        .social-admin-card:hover {
-            transform: translateY(-8px) scale(1.03);
-            box-shadow: var(--shadow-premium);
-            border-color: var(--color-espresso);
+        /* === HERO === */
+        .hero {
+            text-align: center;
+            flex-shrink: 0;
+            padding-bottom: 18px;
         }
 
-        .admin-icon-box {
-            width: 56px;
-            height: 56px;
+        .logo-box {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 12px;
+            background: #fff;
             border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.6rem;
-            transition: var(--transition-bounce);
+            box-shadow: 0 8px 30px rgba(44, 24, 16, 0.12);
         }
 
-        .premium-feature-card-v2 {
-            background: white;
-            padding: 28px;
-            border-radius: 36px;
-            border: 1px solid rgba(26, 15, 10, 0.03);
+        .logo-box img {
+            width: 42px;
+            height: 42px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #2C1810;
+            color: #FFFDFB;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.55rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            margin-bottom: 12px;
+        }
+
+        .brand {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #2C1810;
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+
+        .brand span {
+            color: #F59E0B;
+        }
+
+        .tagline {
+            font-size: 0.85rem;
+            color: #8B7355;
+            font-weight: 600;
+            line-height: 1.5;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+
+        /* === MAIN CARD === */
+        .main-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(165deg, #3D2518 0%, #241208 100%);
+            border-radius: 32px;
+            padding: 24px 22px;
+            box-shadow: 0 20px 60px rgba(44, 24, 16, 0.25);
+        }
+
+        /* Card Header */
+        .c-head {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .c-bar {
+            width: 4px;
+            height: 44px;
+            background: linear-gradient(180deg, #F59E0B 0%, #D97706 100%);
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .c-titles span {
+            display: block;
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: #F59E0B;
+            letter-spacing: 0.2em;
+            margin-bottom: 6px;
+        }
+
+        .c-titles h2 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.2;
+        }
+
+        /* Card Text */
+        .c-text {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        /* Social Media */
+        .c-socials {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            padding: 18px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .soc {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .soc:hover {
+            transform: translateY(-3px);
+        }
+
+        .soc i {
+            font-size: 1.6rem;
+        }
+
+        .soc-ig i {
+            color: #E1306C;
+        }
+
+        .soc-tt i {
+            color: #fff;
+        }
+
+        .soc-yt i {
+            color: #FF0000;
+        }
+
+        .soc-wa i {
+            color: #25D366;
+        }
+
+        .soc span {
+            font-size: 0.5rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 0.1em;
+        }
+
+        /* CTA Buttons */
+        .c-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: auto;
+            margin-bottom: 20px;
+        }
+
+        .cta {
             display: flex;
             align-items: center;
-            gap: 24px;
-            box-shadow: var(--shadow-soft);
-            transition: var(--transition-bounce);
+            gap: 16px;
+            padding: 16px 18px;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
         }
 
-        .premium-feature-card-v2:hover {
-            transform: translateY(-4px) scale(1.02);
-            border-color: var(--color-amber);
-            box-shadow: 0 20px 48px -15px rgba(245, 158, 11, 0.15);
+        .cta-primary {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.08) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.35);
         }
 
-        .feature-icon-v2 {
-            width: 64px;
-            height: 64px;
-            border-radius: 22px;
+        .cta-ghost {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cta:hover {
+            transform: translateX(6px);
+        }
+
+        .cta-primary:hover {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.28) 0%, rgba(217, 119, 6, 0.12) 100%);
+            border-color: rgba(245, 158, 11, 0.5);
+        }
+
+        .cta-ghost:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .cta-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
+            font-size: 1.2rem;
             flex-shrink: 0;
-            transition: var(--transition-bounce);
         }
 
-        .shadow-glow-amber {
-            box-shadow: var(--glow-amber);
+        .cta-primary .cta-icon {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            color: #fff;
+        }
+
+        .cta-ghost .cta-icon {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .cta-text {
+            flex: 1;
+        }
+
+        .cta-text strong {
+            display: block;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .cta-text span {
+            display: block;
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .cta-arrow {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .cta:hover .cta-arrow {
+            color: #F59E0B;
+            transform: translateX(4px);
+        }
+
+        /* Card Footer */
+        .c-footer {
+            text-align: center;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .c-footer span {
+            font-size: 0.55rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.2);
+            letter-spacing: 0.2em;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-height: 720px) {
+            .home-wrapper {
+                padding: 12px 16px 16px;
+            }
+
+            .logo-box {
+                width: 52px;
+                height: 52px;
+            }
+
+            .logo-box img {
+                width: 36px;
+                height: 36px;
+            }
+
+            .brand {
+                font-size: 1.9rem;
+            }
+
+            .tagline {
+                font-size: 0.78rem;
+            }
+
+            .main-card {
+                padding: 20px 18px;
+            }
+
+            .c-titles h2 {
+                font-size: 1.15rem;
+            }
+
+            .c-text {
+                font-size: 0.78rem;
+                margin-bottom: 16px;
+            }
+
+            .c-socials {
+                padding: 14px 0;
+                gap: 22px;
+            }
+
+            .soc i {
+                font-size: 1.4rem;
+            }
+
+            .c-actions {
+                gap: 10px;
+                margin-bottom: 16px;
+            }
+
+            .cta {
+                padding: 14px 16px;
+            }
+
+            .cta-icon {
+                width: 42px;
+                height: 42px;
+            }
         }
     </style>
 @endsection

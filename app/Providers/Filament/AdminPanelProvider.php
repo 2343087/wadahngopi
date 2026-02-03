@@ -41,13 +41,9 @@ class AdminPanelProvider extends PanelProvider
             ->font('Plus Jakarta Sans')
             ->renderHook(
                 'panels::head.done',
-                fn () => new \Illuminate\Support\HtmlString('
-                    <link rel="stylesheet" href="'.asset('css/filament-custom.css').'">
-                    <meta name="theme-color" content="#09090b">
-                    <style>
-                        .fi-main-ctn { background: #09090b !important; }
-                        .fi-topbar { background: rgba(9, 9, 11, 0.7) !important; backdrop-filter: blur(20px) !important; border-bottom: 1px solid rgba(255,255,255,0.05) !important; }
-                    </style>
+                fn() => new \Illuminate\Support\HtmlString('
+                    <link rel="stylesheet" href="' . asset('css/filament-custom.css') . '">
+                    <meta name="theme-color" content="#1A0F0A">
                 '),
             )
             ->darkMode(true)

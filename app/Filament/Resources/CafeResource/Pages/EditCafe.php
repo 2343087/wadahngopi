@@ -16,4 +16,13 @@ class EditCafe extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (auth()->user()?->role === 'admin') {
+            $data['owner_id'] = auth()->id();
+        }
+
+        return $data;
+    }
 }

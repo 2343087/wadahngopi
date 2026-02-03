@@ -32,6 +32,14 @@ class CafeResource extends Resource
                 Forms\Components\Section::make('Kendali Admin 🛠️')
                     ->description('Hanya tim internal yang bisa otir-atik bagian ini.')
                     ->schema([
+                        Forms\Components\Select::make('city_id')
+                            ->relationship('city', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->label('Kota')
+                            ->placeholder('Pilih kota...')
+                            ->required(),
+
                         Forms\Components\Select::make('owner_id')
                             ->relationship('owner', 'name')
                             ->searchable()
@@ -149,6 +157,14 @@ class CafeResource extends Resource
                                     ->tel()
                                     ->placeholder('0812xxxxxxxx')
                                     ->label('Nomor WhatsApp (Aktif)'),
+
+                                Forms\Components\Select::make('city_id')
+                                    ->relationship('city', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->label('Kota Lokasi')
+                                    ->placeholder('Pilih kota cafe kamu...')
+                                    ->required(),
                             ])->columns(2),
 
                         Forms\Components\Section::make('Nongkrong Jam Berapa? 🕒')
@@ -215,6 +231,13 @@ class CafeResource extends Resource
                     ->toggleable()
                     ->visible(fn() => auth()->user()?->role === 'developer'),
 
+                Tables\Columns\TextColumn::make('city.name')
+                    ->label('Kota')
+                    ->badge()
+                    ->color('primary')
+                    ->sortable()
+                    ->searchable(),
+
                 Tables\Columns\BadgeColumn::make('status')
                     ->colors([
                         'gray' => 'draft',
@@ -225,7 +248,9 @@ class CafeResource extends Resource
 
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('city_id')
+                    ->label('Berdasarkan Kota')
+                    ->relationship('city', 'name'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

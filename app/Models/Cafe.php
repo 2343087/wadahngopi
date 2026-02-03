@@ -12,6 +12,7 @@ class Cafe extends Model
 
     protected $fillable = [
         'name',
+        'city_id',
         'description',
         'address',
         'google_maps_url',
@@ -28,6 +29,11 @@ class Cafe extends Model
         'social_links',
         'menu_images',
     ];
+
+    public function city(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(City::class);
+    }
 
     public function owner()
     {

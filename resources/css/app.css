@@ -9,7 +9,7 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-seri f;
 
     /* Luxury Branding Colors */
     --color-espresso: #1A0F0A;
@@ -43,6 +43,7 @@
 html {
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
+    overflow-x: visible;
 }
 
 body {
@@ -50,7 +51,12 @@ body {
     color: var(--color-text);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    overflow-x: visible;
 }
+
+/* --- Dark Mode Support --- */
+/* Note: Currently disabled to prevent color conflicts on white card backgrounds */
+/* To enable dark mode properly, cards need individual dark mode handling */
 
 [x-cloak] {
     display: none !important;
@@ -72,9 +78,9 @@ img {
     padding-bottom: 140px;
     /* Lebihin buat floating bottom nav */
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
+    display: block;
+    overflow: visible !important;
+    z-index: auto;
 }
 
 @media (min-width: 481px) {

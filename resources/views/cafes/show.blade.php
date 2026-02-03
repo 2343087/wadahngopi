@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
 @section('title', $cafe->name . ' - WadahNgopi.Com')
+@section('meta_description', Str::limit($cafe->description, 155) ?: 'Temukan ' . $cafe->name . ' di ' . ($cafe->address ?? 'Kalimantan') . '. Cafe dengan fasilitas lengkap.')
+@section('og_title', $cafe->name . ' - WadahNgopi')
+@section('og_description', Str::limit($cafe->description, 100) ?: 'Cafe nyaman di ' . ($cafe->address ?? 'Kalimantan'))
+@section('og_image', $cafe->image_path ? Storage::url($cafe->image_path) : asset('wadahicon.png'))
 
 @section('content')
     @php
@@ -58,27 +62,35 @@
     </style>
 
     <div class="detail-wrapper" x-data='cafeDetailComponent({
-                                                                                                id: {{ $cafe->id }},
-                                                                                                images: {!! json_encode($galleryImages) !!},
-                                                                                                allCategories: {!! json_encode($allCats) !!},
-                                                                                                defaultTab: {!! json_encode($defaultTab) !!},
-                                                                                                menuImages: {!! json_encode($activeGalleryImages->map(fn($img) => ["url" => Storage::url($img["image"]), "tag" => $img["tag"]])->values()) !!}
-                                                                                            })'>
+                                                                                                        id: {{ $cafe->id }},
+                                                                                                        images: {!! json_encode($galleryImages) !!},
+                                                                                                        allCategories: {!! json_encode($allCats) !!},
+                                                                                                        defaultTab: {!! json_encode($defaultTab) !!},
+                                                                                                        menuImages: {!! json_encode($activeGalleryImages->map(fn($img) => ["url" => Storage::url($img["image"]), "tag" => $img["tag"]])->values()) !!}
+                                                                                                    })'>
 
         {{-- Hero Slider Section --}}
         <div class="detail-hero-luxury" @touchstart="touchStart($event)" @touchend="touchEnd($event)">
             {{-- Nav Overlay --}}
-            <nav class="detail-nav-overlay">
+            <nav class="detail-nav-overlay group">
                 <a href="javascript:history.back()"
-                    class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-xl border border-white/30 flex items-center justify-center text-white shadow-lg transition-all active:scale-90 no-underline">
+                    class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-glass transition-all active:scale-90 no-underline hover:bg-white/30">
                     <i class="ph ph-arrow-left text-2xl"></i>
                 </a>
-                <button
-                    class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-xl border border-white/30 flex items-center justify-center text-white shadow-lg transition-all active:scale-90"
-                    @click="toggleBookmark">
-                    <i :class="isBookmarked ? 'ph-fill ph-bookmark-simple' : 'ph ph-bookmark-simple'"
-                        :style="isBookmarked ? 'color: #F59E0B' : ''" class="text-2xl"></i>
-                </button>
+
+                <div class="flex items-center gap-2">
+                    <button
+                        class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-glass transition-all active:scale-90 hover:bg-white/30"
+                        @click="toggleBookmark">
+                        <i :class="isBookmarked ? 'ph-fill ph-bookmark-simple' : 'ph ph-bookmark-simple'"
+                            :style="isBookmarked ? 'color: #F59E0B' : ''" class="text-2xl"></i>
+                    </button>
+                    <button
+                        class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-glass transition-all active:scale-90 hover:bg-white/30"
+                        @click="shareCafe">
+                        <i class="ph ph-share-network text-2xl"></i>
+                    </button>
+                </div>
             </nav>
 
             {{-- Slider Images --}}
@@ -124,8 +136,12 @@
 
             {{-- Kontak & Sosmed Section --}}
             @php
-                // Filter active social links using the correct 'show' field
-                $activeSocialLinks = collect($cafe->social_links ?? [])->filter(fn($link) => !empty($link['show']) && !empty($link['url']));
+                // Filter active social links - handle various boolean representations
+                $activeSocialLinks = collect($cafe->social_links ?? [])->filter(function($link) {
+                    $isVisible = isset($link['show']) && filter_var($link['show'], FILTER_VALIDATE_BOOLEAN);
+                    $hasUrl = !empty($link['url']);
+                    return $isVisible && $hasUrl;
+                });
                 $hasGoogleMaps = !empty($cafe->google_maps_url);
                 $hasWhatsApp = !empty($cafe->whatsapp_number);
             @endphp
@@ -133,23 +149,25 @@
             @if($hasGoogleMaps || $hasWhatsApp || $activeSocialLinks->isNotEmpty())
                 <section class="mb-8">
                     {{-- Section Title --}}
-                    <div class="flex items-center gap-2 mb-4">
-                        <i class="ph-bold ph-phone text-amber-600 text-base"></i>
-                        <h3 class="text-espresso text-sm font-bold">Hubungi & Follow</h3>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <i class="ph-bold ph-chats-circle text-amber-600 text-lg"></i>
+                            <h3 class="text-espresso text-sm font-bold uppercase tracking-wider">Hubungi & Follow</h3>
+                        </div>
                     </div>
 
                     {{-- Action Buttons --}}
                     @if($hasGoogleMaps || $hasWhatsApp)
-                        <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div class="flex items-center gap-3 mb-5">
                             @if($hasGoogleMaps)
                                 <a href="{{ e($cafe->google_maps_url) }}" target="_blank" rel="noopener noreferrer"
-                                    class="flex items-center gap-3 p-3.5 rounded-2xl border border-espresso/10 bg-espresso/5 active:scale-[0.98] transition-transform no-underline">
-                                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-amber-500">
-                                        <i class="ph-bold ph-map-pin text-white text-base"></i>
+                                    class="flex-1 flex items-center gap-3 p-3 rounded-2xl border border-espresso/5 bg-white shadow-soft active:scale-[0.98] transition-all no-underline hover:border-amber/30">
+                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-amber-50 rounded-xl">
+                                        <i class="ph-fill ph-map-pin text-amber-600 text-lg"></i>
                                     </div>
                                     <div class="min-w-0">
-                                        <span class="text-espresso text-sm font-semibold block">Lokasi</span>
-                                        <span class="text-espresso/50 text-[10px]">Google Maps</span>
+                                        <span class="text-espresso text-[0.85rem] font-bold block leading-none mb-1">Lokasi</span>
+                                        <span class="text-text-muted text-[10px] font-semibold">Google Maps</span>
                                     </div>
                                 </a>
                             @endif
@@ -157,13 +175,13 @@
                             @if($hasWhatsApp)
                                 <a href="https://wa.me/{{ e(preg_replace('/[^0-9]/', '', $cafe->whatsapp_number)) }}" target="_blank"
                                     rel="noopener noreferrer"
-                                    class="flex items-center gap-3 p-3.5 rounded-2xl border border-espresso/10 bg-espresso/5 active:scale-[0.98] transition-transform no-underline">
-                                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-green-500">
-                                        <i class="ph-bold ph-whatsapp-logo text-white text-base"></i>
+                                    class="flex-1 flex items-center gap-3 p-3 rounded-2xl border border-espresso/5 bg-white shadow-soft active:scale-[0.98] transition-all no-underline hover:border-green-500/30">
+                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-green-50 rounded-xl">
+                                        <i class="ph-fill ph-whatsapp-logo text-green-600 text-lg"></i>
                                     </div>
                                     <div class="min-w-0">
-                                        <span class="text-espresso text-sm font-semibold block">Chat</span>
-                                        <span class="text-espresso/50 text-[10px]">WhatsApp</span>
+                                        <span class="text-espresso text-[0.85rem] font-bold block leading-none mb-1">Chat</span>
+                                        <span class="text-text-muted text-[10px] font-semibold">WhatsApp</span>
                                     </div>
                                 </a>
                             @endif
@@ -172,17 +190,17 @@
 
                     {{-- Social Media Links --}}
                     @if($activeSocialLinks->isNotEmpty())
-                        <div class="flex flex-wrap gap-2">
+                        <div class="flex flex-wrap gap-2.5">
                             @foreach($activeSocialLinks as $link)
                                 @php
                                     $platform = strtolower($link['platform'] ?? '');
                                     $iconClass = match ($platform) {
-                                        'instagram' => 'ph-instagram-logo',
-                                        'tiktok' => 'ph-tiktok-logo',
-                                        'facebook' => 'ph-facebook-logo',
-                                        'x', 'twitter' => 'ph-x-logo',
-                                        'youtube' => 'ph-youtube-logo',
-                                        default => 'ph-globe'
+                                        'instagram' => 'ph-fill ph-instagram-logo',
+                                        'tiktok' => 'ph-fill ph-tiktok-logo',
+                                        'facebook' => 'ph-fill ph-facebook-logo',
+                                        'x', 'twitter' => 'ph-fill ph-x-logo',
+                                        'youtube' => 'ph-fill ph-youtube-logo',
+                                        default => 'ph-fill ph-globe'
                                     };
                                     $label = match ($platform) {
                                         'instagram' => 'Instagram',
@@ -194,9 +212,9 @@
                                     };
                                 @endphp
                                 <a href="{{ e($link['url']) }}" target="_blank" rel="noopener noreferrer"
-                                    class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-espresso/10 bg-espresso/5 text-espresso active:scale-95 transition-transform no-underline">
-                                    <i class="ph-bold {{ $iconClass }} text-sm"></i>
-                                    <span class="text-xs font-medium">{{ $label }}</span>
+                                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-espresso/5 bg-white shadow-soft text-espresso active:scale-95 transition-all no-underline hover:bg-espresso hover:text-white group/social">
+                                    <i class="{{ $iconClass }} text-sm text-amber-600 group-hover/social:text-white transition-colors"></i>
+                                    <span class="text-[0.7rem] font-bold uppercase tracking-wider">{{ $label }}</span>
                                 </a>
                             @endforeach
                         </div>
@@ -206,75 +224,62 @@
 
             {{-- Features Section --}}
             <section class="mb-12">
-                <h2 class="text-[1.3rem] font-black text-[#2C1810] mb-5 flex items-center gap-3">
-                    <i class="ph-fill ph-sparkle text-[#D97706] text-2xl"></i>
-                    Fasilitas
+                <h2 class="text-sm font-bold text-espresso uppercase tracking-widest mb-5 flex items-center gap-2.5">
+                    <i class="ph-fill ph-sparkle text-amber-600 text-lg"></i>
+                    Fasilitas Tersedia
                 </h2>
-                <div class="flex flex-wrap gap-3">
+                <div class="flex flex-wrap gap-2.5">
                     @forelse($cafe->facilities as $f)
                         <div
-                            class="bg-white border border-slate-100 px-5 py-3 rounded-2xl flex items-center gap-3 transition-all hover:border-slate-200">
-                            <i class="{{ $f->icon ?? 'ph ph-check-circle' }} text-[#2C1810] text-xl"></i>
-                            <span class="font-bold text-[#2C1810] text-sm">{{ $f->name }}</span>
+                            class="bg-white border border-espresso/5 px-4 py-2.5 rounded-xl flex items-center gap-2.5 transition-all shadow-soft group/fac">
+                            <i class="{{ $f->icon ?? 'ph ph-check-circle' }} text-espresso/60 text-lg group-hover/fac:text-amber-600 transition-colors"></i>
+                            <span class="font-bold text-espresso text-[0.8rem]">{{ $f->name }}</span>
                         </div>
                     @empty
-                        <span class="text-slate-300 italic text-sm">Informasi belum tersedia.</span>
+                        <span class="text-slate-300 italic text-sm">Informasi fasilitas belum tersedia.</span>
                     @endforelse
                 </div>
             </section>
 
-            {{-- Menu Section (Refined Masonry) --}}
-            <section class="menu-section-v4" x-data="{ showAllMenu: false }">
-                <div class="section-header-v5 flex items-end justify-between mb-8">
-                    <div>
-                        <h2 class="section-title-v5">Daftar Menu</h2>
-                        <p class="text-slate-400 text-[11px] font-black mt-2 uppercase tracking-[0.25em]">Cita rasa dalam
-                            setiap pilihan</p>
-                    </div>
+            {{-- Menu Section (Clean & Simple) --}}
+            <section x-data="{ activeImage: null }">
+                {{-- Simple Header --}}
+                <div class="flex items-center justify-between mb-5">
+                    <h2 class="text-xl font-black text-[#2C1810]">Daftar Menu</h2>
+                    @if($activeGalleryImages->count() > 0)
+                        <span class="text-xs font-bold text-slate-400">{{ $activeGalleryImages->count() }} foto</span>
+                    @endif
                 </div>
 
-                {{-- Premium Grid (Masonry) --}}
-                <div class="columns-2 md:columns-3 gap-4 space-y-4">
-                    @foreach($activeGalleryImages as $index => $img)
-                        <div class="menu-card-v10 group break-inside-avoid"
-                            x-show="showAllMenu || {{ $index < 6 ? 'true' : 'false' }}"
-                            x-transition:enter="transition ease-out duration-500"
-                            x-transition:enter-start="opacity-0 translate-y-8"
-                            x-transition:enter-end="opacity-100 translate-y-0">
-                            <div
-                                class="relative overflow-hidden rounded-[2.5rem] bg-white border border-slate-100 p-2 transition-all duration-500 group-hover:border-amber-200 group-hover:shadow-2xl group-hover:shadow-amber-900/10 active:scale-95">
+                @if($activeGalleryImages->count() > 0)
+                    {{-- Simple Grid - 2 columns --}}
+                    <div class="grid grid-cols-2 gap-3">
+                        @foreach($activeGalleryImages as $index => $img)
+                            <div class="cursor-pointer active:scale-95 transition-transform"
+                                @click="activeImage = '{{ Storage::url($img['image']) }}'">
                                 <img src="{{ Storage::url($img['image']) }}"
-                                    class="w-full h-auto rounded-[2rem] transition-transform duration-1000 group-hover:scale-110"
-                                    alt="{{ $img['tag'] }}">
-
-                                <div
-                                    class="absolute bottom-3.5 left-3.5 right-3.5 bg-black/40 backdrop-blur-xl border border-white/20 px-3 py-2 rounded-2xl shadow-xl transform transition-all duration-500 group-hover:bg-white group-hover:border-amber-100">
-                                    <span
-                                        class="text-[0.6rem] font-black uppercase tracking-widest text-white group-hover:text-[#2C1810] block text-center truncate">
-                                        {{ $img['tag'] }}
-                                    </span>
-                                </div>
+                                    class="w-full aspect-square object-cover rounded-2xl shadow-md"
+                                    alt="{{ $img['tag'] }}" loading="lazy">
                             </div>
-                        </div>
-                    @endforeach
-                </div>
+                        @endforeach
+                    </div>
 
-                {{-- "Show More" Button --}}
-                @if($activeGalleryImages->count() > 6)
-                    <div class="flex justify-center mt-12" x-show="!showAllMenu">
-                        <button @click="showAllMenu = true"
-                            class="px-8 py-4 bg-white border border-slate-100 text-[#2C1810] font-black text-xs uppercase tracking-widest rounded-3xl shadow-lg hover:shadow-2xl transition-all active:scale-90 flex items-center gap-3">
-                            <i class="ph-bold ph-plus text-amber-500"></i>Lihat Menu Lengkap
+                    {{-- Lightbox --}}
+                    <div x-show="activeImage" x-transition.opacity
+                        class="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center p-4"
+                        @click.self="activeImage = null" x-cloak>
+                        <button @click="activeImage = null"
+                            class="absolute top-5 right-5 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white">
+                            <i class="ph-bold ph-x text-lg"></i>
                         </button>
+                        <img :src="activeImage" class="max-w-full max-h-[90vh] rounded-xl object-contain" alt="Menu">
+                    </div>
+                @else
+                    <div class="py-10 text-center bg-slate-50 rounded-2xl">
+                        <i class="ph ph-image text-3xl text-slate-200 mb-2 block"></i>
+                        <p class="text-slate-400 text-sm">Menu belum tersedia</p>
                     </div>
                 @endif
-
-                {{-- Empty State --}}
-                <div x-show="menuImages.length === 0"
-                    class="py-20 text-center bg-white rounded-[40px] border border-dashed border-slate-200">
-                    <i class="ph-bold ph-book-open text-4xl text-slate-100 mb-4 block"></i>
-                    <p class="text-slate-400 font-bold uppercase tracking-widest text-[0.7rem]">Menu belum tersedia</p>
-                </div>
             </section>
 
             <div class="h-24"></div>
@@ -299,7 +304,21 @@
                 nextSlide() { const len = this.images.length; if (len > 0) this.currentSlide = (this.currentSlide + 1) % len; },
                 prevSlide() { const len = this.images.length; if (len > 0) this.currentSlide = (this.currentSlide - 1 + len) % len; },
                 touchStart(e) { this.tx = e.touches[0].clientX; }, touchEnd(e) { const dx = this.tx - e.changedTouches[0].clientX; if (Math.abs(dx) > 40) { dx > 0 ? this.nextSlide() : this.prevSlide(); } },
-                toggleBookmark() { let b = JSON.parse(localStorage.getItem('wadah-bookmarks') || '[]'); this.isBookmarked ? b = b.filter(id => id !== props.id) : b.push(props.id); localStorage.setItem('wadah-bookmarks', JSON.stringify(b)); this.isBookmarked = !this.isBookmarked; }
+                toggleBookmark() { let b = JSON.parse(localStorage.getItem('wadah-bookmarks') || '[]'); this.isBookmarked ? b = b.filter(id => id !== props.id) : b.push(props.id); localStorage.setItem('wadah-bookmarks', JSON.stringify(b)); this.isBookmarked = !this.isBookmarked; },
+                shareCafe() {
+                    const shareData = {
+                        title: '{{ $cafe->name }} - WadahNgopi',
+                        text: 'Cek cafe estetik ini di WadahNgopi: {{ $cafe->name }}',
+                        url: window.location.href
+                    };
+                    if (navigator.share) {
+                        navigator.share(shareData).catch(err => console.log('Error sharing:', err));
+                    } else {
+                        navigator.clipboard.writeText(shareData.url).then(() => {
+                            window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Link disalin ke clipboard!', type: 'success' } }));
+                        });
+                    }
+                }
             }));
         });
     </script>
