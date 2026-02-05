@@ -37,7 +37,7 @@
                     <span>INSTAGRAM</span>
                 </a>
                 <a href="https://www.tiktok.com/@wadah.ngopi?_r=1&_t=ZS-93dSno0Z0Cu
-    " class="soc soc-tt">
+                " class="soc soc-tt">
                     <i class="ph-fill ph-tiktok-logo"></i>
                     <span>TIKTOK</span>
                 </a>
@@ -45,10 +45,10 @@
                     <i class="ph-fill ph-youtube-logo"></i>
                     <span>YOUTUBE</span>
                 </a>
-                <a href="https://wa.me/6282199694350" class="soc soc-wa">
-                    <i class="ph-fill ph-whatsapp-logo"></i>
-                    <span>WHATSAPP</span>
-                </a>
+                <!-- <a href="https://wa.me/6282199694350" class="soc soc-wa">
+                                <i class="ph-fill ph-whatsapp-logo"></i>
+                                <span>WHATSAPP</span>
+                            </a> -->
             </div>
 
             {{-- CTA Buttons --}}
