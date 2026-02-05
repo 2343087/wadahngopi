@@ -30,6 +30,9 @@
         <div class="header-spacer-2026"></div>
 
         <style>
+            /* Font Family - Must be at top */
+            @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap');
+
             /* === PREMIUM HEADER / EXPLORE STYLE === */
             .explore-hero-2026 {
                 position: fixed !important;
@@ -175,9 +178,6 @@
                 height: 28px;
                 object-fit: contain;
             }
-
-            /* Font Family */
-            @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap');
         </style>
 
         <main class="px-6 flex-1 mb-24">

@@ -44,7 +44,7 @@
 
                     {{-- Right: Actions --}}
                     <div class="pl-2 border-l border-[#1a0f0a]/5 flex flex-col justify-center">
-                        <button @click.prevent.stop="removeFromSaved(cafe.id)"
+                        <button @click.prevent.stop="confirmDelete(cafe)"
                             class="flex items-center justify-center w-10 h-10 bg-[#FEF2F2] text-[#EF4444] rounded-xl hover:bg-[#FEE2E2] active:scale-90 transition-all shadow-sm">
                             <i class="ph-bold ph-trash text-lg"></i>
                         </button>
@@ -69,25 +69,90 @@
             Mulai Menjelajah
         </a>
     </div>
+
+    {{-- Delete Confirmation Modal --}}
+    <template x-teleport="body">
+        <div x-show="showDeleteModal" x-cloak
+            style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);"
+            x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+            @click.self="showDeleteModal = false">
+
+            <div x-show="showDeleteModal"
+                style="background: white; border-radius: 24px; padding: 24px; width: 100%; max-width: 320px; margin: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);"
+                x-transition:enter="transition ease-out duration-200 delay-75"
+                x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95">
+
+                {{-- Modal Header --}}
+                <div
+                    style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 20px;">
+                    <div
+                        style="width: 56px; height: 56px; background: #FEE2E2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                        <i class="ph-bold ph-warning" style="font-size: 24px; color: #EF4444;"></i>
+                    </div>
+                    <h3 style="font-size: 18px; font-weight: 900; color: #2C1810; margin-bottom: 8px;">Hapus dari
+                        Simpanan?</h3>
+                    <p style="font-size: 14px; color: #8B7355; line-height: 1.5;">
+                        Kamu yakin mau hapus <span style="font-weight: 700; color: #2C1810;"
+                            x-text="cafeToDelete?.name || 'cafe ini'"></span> dari daftar simpananmu?
+                    </p>
+                </div>
+
+                {{-- Modal Actions --}}
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <button @click="executeDelete()"
+                        style="width: 100%; padding: 14px 16px; background: #EF4444; color: white; font-weight: 700; font-size: 14px; border-radius: 12px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;"
+                        onmouseover="this.style.background='#DC2626'" onmouseout="this.style.background='#EF4444'">
+                        <i class="ph-bold ph-trash"></i>
+                        Ya, Hapus
+                    </button>
+                    <button @click="showDeleteModal = false"
+                        style="width: 100%; padding: 14px 16px; background: #F5EFED; color: #2C1810; font-weight: 700; font-size: 14px; border-radius: 12px; border: none; cursor: pointer;"
+                        onmouseover="this.style.background='#E8E0DC'" onmouseout="this.style.background='#F5EFED'">
+                        Batal
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
 </div>
 
 @script
 <script>
     Alpine.data('savedCafesLogic', () => ({
         savedIds: [],
+        showDeleteModal: false,
+        cafeToDelete: null,
+
         initFromStorage() {
             try {
                 const stored = localStorage.getItem('wadah-bookmarks');
                 this.savedIds = stored ? JSON.parse(stored) : [];
             } catch (e) { this.savedIds = []; }
         },
-        removeFromSaved(id) {
-            this.savedIds = this.savedIds.filter(i => i != id);
+
+        confirmDelete(cafe) {
+            this.cafeToDelete = cafe;
+            this.showDeleteModal = true;
+        },
+
+        executeDelete() {
+            if (!this.cafeToDelete) return;
+
+            this.savedIds = this.savedIds.filter(i => i != this.cafeToDelete.id);
             localStorage.setItem('wadah-bookmarks', JSON.stringify(this.savedIds));
 
-            // Dispatch subtle toast or vibration pattern if needed
+            // Haptic feedback
             if (navigator.vibrate) navigator.vibrate(50);
+
+            // Close modal and reset
+            this.showDeleteModal = false;
+            this.cafeToDelete = null;
         },
+
         shareCafe(cafe) {
             const shareData = {
                 title: cafe.name + ' - WadahNgopi',

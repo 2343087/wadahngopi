@@ -91,6 +91,21 @@ class ExploreSearch extends Component
         $this->resetPage();
     }
 
+    /**
+     * Reset all filters to their default state.
+     */
+    public function resetAllFilters(): void
+    {
+        $this->search = '';
+        $this->filter = 'semua';
+        $this->sort = 'relevance';
+        $this->activeLetter = null;
+        $this->cityId = null;
+        $this->userLat = null;
+        $this->userLng = null;
+        $this->resetPage();
+    }
+
     public function setUserLocation(float $lat, float $lng): void
     {
         $this->userLat = $lat;

@@ -29,7 +29,7 @@
             <div class="search-icon-pulse">
                 <i class="ph-bold ph-magnifying-glass"></i>
             </div>
-            <input type="text" wire:model.live.debounce.500ms="search" placeholder="Cari cafe favoritmu..." 
+            <input type="text" id="cafe-search" name="search" wire:model.live.debounce.500ms="search" placeholder="Cari cafe favoritmu..." 
                 class="explore-search-input">
             <button class="explore-sort-btn" @click="showSortMenu = !showSortMenu"
                 :class="showSortMenu ? 'active' : ''">
@@ -75,9 +75,9 @@
                         </button>
                     @endforeach
 
-                    @if($activeLetter)
+                    @if($activeLetter || $search || $filter !== 'semua' || $cityId || $sort !== 'relevance')
                         <div class="sticky bottom-0 left-0 right-0 p-2 bg-white/95 backdrop-blur-sm border-t border-[#F5EFED]">
-                            <button wire:click="setLetter(null)" 
+                            <button wire:click="resetAllFilters" @click="showSortMenu = false"
                                 class="w-full py-2 flex items-center justify-center gap-2 text-xs font-bold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
                                 <i class="ph-bold ph-x"></i>
                                 Reset Filter
@@ -258,7 +258,7 @@
                 </div>
                 <h3 class="empty-state-title">Belum Ada Cafe</h3>
                 <p class="empty-state-text">Coba ubah filter atau kata kunci pencarian</p>
-                <button class="empty-state-btn" wire:click="$set('search', ''); $set('filter', 'semua'); $set('cityId', null)">
+                <button class="empty-state-btn" wire:click="resetAllFilters">
                     <i class="ph-bold ph-arrow-counter-clockwise"></i>
                     Reset Filter
                 </button>

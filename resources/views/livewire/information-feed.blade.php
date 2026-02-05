@@ -223,6 +223,9 @@
 
     {{-- Shared Explore/Saved Styles --}}
     <style>
+        /* Font Family - Must be at top */
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap');
+
         /* === PREMIUM HEADER / EXPLORE STYLE === */
         body {
             background-color: #FAF9F6;
@@ -442,8 +445,5 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-
-        /* Font Family */
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap');
     </style>
 </div>
