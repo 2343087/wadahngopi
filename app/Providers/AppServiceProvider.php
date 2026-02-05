@@ -25,6 +25,12 @@ class AppServiceProvider extends ServiceProvider
     {
         if (app()->isLocal()) {
             //
+        } else {
+            // Force HTTPS & Fix Proxy Header issues in production
+            URL::forceScheme('https');
+            if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+                $_SERVER['HTTPS'] = 'on';
+            }
         }
 
         // Rate limiting for web requests (60 requests per minute per IP)

@@ -47,11 +47,15 @@ html {
 }
 
 body {
-    background-color: #E6E1DC;
-    color: var(--color-text);
-    font-family: var(--font-sans);
+    background-color: #FFFDFB;
+    color: #1A0F0A;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     -webkit-font-smoothing: antialiased;
-    overflow-x: visible;
+    overflow-x: hidden;
+    /* Luxury Dots Pattern */
+    background-image: radial-gradient(#1A0F0A 0.5px, transparent 0.5px);
+    background-size: 24px 24px;
+    background-attachment: fixed;
 }
 
 /* --- Dark Mode Support --- */
@@ -85,8 +89,6 @@ img {
 
 @media (min-width: 481px) {
     body {
-        background-image: radial-gradient(var(--color-coffee-light) 1px, transparent 1px);
-        background-size: 20px 20px;
         display: flex;
         justify-content: center;
     }
@@ -423,9 +425,7 @@ img {
     right: -50px;
     width: 200px;
     height: 200px;
-    background: radial-gradient(circle, var(--color-coffee-light) 0%, transparent 70%);
-    opacity: 0.15;
-    filter: blur(40px);
+    background: transparent;
 }
 
 .hero-luxury-title {

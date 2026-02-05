@@ -11,6 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Trust all proxies for hosting (Cloudflare, Heroku, etc)
+        $middleware->trustProxies(at: '*');
+
         // Add security headers
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
     })

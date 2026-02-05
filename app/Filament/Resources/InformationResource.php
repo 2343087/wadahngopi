@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class InformationResource extends Resource
 {
@@ -16,80 +17,53 @@ class InformationResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-newspaper';
 
-    protected static ?string $navigationLabel = 'Info & Berita Kopi';
+    protected static ?string $navigationGroup = 'Manajemen Konten';
 
-    protected static ?string $modelLabel = 'Berita';
-
-    protected static ?string $pluralModelLabel = 'Berita Kopi';
-
-    protected static ?string $navigationGroup = 'Konten & Promo';
-
-    public static function canAccess(): bool
+    public static function canViewAny(): bool
     {
         return auth()->user()?->role === 'developer';
     }
+
+    protected static ?string $navigationLabel = 'Informasi & Berita';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Apa Beritanya? ✍️')
-                    ->schema([
-                        Forms\Components\TextInput::make('title')
-                            ->required()
-                            ->maxLength(255)
-                            ->placeholder('Tulis judul yang bikin orang pengen klik...')
-                            ->label('Judul Postingan')
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(fn (Forms\Set $set, ?string $state) => $set('slug', \Illuminate\Support\Str::slug($state))),
-                        Forms\Components\TextInput::make('slug')
-                            ->required()
-                            ->unique(ignoreRecord: true)
-                            ->placeholder('link-otomatis-disini')
-                            ->label('Link Cantik (Slug)')
-                            ->maxLength(255),
-                        Forms\Components\Select::make('category')
-                            ->options([
-                                'Berita' => 'Berita Hangat',
-                                'Edukasi' => 'Kelas Kopi',
-                                'Lomba' => 'Event & Lomba',
-                                'Promo' => 'Diskon & Promo',
-                            ])
-                            ->default('Berita')
-                            ->label('Masuk Kategori Apa?')
-                            ->required(),
-                        Forms\Components\Textarea::make('summary')
-                            ->rows(3)
-                            ->placeholder('Ringkas dikit beritanya biar orang makin penasaran...')
-                            ->label('Ringkasan Singkat')
-                            ->columnSpanFull(),
-                        Forms\Components\RichEditor::make('content')
-                            ->required()
-                            ->placeholder('Tulis isi beritanya disini ya boss...')
-                            ->label('Isi Konten Lengkap')
-                            ->columnSpanFull(),
-                    ])->columns(2),
+                Forms\Components\Section::make('Konten Utama')->schema([
+                    Forms\Components\TextInput::make('title')
+                        ->required()
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(fn(string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+                    Forms\Components\TextInput::make('slug')
+                        ->required()
+                        ->unique(ignoreRecord: true),
+                    Forms\Components\Select::make('category')
+                        ->options([
+                            'Berita' => 'Berita',
+                            'Edukasi' => 'Edukasi',
+                            'Lomba' => 'Lomba',
+                            'Promo' => 'Promo',
+                        ])
+                        ->required(),
+                    Forms\Components\Textarea::make('summary')
+                        ->rows(3)
+                        ->columnSpanFull(),
+                    Forms\Components\RichEditor::make('content')
+                        ->columnSpanFull(),
+                ]),
 
-                Forms\Components\Section::make('Biar Makin Estetik 🖼️')
-                    ->schema([
-                        Forms\Components\FileUpload::make('image_path')
-                            ->image()
-                            ->disk('public')
-                            ->directory('information')
-                            ->visibility('public')
-                            ->maxSize(5120) // 5MB limit
-                            ->label('Foto Utama Postingan')
-                            ->imageResizeMode('cover')
-                            ->imageCropAspectRatio('16:9')
-                            ->imageResizeTargetWidth('1200')
-                            ->imageEditor(),
-                        Forms\Components\Toggle::make('is_published')
-                            ->label('Tayangin Langsung?')
-                            ->default(true),
-                        Forms\Components\DateTimePicker::make('published_at')
-                            ->label('Kapan Tayangnya?')
-                            ->default(now()),
-                    ])->columns(2),
+                Forms\Components\Section::make('Media & Publikasi')->schema([
+                    Forms\Components\FileUpload::make('image_path')
+                        ->image()
+                        ->directory('information')
+                        ->columnSpanFull(),
+                    Forms\Components\Toggle::make('is_published')
+                        ->label('Terbitkan?')
+                        ->default(true),
+                    Forms\Components\DateTimePicker::make('published_at')
+                        ->default(now()),
+                ])->columns(2),
             ]);
     }
 
@@ -98,41 +72,27 @@ class InformationResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image_path')
-                    ->label('Foto')
-                    ->circular(),
+                    ->label('Cover'),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable()
-                    ->weight('bold')
-                    ->wrap()
-                    ->description(fn (Information $record): string => $record->category),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('category')
-                    ->searchable()
-                    ->badge()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->limit(30),
+                Tables\Columns\BadgeColumn::make('category')
+                    ->colors(['primary']),
                 Tables\Columns\IconColumn::make('is_published')
-                    ->label('Publik')
                     ->boolean(),
+                Tables\Columns\TextColumn::make('views')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('published_at')
-                    ->dateTime('d M Y')
-                    ->sortable()
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('category'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -31,11 +31,27 @@ class StatsOverview extends BaseWidget
         }
 
         return [
-            Stat::make('Cafe Terdaftar', $cafeQuery->count())
-                ->description('Total cafe yang udah join 🏠')
+            Stat::make('Total Kafe', $cafeQuery->count())
+                ->description('Cafe terdaftar di sistem')
                 ->descriptionIcon('heroicon-m-building-storefront')
-                ->color('warning')
-                ->chart([7, 2, 10, 3, 15, 4, 18, 5, 20]),
+                ->color('primary')
+                ->chart(
+                    \App\Models\Cafe::selectRaw('count(*) as count')
+                        ->where('created_at', '>=', now()->subDays(7))
+                        ->groupByRaw('DATE(created_at)')
+                        ->pluck('count')
+                        ->toArray()
+                ),
+
+            Stat::make('Kafe Perlu Review', Cafe::where('status', 'review')->count())
+                ->description('Butuh persetujuan admin')
+                ->descriptionIcon('heroicon-m-clipboard-document-check')
+                ->color('warning'),
+
+            Stat::make('Total Pengunjung', \App\Models\Information::sum('views'))
+                ->description('Real traffic pengguna')
+                ->descriptionIcon('heroicon-m-chart-bar')
+                ->color('success'),
 
             Stat::make('Rating Rata-rata', number_format((float) ($reviewQuery->avg('rating') ?? 0), 1))
                 ->description('Kata mereka soal WadahNgopi ⭐')

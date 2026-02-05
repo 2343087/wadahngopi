@@ -2,76 +2,71 @@
 <div wire:poll.30s="loadCafes" x-data="savedCafesLogic()" x-init="initFromStorage()" class="min-h-screen">
     <div x-effect="$wire.updateIds(savedIds)"></div>
 
-    {{-- Saved Cafes List (Bulletproof Horizontal) --}}
-    <div class="px-6 space-y-4 pb-32" x-show="$wire.cafes.length > 0">
+    {{-- Saved Cafes List --}}
+    <div class="space-y-4 pb-32" x-show="$wire.cafes.length > 0">
         <template x-for="cafe in $wire.cafes" :key="cafe.id">
             <a :href="cafe.url"
-                class="block bg-white hover:bg-cream-dark transition-colors border border-espresso/5 border-solid rounded-[28px] shadow-sm overflow-hidden"
-                style="display: flex !important; align-items: center; padding: 12px; gap: 16px; text-decoration: none !important;">
+                class="group block bg-white hover:bg-[#F5EFED] transition-colors border border-[#1a0f0a]/5 rounded-[24px] shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] overflow-hidden relative">
 
-                {{-- Left: Fixed Image --}}
-                <div
-                    style="width: 80px; height: 80px; border-radius: 20px; overflow: hidden; flex-shrink: 0; position: relative; background: #f5efed;">
-                    <img :src="cafe.image || 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=300'"
-                        :alt="cafe.name" style="width: 100%; height: 100%; object-fit: cover;">
+                <div class="flex items-center p-3 gap-4">
+                    {{-- Left: Fixed Image --}}
+                    <div class="w-20 h-20 shrink-0 rounded-[18px] overflow-hidden bg-gray-100 relative shadow-inner">
+                        <img :src="cafe.image || 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=300'"
+                            :alt="cafe.name"
+                            class="absolute inset-0 w-full h-full object-cover z-10 transition-transform duration-500 group-hover:scale-110">
 
-                    {{-- Status Dot --}}
-                    <div
-                        style="position: absolute; top: 6px; right: 6px; width: 14px; height: 14px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 4px rgba(0,0,0,0.1);">
-                        <div :class="cafe.isOpen ? 'bg-emerald-500' : 'bg-rose-500'"
-                            style="width: 6px; height: 6px; border-radius: 50%;"></div>
+                        {{-- Status Dot --}}
+                        <div
+                            class="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm">
+                            <div :class="cafe.isOpen ? 'bg-emerald-500' : 'bg-rose-500'"
+                                class="w-1.5 h-1.5 rounded-full"></div>
+                        </div>
                     </div>
-                </div>
 
-                {{-- Middle: Content Area --}}
-                <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
-                    <h3 style="margin: 0; font-size: 1.05rem; font-weight: 850; color: #1a0f0a; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
-                        x-text="cafe.name"></h3>
-                    <p
-                        style="margin: 0; font-size: 0.75rem; font-weight: 700; color: #8d7b70; display: flex; align-items: center; gap: 4px;">
-                        <i class="ph-fill ph-map-pin-line text-amber"></i>
-                        <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
-                            x-text="(cafe.address || '').split(',')[0]"></span>
-                    </p>
-                    <div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px;">
-                        <template x-for="tag in (cafe.facilities || [])">
-                            <span
-                                style="padding: 3px 8px; background: #f5efed; color: #7f5539; font-size: 0.6rem; font-weight: 800; border-radius: 8px; white-space: nowrap;"
-                                x-text="tag"></span>
-                        </template>
+                    {{-- Middle: Content Area --}}
+                    <div class="flex-1 min-w-0 flex flex-col justify-center gap-1">
+                        <h3 class="text-[1rem] font-black text-[#2C1810] leading-snug truncate group-hover:text-[#F59E0B] transition-colors"
+                            x-text="cafe.name"></h3>
+
+                        <p class="text-[0.7rem] font-bold text-[#8B7355] flex items-center gap-1">
+                            <i class="ph-fill ph-map-pin text-[#F59E0B]"></i>
+                            <span class="truncate" x-text="(cafe.address || '').split(',')[0]"></span>
+                        </p>
+
+                        <div class="flex flex-wrap gap-1.5 mt-1">
+                            <template x-for="tag in (cafe.facilities || []).slice(0, 2)">
+                                <span
+                                    class="px-2 py-0.5 bg-[#FAF9F6] text-[#8B7355] text-[0.6rem] font-bold uppercase tracking-wider rounded-md"
+                                    x-text="tag"></span>
+                            </template>
+                        </div>
                     </div>
-                </div>
 
-                {{-- Right: Actions --}}
-                <div
-                    style="padding-left: 12px; border-left: 1px solid rgba(26,15,10,0.05); flex-shrink: 0; display: flex; flex-direction: column; gap: 8px;">
-                    <button @click.prevent.stop="removeFromSaved(cafe.id)"
-                        class="flex items-center justify-center transition-all active:scale-90"
-                        style="width: 44px; height: 44px; border: none; background: #FEF2F2; color: #EF4444; border-radius: 16px; cursor: pointer;">
-                        <i class="ph-bold ph-trash" style="font-size: 1.2rem;"></i>
-                    </button>
+                    {{-- Right: Actions --}}
+                    <div class="pl-2 border-l border-[#1a0f0a]/5 flex flex-col justify-center">
+                        <button @click.prevent.stop="removeFromSaved(cafe.id)"
+                            class="flex items-center justify-center w-10 h-10 bg-[#FEF2F2] text-[#EF4444] rounded-xl hover:bg-[#FEE2E2] active:scale-90 transition-all shadow-sm">
+                            <i class="ph-bold ph-trash text-lg"></i>
+                        </button>
+                    </div>
                 </div>
             </a>
         </template>
     </div>
 
-    {{-- Empty State --}}
-    <div x-show="$wire.cafes.length === 0" x-cloak
-        style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 40px; text-align: center;">
-        <div
-            style="width: 80px; height: 80px; background: #f5efed; border-radius: 30px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
-            <i class="ph-fill ph-coffee" style="font-size: 32px; color: rgba(26,15,10,0.2);"></i>
+    {{-- Premium Empty State --}}
+    <div x-show="$wire.cafes.length === 0" x-cloak class="flex flex-col items-center justify-center py-20 text-center">
+        <div class="w-20 h-20 bg-[#F5EFED] rounded-full flex items-center justify-center mb-6 animate-pulse">
+            <i class="ph-fill ph-bookmark-simple text-3xl text-[#8B7355]"></i>
         </div>
-        <h3 style="font-size: 1.25rem; font-weight: 900; color: #1a0f0a; margin-bottom: 8px;">Belum Ada Cafe Simpanan
-        </h3>
-        <p
-            style="font-size: 0.9rem; font-weight: 600; color: rgba(26,15,10,0.5); line-height: 1.5; margin-bottom: 32px;">
-            Jelajahi cafe estetik di sekitarmu dan simpan ke daftar ini.
+        <h3 class="text-lg font-black text-[#2C1810] mb-2">Belum Ada Cafe Tersimpan</h3>
+        <p class="text-sm text-[#8B7355] max-w-[240px] leading-relaxed mb-8">
+            Jelajahi cafe estetik di sekitarmu dan simpan favoritmu di sini.
         </p>
         <a href="{{ route('explore') }}"
-            style="display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; background: #1a0f0a; color: #fffdfb; border-radius: 20px; font-weight: 900; text-decoration: none; box-shadow: 0 10px 25px rgba(26,15,10,0.2);">
-            <i class="ph-bold ph-compass"></i>
-            Mulai Cari
+            class="flex items-center gap-2 px-8 py-3.5 bg-[#2C1810] text-[#FFFDFB] rounded-2xl font-bold text-sm shadow-lg shadow-[#2C1810]/20 hover:bg-[#4A2C20] hover:-translate-y-1 transition-all">
+            <i class="ph-bold ph-compass text-lg"></i>
+            Mulai Menjelajah
         </a>
     </div>
 </div>
@@ -89,6 +84,9 @@
         removeFromSaved(id) {
             this.savedIds = this.savedIds.filter(i => i != id);
             localStorage.setItem('wadah-bookmarks', JSON.stringify(this.savedIds));
+
+            // Dispatch subtle toast or vibration pattern if needed
+            if (navigator.vibrate) navigator.vibrate(50);
         },
         shareCafe(cafe) {
             const shareData = {
@@ -100,7 +98,7 @@
                 navigator.share(shareData).catch(err => console.log('Error sharing:', err));
             } else {
                 navigator.clipboard.writeText(shareData.url).then(() => {
-                    window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Link disalin ke clipboard!', type: 'success' } }));
+                    // Optional: Custom toast dispatch
                 });
             }
         }

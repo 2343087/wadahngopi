@@ -38,12 +38,18 @@ class AdminPanelProvider extends PanelProvider
                 'warning' => Color::Orange,
                 'info' => Color::Sky,
             ])
-            ->font('Plus Jakarta Sans')
+            ->font('Outfit')
             ->renderHook(
                 'panels::head.done',
                 fn() => new \Illuminate\Support\HtmlString('
                     <link rel="stylesheet" href="' . asset('css/filament-custom.css') . '">
+                    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap" rel="stylesheet">
                     <meta name="theme-color" content="#1A0F0A">
+                    <style>
+                        :root {
+                            --font-family: "Outfit", sans-serif;
+                        }
+                    </style>
                 '),
             )
             ->darkMode(true)

@@ -24,6 +24,13 @@ class CafeResource extends Resource
 
     protected static ?string $navigationGroup = 'Manajemen Warung';
 
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->role === 'developer';
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -142,6 +149,24 @@ class CafeResource extends Resource
                             ->imageEditor()
                             ->columnSpanFull(),
 
+                        Forms\Components\Section::make('Fasilitas Cafe 🛋️')
+                            ->description('Apa aja yang ada di cafe kamu?')
+                            ->schema([
+                                Forms\Components\Repeater::make('facilities')
+                                    ->relationship()
+                                    ->schema([
+                                        Forms\Components\TextInput::make('name')
+                                            ->label('Nama Fasilitas')
+                                            ->placeholder('Contoh: Wifi Kenceng, Musholla, AC Dingin')
+                                            ->required(),
+                                    ])
+                                    ->columns(1)
+                                    ->defaultItems(0)
+                                    ->addActionLabel('+ Tambah Fasilitas')
+                                    ->grid(3)
+                                    ->columnSpanFull(),
+                            ]),
+
                         Forms\Components\Section::make('Cara Kesini & Kontak 📍')
                             ->schema([
                                 Forms\Components\Textarea::make('address')
@@ -169,10 +194,55 @@ class CafeResource extends Resource
 
                         Forms\Components\Section::make('Nongkrong Jam Berapa? 🕒')
                             ->schema([
-                                Forms\Components\TimePicker::make('opening_time')->label('Mulai Buka'),
-                                Forms\Components\TimePicker::make('closing_time')->label('Udah Tutup'),
-                                Forms\Components\TextInput::make('latitude')->numeric()->placeholder('Contoh: -6.xxxx'),
-                                Forms\Components\TextInput::make('longitude')->numeric()->placeholder('Contoh: 106.xxxx'),
+                                Forms\Components\TimePicker::make('opening_time')
+                                    ->label('Mulai Buka')
+                                    ->seconds(false)
+                                    ->format('H:i')
+                                    ->displayFormat('H:i'),
+                                Forms\Components\TimePicker::make('closing_time')
+                                    ->label('Udah Tutup')
+                                    ->seconds(false)
+                                    ->format('H:i')
+                                    ->displayFormat('H:i'),
+
+                                Forms\Components\ViewField::make('location_trigger')
+                                    ->view('filament.components.location-button')
+                                    ->hiddenLabel(),
+                                Forms\Components\TextInput::make('latitude')
+                                    ->numeric()
+                                    ->placeholder('Contoh: -6.xxxx')
+                                    ->suffixAction(
+                                        Forms\Components\Actions\Action::make('getLocation')
+                                            ->icon('heroicon-m-map-pin')
+                                            ->tooltip('Ambil Lokasi Saya')
+                                            ->action(function () {})
+                                            ->extraAttributes([
+                                                'class' => 'cursor-pointer text-primary-500',
+                                                'title' => 'Ambil Lokasi Saat Ini',
+                                                'x-on:click' => <<<'JS'
+                                                    if (!navigator.geolocation) {
+                                                        alert('Browser kamu tidak mendukung geolocation.');
+                                                        return;
+                                                    }
+                                                    navigator.geolocation.getCurrentPosition(
+                                                        (position) => {
+                                                            // Fill both Lat and Long
+                                                            $wire.set('data.latitude', position.coords.latitude);
+                                                            $wire.set('data.longitude', position.coords.longitude);
+                                                            
+                                                            // Optional: Show success feedback
+                                                            new Notification('Lokasi Berhasil Diambil!');
+                                                        },
+                                                        (error) => {
+                                                            alert('Gagal mengambil lokasi (Pastikan GPS aktif & Izin diberikan): ' + error.message);
+                                                        }
+                                                    );
+                                                JS,
+                                            ])
+                                    ),
+                                Forms\Components\TextInput::make('longitude')
+                                    ->numeric()
+                                    ->placeholder('Contoh: 106.xxxx'),
                             ])->columns(2),
 
                         Forms\Components\Section::make('Social Media 📱')
@@ -253,7 +323,8 @@ class CafeResource extends Resource
                     ->relationship('city', 'name'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->url(fn(Cafe $record): string => static::getUrl('edit', ['record' => $record])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -1,126 +1,159 @@
-/* 🚀 ANTIGRAVITY GOD TIER DASHBOARD STYLES 🚀 */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&family=Outfit:wght@100..900&display=swap');
+/* 
+   ========================================
+   WadahNgopi Premium Admin Theme (God Tier)
+   ======================================== 
+*/
 
-:root {
-    --fi-header-height: 5rem;
-    --dashboard-bg: #F8F7F5;
-    --card-bg: rgba(255, 255, 255, 0.85);
-    --card-border: rgba(0, 0, 0, 0.05);
-    --accent-primary: #D97706;
-    /* Amber-600 */
-    --espresso: #1A0F0A;
-}
-
-.dark {
-    --dashboard-bg: #09090b;
-    --card-bg: rgba(18, 18, 22, 0.6);
-    --card-border: rgba(255, 255, 255, 0.08);
-}
-
-/* Global Reset */
+/* --- Global Vibe --- */
 body {
-    background: var(--dashboard-bg) !important;
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
-}
-
-/* Premium Glassmorphism 3.0 */
-.fi-wi-widget>div,
-.fi-section,
-.fi-fo-section,
-.fi-ta-content {
-    background: var(--card-bg) !important;
-    backdrop-filter: blur(20px) !important;
-    border: 1px solid var(--card-border) !important;
-    border-radius: 2.5rem !important;
-    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05) !important;
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.dark .fi-wi-widget>div,
-.dark .fi-section,
-.dark .fi-fo-section,
-.dark .fi-ta-content {
-    box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.5) !important;
-}
-
-/* Luxury Banner Override - ALWAYS DARK BLOCK */
-.welcome-banner-luxury {
-    background: linear-gradient(135deg, #1A0F0A 0%, #261710 100%) !important;
-    color: white !important;
-    border: 1px solid rgba(217, 119, 6, 0.4) !important;
-    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6) !important;
-}
-
-/* Ensure text inside luxury banner is ALWAYS high contrast */
-.welcome-banner-luxury h2,
-.welcome-banner-luxury p,
-.welcome-banner-luxury div,
-.welcome-banner-luxury span {
-    color: white !important;
-}
-
-.welcome-banner-luxury .text-amber-400,
-.welcome-banner-luxury .text-amber-100,
-.welcome-banner-luxury .text-amber-200 {
-    color: #fbbf24 !important;
-    /* Force true amber */
-}
-
-/* Animations */
-@keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
-}
-
-.animate-float {
-    animation: float 6s ease-in-out infinite;
-}
-
-/* Stats Widgets Revamp */
-.fi-wi-stats-overview-stat {
-    padding: 2rem !important;
-}
-
-.fi-wi-stats-overview-stat-label {
-    text-transform: uppercase !important;
-    letter-spacing: 0.1em !important;
-    font-weight: 800 !important;
-    font-size: 0.7rem !important;
-    color: var(--accent-primary) !important;
-}
-
-.fi-wi-stats-overview-stat-value {
+    background-color: #FAF9F6 !important;
+    /* Premium Off-White */
     font-family: 'Outfit', sans-serif !important;
-    font-weight: 900 !important;
-    font-size: 3rem !important;
-    letter-spacing: -0.02em !important;
-    color: inherit !important;
-    background: none !important;
-    -webkit-text-fill-color: initial !important;
 }
 
-.dark .fi-wi-stats-overview-stat-value {
+/* Dark Mode Override */
+.dark body {
+    background-color: #120b08 !important;
+    /* Deep Espresso */
+    background-image: radial-gradient(circle at 50% 0%, #2c1810 0%, #120b08 70%);
+}
+
+/* --- Authenticated/Dashboard Page --- */
+
+/* Sidebar */
+.fi-sidebar {
+    background-color: transparent !important;
+    border-right: none !important;
+}
+
+.fi-sidebar-header {
+    background-color: transparent !important;
+}
+
+.fi-sidebar-nav {
+    background: rgba(255, 255, 255, 0.5) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.4) !important;
+    margin-top: 10px;
+    border-radius: 0 24px 24px 0;
+    box-shadow: 4px 0 24px rgba(26, 15, 10, 0.03);
+    padding-right: 8px;
+}
+
+.dark .fi-sidebar-nav {
+    background: rgba(18, 11, 8, 0.6) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Sidebar Branding */
+.fi-sidebar-header .fi-logo {
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
+    color: #2C1810 !important;
+}
+
+.dark .fi-sidebar-header .fi-logo {
+    color: #FFFDFB !important;
+}
+
+/* Fix Logo Visibility in Dark Mode (Invert if dark logo) */
+.dark .fi-sidebar-header img {
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+}
+
+/* --- Cards & Panels --- */
+.fi-section,
+.fi-wi-stats-overview-stat,
+.fi-ta {
+    background-color: #ffffff !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(26, 15, 10, 0.05) !important;
+    box-shadow: 0 4px 20px rgba(26, 15, 10, 0.04) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fi-wi-stats-overview-stat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(26, 15, 10, 0.08) !important;
+}
+
+.dark .fi-section,
+.dark .fi-wi-stats-overview-stat,
+.dark .fi-ta {
+    background-color: #1e130f !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* --- Login Page (The Welcome) --- */
+.fi-simple-layout {
+    background-image: url('https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=2071&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+/* Dark Overlay for Login */
+.fi-simple-layout::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(44, 24, 16, 0.85), rgba(18, 11, 8, 0.95));
+    z-index: 0;
+}
+
+.fi-simple-main,
+.fi-simple-footer {
+    position: relative;
+    z-index: 10;
+}
+
+/* Login Card */
+.fi-simple-main .fi-section {
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
     color: white !important;
 }
 
-/* Sidebar & Nav Improvement */
-.fi-sidebar {
-    background: var(--dashboard-bg) !important;
-    border-right: 1px solid var(--card-border) !important;
+/* Login Inputs */
+.fi-simple-main input {
+    background: rgba(0, 0, 0, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
 }
 
-.fi-sidebar-item-button {
-    border-radius: 1.25rem !important;
+.fi-simple-main input::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
 }
 
-.fi-sidebar-item-active {
-    background: rgba(217, 119, 6, 0.1) !important;
-    color: var(--accent-primary) !important;
+.fi-simple-main h1 {
+    color: #F59E0B !important;
+    /* Premium Amber */
+    font-weight: 900 !important;
+    font-size: 2rem !important;
+    text-align: center;
+    letter-spacing: -0.02em;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Button Primary */
+.fi-btn-primary {
+    background: #F59E0B !important;
+    color: #2C1810 !important;
+    font-weight: 800 !important;
+    border-radius: 12px !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3) !important;
+    transition: all 0.2s ease;
+}
+
+.fi-btn-primary:hover {
+    background: #fbbf24 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4) !important;
 }

@@ -52,6 +52,8 @@
 
 
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -64,6 +66,7 @@
         setTimeout(() => { this.toast.show = false; }, 3000);
     }
 }" @toast.window="showToast($event.detail.message, $event.detail.type)">
+
     {{-- Global Toast Notification --}}
     <div x-show="toast.show" x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
@@ -111,6 +114,18 @@
                 }
             });
         }
+
+        // Livewire Page Expired Auto-Handler (No Popup)
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.hook('request', ({ fail }) => {
+                fail(({ status, preventDefault }) => {
+                    if (status === 419) {
+                        preventDefault();
+                        window.location.reload();
+                    }
+                })
+            })
+        });
     </script>
     @stack('scripts')
 </body>

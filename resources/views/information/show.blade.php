@@ -4,29 +4,29 @@
 
 @section('content')
     <div x-data="{ 
-                    scrolled: 0,
-                    progress: 0,
-                    init() {
-                        window.addEventListener('scroll', () => {
-                            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-                            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                            this.progress = (winScroll / height) * 100;
-                            this.scrolled = winScroll;
-                        });
-                    },
-                    share() {
-                        if (navigator.share) {
-                            navigator.share({
-                                title: '{{ addslashes($information->title) }}',
-                                text: '{{ addslashes($information->summary ?? "Baca berita terbaru tentang kopi di WadahNgopi!") }}',
-                                url: window.location.href,
-                            }).catch(console.error);
-                        } else {
-                            navigator.clipboard.writeText(window.location.href);
-                            alert('Link disalin ke clipboard!');
+                        scrolled: 0,
+                        progress: 0,
+                        init() {
+                            window.addEventListener('scroll', () => {
+                                let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                                let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                                this.progress = (winScroll / height) * 100;
+                                this.scrolled = winScroll;
+                            });
+                        },
+                        share() {
+                            if (navigator.share) {
+                                navigator.share({
+                                    title: '{{ addslashes($information->title) }}',
+                                    text: '{{ addslashes($information->summary ?? "Baca berita terbaru tentang kopi di WadahNgopi!") }}',
+                                    url: window.location.href,
+                                }).catch(console.error);
+                            } else {
+                                navigator.clipboard.writeText(window.location.href);
+                                alert('Link disalin ke clipboard!');
+                            }
                         }
-                    }
-                }" class="min-h-screen bg-white pb-40 font-['Plus_Jakarta_Sans'] antialiased">
+                    }" class="min-h-screen bg-white pb-40 font-['Plus_Jakarta_Sans'] antialiased">
 
         {{-- Top Reading Bar --}}
         <div class="fixed top-0 left-0 w-full h-[3px] z-[70] pointer-events-none">
@@ -84,11 +84,24 @@
                     </div>
                 </div>
 
-                {{-- 5. Main Image (Now below Title/Meta) --}}
-                <div class="mb-12">
-                    <img src="{{ $information->image_path && str_starts_with($information->image_path, 'http') ? $information->image_path : ($information->image_path ? Storage::url($information->image_path) : 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=1200') }}"
-                        class="w-full aspect-video md:aspect-[21/10] object-cover rounded-[32px] shadow-2xl shadow-black/5 border border-slate-100"
+                {{-- 5. Main Image (Premium Blur + Contain) --}}
+                <div
+                    class="mb-12 relative w-full aspect-video md:aspect-[21/10] rounded-[32px] overflow-hidden shadow-2xl shadow-black/5 border border-slate-100 bg-[#F5EFED] isolate">
+                    @php
+                        $imageSrc = $information->image_path && str_starts_with($information->image_path, 'http') ? $information->image_path : ($information->image_path ? Storage::url($information->image_path) : 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=1200');
+                    @endphp
+
+                    {{-- 1. Blurred Background (Fill Space) --}}
+                    <div class="absolute inset-0 bg-cover bg-center blur-2xl scale-110 opacity-60"
+                        style="background-image: url('{{ $imageSrc }}');">
+                    </div>
+
+                    {{-- 2. Main Image (Contain - No Crop) --}}
+                    <img src="{{ $imageSrc }}" class="absolute inset-0 w-full h-full object-contain z-10"
                         alt="{{ $information->title }}">
+
+                    {{-- 3. Subtle Overlay --}}
+                    <div class="absolute inset-0 bg-black/5 z-20 pointer-events-none"></div>
                 </div>
 
                 {{-- 6. Executive Summary --}}

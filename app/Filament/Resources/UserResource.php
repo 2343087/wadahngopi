@@ -9,6 +9,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
 {
@@ -16,50 +18,39 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationLabel = 'Tim & Pelanggan';
+    protected static ?string $navigationGroup = 'Kendali Admin';
 
-    protected static ?string $modelLabel = 'Pengguna';
+    protected static ?int $navigationSort = 1;
 
-    protected static ?string $pluralModelLabel = 'Tim Kita';
-
-    protected static ?string $navigationGroup = 'Pengaturan Sistem';
-
-    public static function canAccess(): bool
+    public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()?->role === 'developer';
+        // Only Developer can see User Management
+        return auth()->user()->role === 'developer';
     }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Info Pengguna 🧑‍💻')
-                    ->description('Data dasar biar saling kenal.')
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->placeholder('Nama Lengkap Lengkapnya...')
-                            ->label('Nama Lengkap')
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('email')
-                            ->email()
-                            ->required()
-                            ->placeholder('email@contoh.com')
-                            ->label('Alamat Email'),
-                        Forms\Components\TextInput::make('password')
-                            ->password()
-                            ->dehydrated(fn ($state) => filled($state))
-                            ->required(fn (string $context): bool => $context === 'create')
-                            ->placeholder('Ssttt... rahasia ya!')
-                            ->label('Kata Sandi'),
-                        Forms\Components\Select::make('role')
-                            ->options([
-                                'developer' => 'Developer (Super Admin)',
-                                'admin' => 'Admin (Cafe Owner)',
-                            ])
-                            ->label('Role Akses')
-                            ->required(),
-                    ])->columns(2),
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('email')
+                    ->email()
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\Select::make('role')
+                    ->options([
+                        'developer' => 'Developer',
+                        'admin' => 'Admin Cafe',
+                        'user' => 'User Biasa',
+                    ])
+                    ->required(),
+                Forms\Components\TextInput::make('password')
+                    ->password()
+                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                    ->dehydrated(fn($state) => filled($state))
+                    ->required(fn(string $context): bool => $context === 'create'),
             ]);
     }
 
@@ -68,20 +59,17 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable()
-                    ->weight('bold'),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->searchable()
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('role')
-                    ->searchable()
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'developer' => 'danger',
-                        'admin' => 'success',
-                    }),
+                    ->searchable(),
+                Tables\Columns\BadgeColumn::make('role')
+                    ->colors([
+                        'danger' => 'developer',
+                        'warning' => 'admin',
+                        'success' => 'user',
+                    ]),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime('d M Y')
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

@@ -24,8 +24,8 @@ class InformationController extends Controller
     {
         abort_unless($information->is_published, 404);
 
-        // Increment views safely from hacker/bot spam by simple increment
-        // For production we might want to use session-based or IP-based but simple increment is requested
+        // Direct DB increment to ensure immediate real-time updates for the user.
+        // "Anti-ngebug" - simple and reliable.
         $information->increment('views');
 
         return view('information.show', compact('information'));

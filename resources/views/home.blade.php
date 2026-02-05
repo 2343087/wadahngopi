@@ -11,7 +11,8 @@
             </div>
             <span class="badge">BY : AK KREATIF</span>
             <h1 class="brand">Wadah<span>Ngopi</span></h1>
-            <p class="tagline">Mempermudah buanmu mencari spot ngopi nyaman di Samarinda.</p>
+            <p class="tagline">untuk merajut silaturahmi dan mendekatkan para pelaku usaha kedai kopi dengan parah peminat
+                kopi di samarinda.</p>
         </header>
 
         {{-- Main Card --}}
@@ -26,24 +27,25 @@
             </div>
 
             {{-- Body --}}
-            <p class="c-text">Di WadahNgopi, secangkir kopi adalah awal kolaborasi. Kami bukan sekadar tempat singgah,
-                melainkan ruang untuk merajut silaturahmi.</p>
+            <p class="c-text">di wadah ngopi ini. para pelaku usaha kedai kopi. dapat memperkenalkan produk kedai kopinya,
+                secara lebih mudah.</p>
 
             {{-- Social Media --}}
             <div class="c-socials">
-                <a href="https://www.instagram.com/ak_kreatif/" target="_blank" class="soc soc-ig">
+                <a href="https://www.instagram.com/wadahngopi/" target="_blank" class="soc soc-ig">
                     <i class="ph-fill ph-instagram-logo"></i>
                     <span>INSTAGRAM</span>
                 </a>
-                <a href="#" class="soc soc-tt">
+                <a href="https://www.tiktok.com/@wadah.ngopi?_r=1&_t=ZS-93dSno0Z0Cu
+    " class="soc soc-tt">
                     <i class="ph-fill ph-tiktok-logo"></i>
                     <span>TIKTOK</span>
                 </a>
-                <a href="#" class="soc soc-yt">
+                <a href="https://youtube.com/@wadahngopi?si=4MYRQCMn6cjEeAlB" class="soc soc-yt">
                     <i class="ph-fill ph-youtube-logo"></i>
                     <span>YOUTUBE</span>
                 </a>
-                <a href="#" class="soc soc-wa">
+                <a href="https://wa.me/6282199694350" class="soc soc-wa">
                     <i class="ph-fill ph-whatsapp-logo"></i>
                     <span>WHATSAPP</span>
                 </a>

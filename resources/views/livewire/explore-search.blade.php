@@ -4,7 +4,7 @@
     {{-- Livewire data is handled in Alpine x-data script --}}
 
     @if(config('app.debug'))
-        <div class="hidden" id="cafe-debug-count">{{ count($cafes) }}</div>
+        <div class="hidden" id="cafe-debug-count">{{ $cafes->count() }}</div>
     @endif
 
     {{-- Ultra Premium Hero Section --}}
@@ -29,7 +29,7 @@
             <div class="search-icon-pulse">
                 <i class="ph-bold ph-magnifying-glass"></i>
             </div>
-            <input type="text" x-model="search" placeholder="Cari cafe favoritmu..." @keyup.escape="search = ''"
+            <input type="text" wire:model.live.debounce.500ms="search" placeholder="Cari cafe favoritmu..." 
                 class="explore-search-input">
             <button class="explore-sort-btn" @click="showSortMenu = !showSortMenu"
                 :class="showSortMenu ? 'active' : ''">
@@ -37,57 +37,72 @@
             </button>
 
             {{-- Sort Dropdown Premium --}}
-            <div class="explore-sort-dropdown" x-show="showSortMenu"
+            <div class="explore-sort-dropdown" x-show="showSortMenu" x-cloak
                 x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 translate-y-4 scale-95"
                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                x-transition:leave-end="opacity-0 translate-y-4 scale-95" x-cloak>
+                x-transition:leave-end="opacity-0 translate-y-4 scale-95">
                 <div class="sort-dropdown-header">
                     <i class="ph-fill ph-funnel text-amber"></i>
                     <span>Urutkan</span>
                 </div>
-                <div class="sort-dropdown-body">
+                <div class="sort-dropdown-body custom-scrollbar relative">
                     <button class="sort-dropdown-item"
-                        :class="activeSort === 'name_az' && !activeLetter ? 'active' : ''"
-                        @click="if (activeSort === 'name_az' && !activeLetter) { activeSort = 'relevance'; } else { activeSort = 'name_az'; activeLetter = null; } showSortMenu = false">
+                        wire:click="setSort('name_az')"
+                        :class="$wire.sort === 'name_az' && !$wire.activeLetter ? 'active' : ''"
+                        @click="showSortMenu = false">
                         <i class="ph-fill ph-sort-ascending"></i>
                         <span> (A-Z)</span>
                     </button>
-                    <button class="sort-dropdown-item" :class="activeSort === 'name_za' ? 'active' : ''"
-                        @click="if (activeSort === 'name_za') { activeSort = 'relevance'; } else { activeSort = 'name_za'; activeLetter = null; } showSortMenu = false">
+                    <button class="sort-dropdown-item" 
+                        wire:click="setSort('name_za')"
+                        :class="$wire.sort === 'name_za' && !$wire.activeLetter ? 'active' : ''"
+                        @click="showSortMenu = false">
                         <i class="ph-fill ph-sort-descending"></i>
                         <span> (Z-A)</span>
                     </button>
-                </div>
-                <div class="sort-dropdown-alphabet">
-                    @foreach (range('A', 'Z') as $char)
-                        <button class="sort-dropdown-item" :class="activeLetter === '{{ $char }}' ? 'active' : ''"
-                            @click="if (activeLetter === '{{ $char }}') { activeLetter = null; activeSort = 'relevance'; } else { activeLetter = '{{ $char }}'; activeSort = 'name_az'; } showSortMenu = false">
-                            <i class="ph-fill ph-text-aa"></i>
-                            <span> {{ $char }}</span>
+                    
+                    {{-- Unified Alphabet List items --}}
+                     @foreach (range('A', 'Z') as $char)
+                        <button class="sort-dropdown-item" 
+                            wire:click="setLetter('{{ $char }}')"
+                            :class="$wire.activeLetter === '{{ $char }}' ? 'active' : ''"
+                            @click="showSortMenu = false">
+                            <i class="ph-bold ph-text-aa"></i>
+                            <span> ({{ $char }})</span>
                         </button>
                     @endforeach
+
+                    @if($activeLetter)
+                        <div class="sticky bottom-0 left-0 right-0 p-2 bg-white/95 backdrop-blur-sm border-t border-[#F5EFED]">
+                            <button wire:click="setLetter(null)" 
+                                class="w-full py-2 flex items-center justify-center gap-2 text-xs font-bold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+                                <i class="ph-bold ph-x"></i>
+                                Reset Filter
+                            </button>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
 
         {{-- Category Filter Pills --}}
         <div class="explore-category-pills">
-            <button class="category-pill" :class="activeFilter === 'semua' ? 'active' : ''"
-                @click="activeFilter = 'semua'">
+            <button class="category-pill" :class="$wire.filter === 'semua' ? 'active' : ''"
+                wire:click="$set('filter', 'semua')">
                 <i class="ph-fill ph-coffee"></i>
                 <span>Semua</span>
             </button>
-            <button class="category-pill" :class="activeFilter === 'terdekat' ? 'active' : ''"
-                @click="activeFilter = 'terdekat'; getLocation()">
+            <button class="category-pill" :class="$wire.filter === 'terdekat' ? 'active' : ''"
+                @click="getLocation()">
                 <i class="ph-fill ph-map-pin" x-show="!isLocating"></i>
                 <i class="ph ph-circle-notch animate-spin" x-show="isLocating"></i>
                 <span>Terdekat</span>
             </button>
-            <button class="category-pill pill-open" :class="activeFilter === 'buka' ? 'active' : ''"
-                @click="activeFilter = 'buka'">
+            <button class="category-pill pill-open" :class="$wire.filter === 'buka' ? 'active' : ''"
+                wire:click="$set('filter', 'buka')">
                 <span class="pulse-dot"></span>
                 <span>Buka Sekarang</span>
             </button>
@@ -107,10 +122,9 @@
             @endforeach
         </div>
 
-        {{-- Results Counter --}}
         <div class="explore-result-counter-wrapper">
-            <div class="explore-result-counter" x-show="filteredCafes().length > 0">
-                <span class="counter-number" x-text="filteredCafes().length"></span>
+            <div class="explore-result-counter">
+                <span class="counter-number">{{ $cafes->total() }}</span>
                 <span class="counter-text">cafe ditemukan</span>
             </div>
             <div wire:loading.delay.shorter class="explore-loading-state">
@@ -141,82 +155,119 @@
     </div>
 
     {{-- Cafe Grid Premium --}}
-    <main class="explore-cafe-grid" wire:loading.remove.delay.shorter x-show="filteredCafes().length > 0">
-        <template x-for="(cafe, idx) in filteredCafes()" :key="cafe.id || idx">
-            <a :href="cafe.url" class="cafe-card-2026 group">
-                {{-- Card Image --}}
-                <div class="cafe-card-image">
-                    <img :src="cafe.image || 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800'"
-                        :alt="cafe.name" loading="lazy" class="cafe-card-img">
+    <main class="explore-cafe-grid" wire:loading.remove.delay.shorter>
+        @forelse($cafes as $cafe)
+            <a href="{{ route('cafes.show', $cafe) }}" class="cafe-card-2026 group">
+                    {{-- Fixed Height Image Container --}}
+                    @php
+                        $image = $cafe->image_path ? (str_starts_with($cafe->image_path, 'http') ? $cafe->image_path : Storage::url($cafe->image_path)) : 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800';
+                    @endphp
+                    <div class="cafe-card-image">
+                         <img src="{{ $image }}"
+                              alt="{{ $cafe->name }}" loading="lazy" 
+                              class="cafe-card-img object-cover">
+                              
+                        {{-- Hover Quick Actions (Moved Inside Image) --}}
+                        <div class="cafe-card-actions">
+                            @php
+                                $socials = collect($cafe->social_links ?? [])
+                                    ->filter(fn($s) => filter_var($s['show'] ?? false, FILTER_VALIDATE_BOOLEAN) && !empty($s['url']));
+                                $visibleSocials = $socials->take(3);
+                                $moreSocialsCount = $socials->count() - 3;
+                            @endphp
+                            
+                            @foreach ($visibleSocials as $social)
+                                <button onclick="event.preventDefault(); window.open('{{ $social['url'] }}', '_blank')" class="quick-action-btn" title="{{ ucfirst($social['platform']) }}">
+                                    <i class="ph-bold ph-@if($social['platform'] === 'twitter')x-logo @else{{ $social['platform'] }}-logo @endif"></i>
+                                </button>
+                            @endforeach
+                            
+                            @if($moreSocialsCount > 0)
+                                <div class="quick-action-more">+{{ $moreSocialsCount }}</div>
+                            @endif
+                        </div>
+                     </div>
 
                     {{-- Gradient Overlay --}}
                     <div class="cafe-card-overlay"></div>
 
-                    {{-- Status Badge --}}
-                    <div class="cafe-status-badge" :class="cafe.isOpen ? 'open' : 'closed'">
-                        <span class="status-dot"></span>
-                        <span x-text="cafe.isOpen ? 'Buka' : 'Tutup'"></span>
-                    </div>
-
-                    {{-- Distance Badge --}}
-                    <template x-if="userLat && cafe.distance">
-                        <div class="cafe-distance-badge">
-                            <i class="ph-fill ph-navigation-arrow"></i>
-                            <span x-text="formatDistance(cafe.distance)"></span>
+                    {{-- Smart Status Badge 2026 --}}
+                    @php
+                        $isOpen = $cafe->is_open;
+                        $timeText = '';
+                        if ($isOpen && $cafe->closing_time) {
+                            $timeText = '• Sampai ' . \Carbon\Carbon::parse($cafe->closing_time)->format('H:i');
+                        } elseif (!$isOpen && $cafe->opening_time) {
+                            $timeText = '• Buka ' . \Carbon\Carbon::parse($cafe->opening_time)->format('H:i');
+                        }
+                    @endphp
+                    <div class="cafe-status-badge-smart {{ $isOpen ? 'open' : 'closed' }}">
+                        <div class="flex items-center gap-1.5">
+                            <span class="status-indicator">
+                                <span class="status-ping"></span>
+                                <span class="status-dot"></span>
+                            </span>
+                            <span class="font-black text-[0.65rem] tracking-wider uppercase">
+                                {{ $isOpen ? 'Buka' : 'Tutup' }}
+                            </span>
                         </div>
-                    </template>
-
-                    {{-- Hover Quick Actions --}}
-                    <div class="cafe-card-actions">
-                        <template x-for="(social, sIdx) in (cafe.socialLinks || []).slice(0, 4)" :key="sIdx">
-                            <button @click.prevent.stop="window.open(social.url, '_blank')" class="quick-action-btn">
-                                <i :class="{
-                                    'ph-bold ph-instagram-logo': social.platform === 'instagram',
-                                    'ph-bold ph-tiktok-logo': social.platform === 'tiktok',
-                                    'ph-bold ph-facebook-logo': social.platform === 'facebook',
-                                    'ph-bold ph-x-logo': social.platform === 'twitter'
-                                }"></i>
-                            </button>
-                        </template>
+                        @if($timeText)
+                            <span class="text-[0.6rem] font-bold opacity-90 ml-1 border-l border-white/20 pl-1.5 leading-none">
+                                {{ $timeText }}
+                            </span>
+                        @endif
                     </div>
-                </div>
+
+
+
 
                 {{-- Card Content --}}
                 <div class="cafe-card-content">
-                    <h3 class="cafe-card-title" x-text="cafe.name"></h3>
+                    <h3 class="cafe-card-title">{{ $cafe->name }}</h3>
                     <p class="cafe-card-address">
                         <i class="ph-fill ph-map-pin"></i>
-                        <span x-text="cafe.city"></span>
+                        <span class="drop-shadow-sm">{{ $cafe->address }}</span>    
                     </p>
 
                     {{-- Facilities Tags --}}
-                    <div class="cafe-card-tags" x-show="(cafe.facilities || []).length > 0">
-                        <template x-for="(tag, tIdx) in (cafe.facilities || []).slice(0, 3)" :key="tIdx">
-                            <span class="cafe-tag" x-text="tag"></span>
-                        </template>
-                        <span class="cafe-tag-more" x-show="(cafe.facilities || []).length > 3"
-                            x-text="'+' + ((cafe.facilities || []).length - 3)"></span>
-                    </div>
+                    @if($cafe->facilities->isNotEmpty())
+                        <div class="cafe-card-tags">
+                            @foreach($cafe->facilities->take(3) as $facility)
+                                <span class="cafe-tag">
+                                    {{ Str::limit($facility->name, 10) }}
+                                </span>
+                            @endforeach
+                            @if($cafe->facilities->count() > 3)
+                                <span class="cafe-tag-more">+{{ $cafe->facilities->count() - 3 }}</span>
+                            @endif
+                        </div>
+                    @else 
+                        {{-- Placeholder separation if no facilities --}}
+                        <div class="mt-auto"></div> 
+                    @endif
                 </div>
 
                 {{-- Hover Shine Effect --}}
                 <div class="card-shine"></div>
             </a>
-        </template>
+        @empty
+            {{-- Premium Empty State --}}
+            <div class="col-span-full explore-empty-state">
+                <div class="empty-state-icon">
+                    <i class="ph-light ph-coffee"></i>
+                </div>
+                <h3 class="empty-state-title">Belum Ada Cafe</h3>
+                <p class="empty-state-text">Coba ubah filter atau kata kunci pencarian</p>
+                <button class="empty-state-btn" wire:click="$set('search', ''); $set('filter', 'semua'); $set('cityId', null)">
+                    <i class="ph-bold ph-arrow-counter-clockwise"></i>
+                    Reset Filter
+                </button>
+            </div>
+        @endforelse
     </main>
 
-    {{-- Premium Empty State --}}
-    <div wire:loading.remove.delay.shorter x-show="filteredCafes().length === 0" x-cloak class="explore-empty-state">
-        <div class="empty-state-icon">
-            <i class="ph-light ph-coffee"></i>
-        </div>
-        <h3 class="empty-state-title">Belum Ada Cafe</h3>
-        <p class="empty-state-text">Coba ubah filter atau kata kunci pencarian</p>
-        <button class="empty-state-btn"
-            @click="search = ''; activeFilter = 'semua'; activeLetter = null; activeSort = 'relevance'">
-            <i class="ph-bold ph-arrow-counter-clockwise"></i>
-            Reset Filter
-        </button>
+    <div class="px-6 pb-20">
+        {{ $cafes->links() }}
     </div>
 
     {{-- Premium Explore Styles --}}
@@ -674,15 +725,16 @@
         /* Cafe Grid */
         .explore-cafe-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Allow smaller cards */
             gap: 16px;
-            padding: 24px 20px 140px;
+            padding: 20px 16px 140px;
         }
 
-        @media (max-width: 360px) {
+        @media (max-width: 640px) {
             .explore-cafe-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
+                grid-template-columns: repeat(2, 1fr); /* Force 2 Columns on mobile */
+                gap: 12px;
+                padding: 16px 12px 140px;
             }
         }
 
@@ -720,14 +772,18 @@
 
         .cafe-card-image {
             position: relative;
-            aspect-ratio: 4/5;
+            width: 100%;
+            aspect-ratio: 4/5; /* Fixed Uniform Size */
             overflow: hidden;
+            background-color: #F5EFED;
         }
 
         .cafe-card-img {
+            position: absolute;
+            inset: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: cover; /* Fill the card, crop excess */
             transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -747,51 +803,70 @@
             opacity: 1;
         }
 
-        /* Status Badge */
-        .cafe-status-badge {
+        /* Smart Status Badge 2026 */
+        .cafe-status-badge-smart {
             position: absolute;
             top: 12px;
             right: 12px;
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 8px 12px;
-            border-radius: 100px;
-            font-size: 0.6rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            padding: 6px 10px;
+            border-radius: 12px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            z-index: 20;
+            color: white;
+            line-height: normal;
         }
 
-        .cafe-status-badge.open {
-            background: rgba(16, 185, 129, 0.9);
-            color: white;
+        .cafe-status-badge-smart.open {
+            background: rgba(16, 185, 129, 0.85); /* Emerald Premium */
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
-        .cafe-status-badge.closed {
-            background: rgba(239, 68, 68, 0.85);
-            color: white;
+        .cafe-status-badge-smart.closed {
+            background: rgba(239, 68, 68, 0.85); /* Rose Premium */
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .status-indicator {
+            position: relative;
+            width: 8px;
+            height: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .status-dot {
-            width: 6px;
-            height: 6px;
-            background: currentColor;
+            width: 5px;
+            height: 5px;
+            background: white;
             border-radius: 50%;
-            animation: pulse-dot 1.5s infinite;
+            z-index: 2;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
-        @keyframes pulse-dot {
+        .status-ping {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: white;
+            opacity: 0.6;
+            animation: status-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
 
-            0%,
-            100% {
-                opacity: 1;
-            }
-
+        @keyframes status-ping {
             50% {
                 opacity: 0.4;
+            }
+            75%, 100% {
+                transform: scale(2.5);
+                opacity: 0;
             }
         }
 
@@ -818,49 +893,58 @@
             bottom: 12px;
             right: 12px;
             display: flex;
-            gap: 8px;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
-        }
-
-        .cafe-card-2026:hover .cafe-card-actions {
-            opacity: 1;
-            transform: translateY(0);
+            gap: 6px;
+            z-index: 50;
         }
 
         .quick-action-btn {
-            width: 36px;
-            height: 36px;
-            background: white;
-            border-radius: 12px;
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--color-espresso);
+            color: #2C1810;
             font-size: 1rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .quick-action-btn:hover {
-            background: var(--color-espresso);
-            color: white;
             transform: scale(1.1);
+            background: #2C1810;
+            color: #F59E0B;
         }
+
+        .quick-action-more {
+            width: 32px;
+            height: 32px;
+            background: rgba(44, 24, 16, 0.8);
+            backdrop-filter: blur(4px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
 
         /* Card Content */
         .cafe-card-content {
-            padding: 16px 14px;
+            padding: 12px 14px; /* Compact Padding */
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px; /* Tighter gap */
+            flex: 1;
         }
 
         .cafe-card-title {
-            font-size: 1rem;
+            font-size: 0.9rem; /* Smaller Title */
             font-weight: 800;
             color: #2C1810;
             line-height: 1.2;
@@ -888,27 +972,25 @@
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
-            margin-top: 4px;
+            margin-top: auto; /* Push to bottom */
         }
 
         .cafe-tag {
-            padding: 4px 10px;
-            background: #F5EFED;
-            border-radius: 8px;
             font-size: 0.6rem;
             font-weight: 700;
-            color: #6F4E37;
-            text-transform: uppercase;
+            color: #5C4A3D;
+            background: #F5EFED;
+            padding: 4px 10px;
+            border-radius: 20px;
             letter-spacing: 0.02em;
+            border: 1px solid rgba(26, 15, 10, 0.05);
         }
 
         .cafe-tag-more {
-            padding: 4px 8px;
-            background: var(--color-amber);
-            border-radius: 8px;
             font-size: 0.6rem;
-            font-weight: 800;
-            color: white;
+            font-weight: 700;
+            color: #8B7355;
+            padding: 4px 6px;
         }
 
         /* Card Shine Effect */
@@ -1149,93 +1231,34 @@
 @script
 <script>
     Alpine.data('exploreLogic', () => ({
-        filteredCafes: [],
-        search: '',
         isScrolled: false,
-        activeFilter: 'semua',
-        activeSort: 'relevance',
-        activeLetter: null,
         showSortMenu: false,
         isLocating: false,
-        userLat: null,
-        userLng: null,
-        cafes: @js($cafes),
+        
         initComponent() {
-            // Catch explicit update event ONLY
-            // Ditching the deep $watch($wire.cafes) which causes major lag
-            this.$wire.on('cafes-updated', (event) => {
-                const data = event.detail?.cafes || event.cafes;
-                if (data && typeof data === 'object') {
-                    this.cafes = Array.isArray(data) ? [...data] : Object.values(data);
-                }
-            });
-        },
-
-        filteredCafes() {
-            if (!this.cafes || !Array.isArray(this.cafes)) return [];
-
-            // Search cache
-            const q = (this.search || '').trim().toLowerCase();
-            const filter = this.activeFilter;
-            const letter = this.activeLetter;
-
-            return this.cafes.filter(c => {
-                // Search filter
-                if (q !== '') {
-                    const name = (c.name || '').toLowerCase();
-                    const addr = (c.address || '').toLowerCase();
-                    if (!name.includes(q) && !addr.includes(q)) return false;
-                }
-
-                // Status filter
-                if (filter === 'buka' && !c.isOpen) return false;
-
-                // Alphabet filter
-                if (letter) {
-                    const name = (c.name || '').trim().toUpperCase();
-                    if (!name.startsWith(letter)) return false;
-                }
-
-                return true;
-            }).sort((a, b) => {
-                // Sorting logic
-                if (this.activeSort === 'name_az') return (a.name || '').localeCompare(b.name || '');
-                if (this.activeSort === 'name_za') return (b.name || '').localeCompare(a.name || '');
-                if (filter === 'terdekat' && this.userLat && this.userLng) {
-                    return (a.distance || 0) - (b.distance || 0);
-                }
-                return 0;
-            });
+            // Keep header scroll effect
+            this.isScrolled = window.pageYOffset > 50;
         },
 
         getLocation() {
-            if (!navigator.geolocation) return;
+            if (!navigator.geolocation) {
+                alert('Geolocation is not supported by your browser');
+                return;
+            }
             this.isLocating = true;
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
-                    this.userLat = pos.coords.latitude;
-                    this.userLng = pos.coords.longitude;
+                    // Send to backend
+                    this.$wire.setUserLocation(pos.coords.latitude, pos.coords.longitude);
+                    this.$wire.set('filter', 'terdekat');
                     this.isLocating = false;
                 },
-                () => { this.isLocating = false; }
+                (err) => { 
+                    console.error(err);
+                    this.isLocating = false; 
+                    alert('Gagal mendapatkan lokasi. Pastikan GPS aktif.');
+                }
             );
-        },
-
-        calculateDistance(lat1, lon1, lat2, lon2) {
-            if (!lat2 || !lon2) return null;
-            const R = 6371; // km
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c;
-        },
-
-        formatDistance(km) {
-            if (km === null) return '';
-            return km < 1 ? Math.round(km * 1000) + 'm' : km.toFixed(1) + 'km';
         }
     }));
 </script>
