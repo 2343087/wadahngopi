@@ -135,7 +135,9 @@ class ExploreSearch extends Component
                 'image_path',
                 'social_links',
                 'opening_time',
-                'closing_time'
+                'closing_time',
+                'is_24_hours',
+                'operating_hours'
             ])
             ->with(['facilities:id,cafe_id,name', 'city:id,name']);
 
@@ -153,21 +155,51 @@ class ExploreSearch extends Component
             $query->where('name', 'like', $this->activeLetter . '%');
         }
 
-        // Filter Logic
+        // Filter Logic for "buka" - uses accessor for flexible hours support
         if ($this->filter === 'buka') {
             $now = now()->format('H:i:s');
-            $query->where(function ($q) use ($now) {
-                $q->where(function ($sub) use ($now) {
-                    $sub->whereColumn('closing_time', '>', 'opening_time')
-                        ->where('opening_time', '<=', $now)
-                        ->where('closing_time', '>=', $now);
-                })->orWhere(function ($sub) use ($now) {
-                    $sub->whereColumn('closing_time', '<', 'opening_time')
-                        ->where(function ($time) use ($now) {
-                            $time->where('opening_time', '<=', $now)
-                                ->orWhere('closing_time', '>=', $now);
-                        });
-                });
+            $isWeekend = in_array(now()->dayOfWeek, [0, 6]);
+
+            $query->where(function ($q) use ($now, $isWeekend) {
+                // 1. Cafe 24 jam = selalu buka
+                $q->where('is_24_hours', true)
+                    // 2. Atau cek dari operating_hours (weekday/weekend)
+                    ->orWhere(function ($sub) use ($now, $isWeekend) {
+                        $hourKey = $isWeekend ? 'weekend' : 'weekday';
+                        $sub->whereNotNull('operating_hours')
+                            ->where(function ($time) use ($now, $hourKey) {
+                                // Normal hours (open < close)
+                                $time->whereRaw("JSON_EXTRACT(operating_hours, '$.$hourKey.close') > JSON_EXTRACT(operating_hours, '$.$hourKey.open')")
+                                    ->whereRaw("JSON_EXTRACT(operating_hours, '$.$hourKey.open') <= ?", [$now])
+                                    ->whereRaw("JSON_EXTRACT(operating_hours, '$.$hourKey.close') >= ?", [$now]);
+                            })
+                            ->orWhere(function ($time) use ($now, $hourKey) {
+                                // Overnight hours (open > close)
+                                $time->whereRaw("JSON_EXTRACT(operating_hours, '$.$hourKey.close') < JSON_EXTRACT(operating_hours, '$.$hourKey.open')")
+                                    ->where(function ($overnight) use ($now, $hourKey) {
+                                    $overnight->whereRaw("JSON_EXTRACT(operating_hours, '$.$hourKey.open') <= ?", [$now])
+                                        ->orWhereRaw("JSON_EXTRACT(operating_hours, '$.$hourKey.close') >= ?", [$now]);
+                                });
+                            });
+                    })
+                    // 3. Fallback ke field lama (backward compatibility)
+                    ->orWhere(function ($sub) use ($now) {
+                        $sub->whereNull('operating_hours')
+                            ->where('is_24_hours', false)
+                            ->where(function ($legacy) use ($now) {
+                                $legacy->where(function ($normal) use ($now) {
+                                    $normal->whereColumn('closing_time', '>', 'opening_time')
+                                        ->where('opening_time', '<=', $now)
+                                        ->where('closing_time', '>=', $now);
+                                })->orWhere(function ($overnight) use ($now) {
+                                    $overnight->whereColumn('closing_time', '<', 'opening_time')
+                                        ->where(function ($time) use ($now) {
+                                            $time->where('opening_time', '<=', $now)
+                                                ->orWhere('closing_time', '>=', $now);
+                                        });
+                                });
+                            });
+                    });
             });
         } elseif ($this->filter === 'terdekat' && $this->userLat && $this->userLng) {
             // "Terdekat" filter implies sorting by distance

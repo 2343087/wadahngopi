@@ -194,16 +194,46 @@ class CafeResource extends Resource
 
                         Forms\Components\Section::make('Nongkrong Jam Berapa? 🕒')
                             ->schema([
-                                Forms\Components\TimePicker::make('opening_time')
-                                    ->label('Mulai Buka')
-                                    ->seconds(false)
-                                    ->format('H:i')
-                                    ->displayFormat('H:i'),
-                                Forms\Components\TimePicker::make('closing_time')
-                                    ->label('Udah Tutup')
-                                    ->seconds(false)
-                                    ->format('H:i')
-                                    ->displayFormat('H:i'),
+                                // Toggle 24 Jam
+                                Forms\Components\Toggle::make('is_24_hours')
+                                    ->label('Buka 24 Jam Non-Stop 🔥')
+                                    ->helperText('Aktifkan jika cafe kamu buka seharian penuh!')
+                                    ->live()
+                                    ->columnSpanFull(),
+
+                                // Jam Weekday (Senin-Jumat)
+                                Forms\Components\Fieldset::make('Jam Hari Kerja (Senin - Jumat)')
+                                    ->schema([
+                                        Forms\Components\TimePicker::make('operating_hours.weekday.open')
+                                            ->label('Buka')
+                                            ->seconds(false)
+                                            ->format('H:i')
+                                            ->displayFormat('H:i'),
+                                        Forms\Components\TimePicker::make('operating_hours.weekday.close')
+                                            ->label('Tutup')
+                                            ->seconds(false)
+                                            ->format('H:i')
+                                            ->displayFormat('H:i'),
+                                    ])
+                                    ->columns(2)
+                                    ->hidden(fn(Forms\Get $get): bool => (bool) $get('is_24_hours')),
+
+                                // Jam Weekend (Sabtu-Minggu)
+                                Forms\Components\Fieldset::make('Jam Akhir Pekan (Sabtu - Minggu)')
+                                    ->schema([
+                                        Forms\Components\TimePicker::make('operating_hours.weekend.open')
+                                            ->label('Buka')
+                                            ->seconds(false)
+                                            ->format('H:i')
+                                            ->displayFormat('H:i'),
+                                        Forms\Components\TimePicker::make('operating_hours.weekend.close')
+                                            ->label('Tutup')
+                                            ->seconds(false)
+                                            ->format('H:i')
+                                            ->displayFormat('H:i'),
+                                    ])
+                                    ->columns(2)
+                                    ->hidden(fn(Forms\Get $get): bool => (bool) $get('is_24_hours')),
 
                                 Forms\Components\ViewField::make('location_trigger')
                                     ->view('filament.components.location-button')

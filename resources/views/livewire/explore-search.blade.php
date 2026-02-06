@@ -195,10 +195,14 @@
                     @php
                         $isOpen = $cafe->is_open;
                         $timeText = '';
-                        if ($isOpen && $cafe->closing_time) {
-                            $timeText = '• Sampai ' . \Carbon\Carbon::parse($cafe->closing_time)->format('H:i');
-                        } elseif (!$isOpen && $cafe->opening_time) {
-                            $timeText = '• Buka ' . \Carbon\Carbon::parse($cafe->opening_time)->format('H:i');
+                        $todayHours = $cafe->today_hours;
+
+                        if ($cafe->is_24_hours) {
+                            $timeText = '• 24 Jam';
+                        } elseif ($isOpen && isset($todayHours['close'])) {
+                            $timeText = '• Sampai ' . \Carbon\Carbon::parse($todayHours['close'])->format('H:i');
+                        } elseif (!$isOpen && isset($todayHours['open'])) {
+                            $timeText = '• Buka ' . \Carbon\Carbon::parse($todayHours['open'])->format('H:i');
                         }
                     @endphp
                     <div class="cafe-status-badge-smart {{ $isOpen ? 'open' : 'closed' }}">
