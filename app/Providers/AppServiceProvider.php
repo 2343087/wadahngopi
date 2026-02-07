@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use App\Models\Cafe;
+use App\Observers\CafeObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Cafe::observe(CafeObserver::class);
         if (app()->isLocal()) {
             //
         } else {

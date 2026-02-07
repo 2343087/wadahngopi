@@ -122,7 +122,8 @@
             @endforeach
         </div>
 
-        <div class="explore-result-counter-wrapper">
+        {{-- Sengaja Gw Hide Dulu Jangan Di Rubah Jangan Di Aktifkan Kalau Gw Gak nyuruh --}}
+        <!-- <div class="explore-result-counter-wrapper">
             <div class="explore-result-counter">
                 <span class="counter-number">{{ $cafes->total() }}</span>
                 <span class="counter-text">cafe ditemukan</span>
@@ -131,7 +132,7 @@
                 <i class="ph ph-circle-notch animate-spin"></i>
                 <span>Mencari...</span>
             </div>
-        </div>
+        </div> -->
     </header>
 
     {{-- Content Spacer for Fixed Header (Static height to prevent jumping) --}}
@@ -225,6 +226,14 @@
 
 
 
+                    {{-- Distance Badge (Only when location is available) --}}
+                    @if(isset($cafe->distance))
+                        <div class="cafe-distance-badge">
+                            <i class="ph-fill ph-navigation-arrow text-amber-500"></i>
+                            <span>{{ number_format($cafe->distance, 1) }} km</span>
+                        </div>
+                    @endif
+
                 {{-- Card Content --}}
                 <div class="cafe-card-content">
                     <h3 class="cafe-card-title">{{ $cafe->name }}</h3>
@@ -288,7 +297,7 @@
             width: 100%;
             max-width: 480px;
             z-index: 1000;
-            padding: 40px 24px 14px;
+            padding: 32px 20px 12px;
             background: #FFFDFB;
             border-radius: 0 0 32px 32px;
             overflow: visible;
@@ -297,11 +306,11 @@
             will-change: padding, background, box-shadow;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .header-spacer-2026 {
-            height: 380px; /* Safe static height to prevent content overlap */
+            height: 330px; /* Reduced to match smaller header */
             width: 100%;
         }
 
@@ -384,7 +393,7 @@
         }
 
         .explore-brand {
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             font-weight: 900;
             color: #2C1810;
             letter-spacing: -0.01em;
@@ -405,11 +414,10 @@
         }
 
         .explore-logo-box {
-            width: 36px;
-            /* Slightly smaller */
-            height: 36px;
+            width: 32px;
+            height: 32px;
             background: white;
-            border-radius: 10px;
+            border-radius: 9px;
             overflow: hidden;
             box-shadow: 0 4px 16px rgba(26, 15, 10, 0.1);
             display: flex;
@@ -418,8 +426,8 @@
         }
 
         .explore-logo-box img {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             object-fit: contain;
         }
 
@@ -427,10 +435,10 @@
         .explore-search-2026 {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
             background: white;
-            padding: 14px 18px;
-            border-radius: 22px;
+            padding: 10px 16px;
+            border-radius: 20px;
             box-shadow: 0 4px 24px rgba(26, 15, 10, 0.08), inset 0 0 0 1px rgba(26, 15, 10, 0.03);
             position: relative;
             z-index: 100;
@@ -443,15 +451,15 @@
         }
 
         .search-icon-pulse {
-            width: 40px;
-            height: 40px;
+            width: 34px;
+            height: 34px;
             background: linear-gradient(135deg, var(--color-espresso) 0%, var(--color-coffee) 100%);
-            border-radius: 14px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.1rem;
+            font-size: 1rem;
             flex-shrink: 0;
         }
 
@@ -459,7 +467,7 @@
             flex: 1;
             border: none;
             outline: none;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             color: var(--color-espresso);
             background: transparent;
@@ -472,15 +480,15 @@
         }
 
         .explore-sort-btn {
-            width: 44px;
-            height: 44px;
+            width: 38px;
+            height: 38px;
             background: #F5EFED;
-            border-radius: 14px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #2C1810;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             transition: all 0.3s ease;
             flex-shrink: 0;
             border: 1px solid rgba(26, 15, 10, 0.08);
@@ -603,12 +611,12 @@
         .category-pill {
             display: flex;
             align-items: center;
-            gap: 7px;
-            padding: 10px 18px;
+            gap: 6px;
+            padding: 8px 14px;
             background: white;
             border: 1px solid rgba(26, 15, 10, 0.1);
             border-radius: 100px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: #2C1810;
             white-space: nowrap;
@@ -680,11 +688,11 @@
         }
 
         .city-pill {
-            padding: 10px 18px;
+            padding: 8px 14px;
             background: white;
             border: 1px solid rgba(26, 15, 10, 0.12);
             border-radius: 100px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: #5C4A3D;
             white-space: nowrap;
@@ -1258,9 +1266,20 @@
                     this.isLocating = false;
                 },
                 (err) => { 
-                    console.error(err);
+                    console.error('Geolocation Error:', err);
                     this.isLocating = false; 
-                    alert('Gagal mendapatkan lokasi. Pastikan GPS aktif.');
+                    
+                    if (err.code === 1) { // PERMISSION_DENIED
+                        if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+                            alert('⚠️ Fitur "Terdekat" butuh koneksi aman (HTTPS). Gunakan "herd secure" atau akses via localhost.');
+                        } else {
+                            alert('Gagal: Izin lokasi ditolak. Cek pengaturan browser lo.');
+                        }
+                    } else if (err.code === 2) { // POSITION_UNAVAILABLE
+                        alert('Gagal: Lokasi gak ketemu. Cek GPS atau sinyal.');
+                    } else {
+                        alert('Gagal mendapatkan lokasi. Masalah teknis.');
+                    }
                 }
             );
         }

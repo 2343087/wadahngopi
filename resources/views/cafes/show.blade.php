@@ -61,13 +61,13 @@
         }
     </style>
 
-    <div class="detail-wrapper" x-data='cafeDetailComponent({
-                                                                                                        id: {{ $cafe->id }},
-                                                                                                        images: {!! json_encode($galleryImages) !!},
-                                                                                                        allCategories: {!! json_encode($allCats) !!},
-                                                                                                        defaultTab: {!! json_encode($defaultTab) !!},
-                                                                                                        menuImages: {!! json_encode($activeGalleryImages->map(fn($img) => ["url" => Storage::url($img["image"]), "tag" => $img["tag"]])->values()) !!}
-                                                                                                    })'>
+    <div class="detail-wrapper" x-data="cafeDetailComponent({
+                        id: {{ $cafe->id }},
+                        images: {{ json_encode($galleryImages) }},
+                        allCategories: {{ json_encode($allCats) }},
+                        defaultTab: {{ json_encode($defaultTab) }},
+                        menuImages: {{ json_encode($activeGalleryImages->map(fn($img) => ['url' => Storage::url($img['image']), 'tag' => $img['tag']])->values()) }}
+                    })">
 
         {{-- Hero Slider Section --}}
         <div class="detail-hero-luxury" @touchstart="touchStart($event)" @touchend="touchEnd($event)">
@@ -95,14 +95,13 @@
 
             {{-- Slider Images --}}
             <template x-for="(img, idx) in images" :key="idx">
-                <div x-show="currentSlide === idx" x-transition:enter="transition duration-700 ease-out"
-                    x-transition:enter-start="opacity-0 scale-110" x-transition:enter-end="opacity-100 scale-100"
-                    class="absolute inset-0">
-                    <img :src="img" class="detail-gallery-img" alt="Cafe">
+                <div x-show="currentSlide === idx" class="absolute inset-0 z-0 cursor-pointer"
+                    @click="activeHeroLightboxIdx = idx">
+                    <img :src="img" class="detail-gallery-img w-full h-full object-cover" alt="Cafe">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20"></div>
                 </div>
             </template>
-            <div x-show="images.length === 0" class="absolute inset-0 bg-slate-200 flex items-center justify-center">
+            <div x-show="images.length === 0" class="absolute inset-0 z-0 bg-slate-200 flex items-center justify-center">
                 <img src="https://placehold.co/1200x800?text={{ urlencode($cafe->name) }}"
                     class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-black/20"></div>
@@ -137,7 +136,7 @@
             {{-- Kontak & Sosmed Section --}}
             @php
                 // Filter active social links - handle various boolean representations
-                $activeSocialLinks = collect($cafe->social_links ?? [])->filter(function($link) {
+                $activeSocialLinks = collect($cafe->social_links ?? [])->filter(function ($link) {
                     $isVisible = isset($link['show']) && filter_var($link['show'], FILTER_VALIDATE_BOOLEAN);
                     $hasUrl = !empty($link['url']);
                     return $isVisible && $hasUrl;
@@ -173,8 +172,13 @@
                             @endif
 
                             @if($hasWhatsApp)
-                                <a href="https://wa.me/{{ e(preg_replace('/[^0-9]/', '', $cafe->whatsapp_number)) }}" target="_blank"
-                                    rel="noopener noreferrer"
+                                @php
+                                    $rawWa = preg_replace('/[^0-9]/', '', $cafe->whatsapp_number);
+                                    if (str_starts_with($rawWa, '08')) {
+                                        $rawWa = '62' . substr($rawWa, 1);
+                                    }
+                                @endphp
+                                <a href="https://wa.me/{{ $rawWa }}" target="_blank" rel="noopener noreferrer"
                                     class="flex-1 flex items-center gap-3 p-3 rounded-2xl border border-espresso/5 bg-white shadow-soft active:scale-[0.98] transition-all no-underline hover:border-green-500/30">
                                     <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-green-50 rounded-xl">
                                         <i class="ph-fill ph-whatsapp-logo text-green-600 text-lg"></i>
@@ -213,7 +217,8 @@
                                 @endphp
                                 <a href="{{ e($link['url']) }}" target="_blank" rel="noopener noreferrer"
                                     class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-espresso/5 bg-white shadow-soft text-espresso active:scale-95 transition-all no-underline hover:bg-espresso hover:text-white group/social">
-                                    <i class="{{ $iconClass }} text-sm text-amber-600 group-hover/social:text-white transition-colors"></i>
+                                    <i
+                                        class="{{ $iconClass }} text-sm text-amber-600 group-hover/social:text-white transition-colors"></i>
                                     <span class="text-[0.7rem] font-bold uppercase tracking-wider">{{ $label }}</span>
                                 </a>
                             @endforeach
@@ -232,7 +237,8 @@
                     @forelse($cafe->facilities as $f)
                         <div
                             class="bg-white border border-espresso/5 px-4 py-2.5 rounded-xl flex items-center gap-2.5 transition-all shadow-soft group/fac">
-                            <i class="{{ $f->icon ?? 'ph ph-check-circle' }} text-espresso/60 text-lg group-hover/fac:text-amber-600 transition-colors"></i>
+                            <i
+                                class="{{ $f->icon ?? 'ph ph-check-circle' }} text-espresso/60 text-lg group-hover/fac:text-amber-600 transition-colors"></i>
                             <span class="font-bold text-espresso text-[0.8rem]">{{ $f->name }}</span>
                         </div>
                     @empty
@@ -241,48 +247,197 @@
                 </div>
             </section>
 
-            {{-- Menu Section (Clean & Simple) --}}
-            <section x-data="{ activeImage: null }">
-                {{-- Simple Header --}}
-                <div class="flex items-center justify-between mb-5">
-                    <h2 class="text-xl font-black text-[#2C1810]">Daftar Menu</h2>
-                    @if($activeGalleryImages->count() > 0)
-                        <span class="text-xs font-bold text-slate-400">{{ $activeGalleryImages->count() }} foto</span>
-                    @endif
+            {{-- Hero-Style Menu Section --}}
+            <section x-data="{ 
+                                                                activeMenuIdx: 0,
+                                                                activeLightboxIdx: null,
+                                                                touchStartX: 0,
+                                                                lastWheelTime: 0,
+
+                                                                scrollTo(idx) {
+                                                                    const el = this.$refs.menuSlider;
+                                                                    const item = el.children[idx];
+                                                                    el.scrollTo({ left: item.offsetLeft - (el.offsetWidth - item.offsetWidth) / 2, behavior: 'smooth' });
+                                                                },
+                                                                updateIdx() {
+                                                                    const el = this.$refs.menuSlider;
+                                                                    const center = el.scrollLeft + el.offsetWidth / 2;
+                                                                    let minDiff = Infinity;
+                                                                    let closestIdx = 0;
+                                                                    Array.from(el.children).forEach((child, i) => {
+                                                                        const diff = Math.abs((child.offsetLeft + child.offsetWidth / 2) - center);
+                                                                        if(diff < minDiff) { minDiff = diff; closestIdx = i; }
+                                                                    });
+                                                                    this.activeMenuIdx = closestIdx;
+                                                                },
+                                                                nextLightbox() {
+                                                                    const len = this.menuImages.length;
+                                                                    if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx + 1) % len;
+                                                                },
+                                                                prevLightbox() {
+                                                                    const len = this.menuImages.length;
+                                                                    if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx - 1 + len) % len;
+                                                                },
+                                                                handleWheel(e) {
+                                                                    const now = Date.now();
+                                                                    if (now - this.lastWheelTime < 250) return; // Cooldown biar gak lompat-lompat
+                                                                    if (Math.abs(e.deltaY) < 30) return; // Abaikan scroll halus
+
+                                                                    if (e.deltaY > 0) this.nextLightbox();
+                                                                    else this.prevLightbox();
+
+                                                                    this.lastWheelTime = now;
+                                                                }
+                                                            }" class="relative">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-black text-[#2C1810] tracking-tight">Daftar Menu</h2>
+                    <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-full">
+                        <i class="ph ph-image text-slate-400"></i>
+                        <span
+                            class="text-[0.7rem] font-black text-slate-500 uppercase tracking-tighter">{{ $activeGalleryImages->count() }}
+                            Foto</span>
+                    </div>
                 </div>
 
                 @if($activeGalleryImages->count() > 0)
-                    {{-- Simple Grid - 2 columns --}}
-                    <div class="grid grid-cols-2 gap-3">
-                        @foreach($activeGalleryImages as $index => $img)
-                            <div class="cursor-pointer active:scale-95 transition-transform"
-                                @click="activeImage = '{{ Storage::url($img['image']) }}'">
-                                <img src="{{ Storage::url($img['image']) }}"
-                                    class="w-full aspect-square object-cover rounded-2xl shadow-md"
-                                    alt="{{ $img['tag'] }}" loading="lazy">
-                            </div>
-                        @endforeach
+                    {{-- Large Hero-Style Menu Slider --}}
+                    <div class="relative group">
+                        <div x-ref="menuSlider" @scroll.debounce.50ms="updateIdx()"
+                            class="flex gap-4 overflow-x-auto pb-8 scrollbar-hide snap-x snap-mandatory -mx-6 px-6">
+                            @foreach($activeGalleryImages as $index => $img)
+                                <div class="flex-none w-[85%] sm:w-[320px] snap-center cursor-pointer active:scale-[0.98] transition-all"
+                                    @click="activeLightboxIdx = {{ $index }}">
+                                    <div
+                                        class="relative aspect-[4/5] rounded-[32px] overflow-hidden shadow-2xl border-4 border-white">
+                                        <img src="{{ Storage::url($img['image']) }}"
+                                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                            alt="{{ $img['tag'] }}" loading="lazy">
+
+                                        {{-- Dark Gradient Overlay --}}
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent">
+                                        </div>
+
+                                        {{-- Tag Badge --}}
+                                        @if(!empty($img['tag']))
+                                            <div class="absolute bottom-5 left-5 right-5">
+                                                <div
+                                                    class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-xl border border-white/30 px-4 py-2 rounded-2xl">
+                                                    <span
+                                                        class="text-[0.7rem] font-black text-white uppercase tracking-widest">{{ $img['tag'] }}</span>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
 
-                    {{-- Lightbox --}}
-                    <div x-show="activeImage" x-transition.opacity
-                        class="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center p-4"
-                        @click.self="activeImage = null" x-cloak>
-                        <button @click="activeImage = null"
-                            class="absolute top-5 right-5 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white">
-                            <i class="ph-bold ph-x text-lg"></i>
+                    {{-- Lightbox (Hero Style with Slider) --}}
+                    <div x-show="activeLightboxIdx !== null" x-transition.opacity
+                        class="fixed inset-0 z-[10000] bg-black/98 backdrop-blur-xl flex flex-col items-center justify-center p-0"
+                        @keydown.escape.window="activeLightboxIdx = null" @keydown.left.window="prevLightbox()"
+                        @keydown.right.window="nextLightbox()" @wheel.prevent="handleWheel($event)"
+                        @touchstart="touchStartX = $event.touches[0].clientX"
+                        @touchend="if (touchStartX - $event.changedTouches[0].clientX > 50) nextLightbox(); if (touchStartX - $event.changedTouches[0].clientX < -50) prevLightbox();"
+                        @click.self="activeLightboxIdx = null" x-cloak>
+
+                        {{-- Close Button --}}
+                        <button @click="activeLightboxIdx = null"
+                            class="absolute top-6 right-6 z-[10001] w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white border border-white/10 transition-all active:scale-90">
+                            <i class="ph-bold ph-x text-xl"></i>
                         </button>
-                        <img :src="activeImage" class="max-w-full max-h-[90vh] rounded-xl object-contain" alt="Menu">
+
+                        {{-- Nav Arrows (Desktop Focus) --}}
+                        <button x-show="menuImages.length > 1" @click="prevLightbox()"
+                            class="hidden sm:flex absolute left-8 z-[10001] w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full items-center justify-center text-white transition-all active:scale-90 border border-white/10">
+                            <i class="ph-bold ph-caret-left text-3xl"></i>
+                        </button>
+                        <button x-show="menuImages.length > 1" @click="nextLightbox()"
+                            class="hidden sm:flex absolute right-8 z-[10001] w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full items-center justify-center text-white transition-all active:scale-90 border border-white/10">
+                            <i class="ph-bold ph-caret-right text-3xl"></i>
+                        </button>
+
+                        {{-- Slides Container --}}
+                        <div class="w-full h-full flex items-center justify-center relative overflow-hidden"
+                            @click.self="activeLightboxIdx = null">
+                            <template x-for="(m, i) in menuImages" :key="i">
+                                <div x-show="activeLightboxIdx === i" x-transition:enter="transition duration-500 ease-out"
+                                    x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
+                                    class="px-4 text-center max-w-[95%]">
+                                    <img :src="m.url"
+                                        class="max-w-full max-h-[85vh] rounded-[32px] shadow-3xl object-contain mx-auto border-4 border-white/10"
+                                        :alt="m.tag" @click.stop>
+                                </div>
+                            </template>
+                        </div>
+
+                        {{-- Counter Indicator --}}
+                        <div
+                            class="absolute bottom-10 bg-white/10 backdrop-blur-md px-5 py-2 rounded-full border border-white/10">
+                            <span class="text-white font-black text-xs tracking-[0.2em]">
+                                <span x-text="activeLightboxIdx + 1"></span> / <span x-text="menuImages.length"></span>
+                            </span>
+                        </div>
                     </div>
                 @else
-                    <div class="py-10 text-center bg-slate-50 rounded-2xl">
-                        <i class="ph ph-image text-3xl text-slate-200 mb-2 block"></i>
-                        <p class="text-slate-400 text-sm">Menu belum tersedia</p>
+                    <div class="py-16 text-center bg-slate-50/50 rounded-[32px] border-2 border-dashed border-slate-200">
+                        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="ph ph-image-square text-3xl text-slate-300"></i>
+                        </div>
+                        <p class="text-slate-400 font-bold text-sm">Belum ada menu yang diunggah</p>
                     </div>
                 @endif
             </section>
 
             <div class="h-24"></div>
+        </div>
+
+        {{-- Hero Gallery Lightbox (Premium Slider) --}}
+        <div x-show="activeHeroLightboxIdx !== null" x-transition.opacity
+            class="fixed inset-0 z-[20000] bg-black/98 backdrop-blur-xl flex flex-col items-center justify-center p-0"
+            @keydown.escape.window="activeHeroLightboxIdx = null" @keydown.left.window="prevHero()"
+            @keydown.right.window="nextHero()" @wheel.prevent="handleHeroWheel($event)"
+            @touchstart="touchHeroStartX = $event.touches[0].clientX"
+            @touchend="if (touchHeroStartX - $event.changedTouches[0].clientX > 50) nextHero(); if (touchHeroStartX - $event.changedTouches[0].clientX < -50) prevHero();"
+            @click.self="activeHeroLightboxIdx = null" x-cloak>
+
+            {{-- Close Button --}}
+            <button @click="activeHeroLightboxIdx = null"
+                class="absolute top-6 right-6 z-[20001] w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white border border-white/10 transition-all active:scale-90">
+                <i class="ph-bold ph-x text-xl"></i>
+            </button>
+
+            {{-- Nav Arrows --}}
+            <button x-show="images.length > 1" @click="prevHero()"
+                class="hidden sm:flex absolute left-8 z-[20001] w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full items-center justify-center text-white transition-all active:scale-90 border border-white/10">
+                <i class="ph-bold ph-caret-left text-3xl"></i>
+            </button>
+            <button x-show="images.length > 1" @click="nextHero()"
+                class="hidden sm:flex absolute right-8 z-[20001] w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full items-center justify-center text-white transition-all active:scale-90 border border-white/10">
+                <i class="ph-bold ph-caret-right text-3xl"></i>
+            </button>
+
+            {{-- Slides Container --}}
+            <div class="w-full h-full flex items-center justify-center relative overflow-hidden"
+                @click.self="activeHeroLightboxIdx = null">
+                <template x-for="(img, i) in images" :key="i">
+                    <div x-show="activeHeroLightboxIdx === i" x-transition:enter="transition duration-500 ease-out"
+                        x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
+                        class="px-4 text-center max-w-[95%]">
+                        <img :src="img"
+                            class="max-w-full max-h-[85vh] rounded-[32px] shadow-3xl object-contain mx-auto border-4 border-white/10"
+                            @click.stop>
+                    </div>
+                </template>
+            </div>
+
+            {{-- Counter Indicator --}}
+            <div class="absolute bottom-10 bg-white/10 backdrop-blur-md px-5 py-2 rounded-full border border-white/10">
+                <span class="text-white font-black text-xs tracking-[0.2em]">
+                    <span x-text="activeHeroLightboxIdx + 1"></span> / <span x-text="images.length"></span>
+                </span>
+            </div>
         </div>
     </div>
 
@@ -291,6 +446,8 @@
             Alpine.data('cafeDetailComponent', (props) => ({
                 currentSlide: 0, currentTab: '', allCategories: [], images: [], isBookmarked: false, visitorId: '', tx: 0,
                 menuImages: [], touchStartX: 0,
+                activeHeroLightboxIdx: null, touchHeroStartX: 0, lastHeroWheelTime: 0,
+
                 init() {
                     this.allCategories = props.allCategories || []; this.images = props.images || []; this.currentTab = props.defaultTab || '';
                     this.menuImages = props.menuImages || [];
@@ -299,11 +456,22 @@
                         let vid = localStorage.getItem('wadah-visitor-id'); if (!vid) { vid = 'visitor-' + Math.random().toString(36).substr(2, 9) + Date.now(); localStorage.setItem('wadah-visitor-id', vid); } this.visitorId = vid;
                         const saved = JSON.parse(localStorage.getItem('wadah-bookmarks') || '[]'); this.isBookmarked = saved.includes(props.id);
                     } catch (e) { }
-                    setInterval(() => { this.nextSlide(); }, 6000);
+                    setInterval(() => { if (this.activeHeroLightboxIdx === null) this.nextSlide(); }, 6000);
                 },
                 nextSlide() { const len = this.images.length; if (len > 0) this.currentSlide = (this.currentSlide + 1) % len; },
                 prevSlide() { const len = this.images.length; if (len > 0) this.currentSlide = (this.currentSlide - 1 + len) % len; },
                 touchStart(e) { this.tx = e.touches[0].clientX; }, touchEnd(e) { const dx = this.tx - e.changedTouches[0].clientX; if (Math.abs(dx) > 40) { dx > 0 ? this.nextSlide() : this.prevSlide(); } },
+
+                nextHero() { const len = this.images.length; if (this.activeHeroLightboxIdx !== null) this.activeHeroLightboxIdx = (this.activeHeroLightboxIdx + 1) % len; },
+                prevHero() { const len = this.images.length; if (this.activeHeroLightboxIdx !== null) this.activeHeroLightboxIdx = (this.activeHeroLightboxIdx - 1 + len) % len; },
+                handleHeroWheel(e) {
+                    const now = Date.now();
+                    if (now - this.lastHeroWheelTime < 250) return;
+                    if (Math.abs(e.deltaY) < 30) return;
+                    e.deltaY > 0 ? this.nextHero() : this.prevHero();
+                    this.lastHeroWheelTime = now;
+                },
+
                 toggleBookmark() { let b = JSON.parse(localStorage.getItem('wadah-bookmarks') || '[]'); this.isBookmarked ? b = b.filter(id => id !== props.id) : b.push(props.id); localStorage.setItem('wadah-bookmarks', JSON.stringify(b)); this.isBookmarked = !this.isBookmarked; },
                 shareCafe() {
                     const shareData = {

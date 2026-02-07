@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
 
@@ -25,6 +26,26 @@ class UserResource extends Resource
     public static function shouldRegisterNavigation(): bool
     {
         // Only Developer can see User Management
+        return auth()->user()->role === 'developer';
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->role === 'developer';
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->role === 'developer';
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()->role === 'developer';
+    }
+
+    public static function canDelete(Model $record): bool
+    {
         return auth()->user()->role === 'developer';
     }
 

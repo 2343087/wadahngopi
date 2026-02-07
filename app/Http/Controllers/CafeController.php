@@ -31,7 +31,7 @@ class CafeController extends Controller
     {
         abort_if($cafe->status !== 'published', 404);
 
-        $cafe->load(['reviews', 'facilities']);
+        $cafe->load(['facilities']);
 
         return view('cafes.show', compact('cafe'));
     }

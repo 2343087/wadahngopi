@@ -4,156 +4,232 @@
    ======================================== 
 */
 
-/* --- Global Vibe --- */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800;900&display=swap');
+
+:root {
+    --brand-amber: #f59e0b;
+    --brand-espresso: #1a0f0a;
+    --brand-bg-light: #fdfdfb;
+    --brand-bg-dark: #0f0805;
+    --card-radius: 28px;
+    --soft-shadow: 0 10px 40px -10px rgba(26, 15, 10, 0.08);
+    --glass-bg: rgba(255, 255, 255, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.5);
+}
+
+/* --- Global Reset --- */
 body {
-    background-color: #FAF9F6 !important;
-    /* Premium Off-White */
+    background-color: var(--brand-bg-light) !important;
     font-family: 'Outfit', sans-serif !important;
+    letter-spacing: -0.01em;
 }
 
-/* Dark Mode Override */
 .dark body {
-    background-color: #120b08 !important;
-    /* Deep Espresso */
-    background-image: radial-gradient(circle at 50% 0%, #2c1810 0%, #120b08 70%);
+    background-color: var(--brand-bg-dark) !important;
+    background-image: radial-gradient(circle at 50% 0%, #1e130f 0%, #0f0805 100%) !important;
 }
 
-/* --- Authenticated/Dashboard Page --- */
+/* --- Navigation & Layout --- */
 
-/* Sidebar */
+/* Sidebar Glassmorphism */
 .fi-sidebar {
     background-color: transparent !important;
     border-right: none !important;
-}
-
-.fi-sidebar-header {
-    background-color: transparent !important;
+    padding: 1.5rem 0 1.5rem 1rem !important;
 }
 
 .fi-sidebar-nav {
-    background: rgba(255, 255, 255, 0.5) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border-right: 1px solid rgba(255, 255, 255, 0.4) !important;
-    margin-top: 10px;
-    border-radius: 0 24px 24px 0;
-    box-shadow: 4px 0 24px rgba(26, 15, 10, 0.03);
-    padding-right: 8px;
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 32px !important;
+    box-shadow: var(--soft-shadow) !important;
+    margin-right: 1.5rem !important;
+    padding: 1rem 0.5rem !important;
 }
 
 .dark .fi-sidebar-nav {
-    background: rgba(18, 11, 8, 0.6) !important;
-    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+    background: rgba(30, 19, 15, 0.6) !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3) !important;
 }
 
 /* Sidebar Branding */
+.fi-sidebar-header {
+    margin-bottom: 2rem !important;
+    padding: 0 1.5rem !important;
+}
+
 .fi-sidebar-header .fi-logo {
-    font-size: 1.25rem !important;
-    font-weight: 800 !important;
-    color: #2C1810 !important;
+    font-size: 1.5rem !important;
+    font-weight: 900 !important;
+    color: var(--brand-espresso) !important;
+    letter-spacing: -0.03em !important;
 }
 
 .dark .fi-sidebar-header .fi-logo {
-    color: #FFFDFB !important;
+    color: white !important;
 }
 
-/* Fix Logo Visibility in Dark Mode (Invert if dark logo) */
-.dark .fi-sidebar-header img {
-    filter: brightness(0) invert(1);
-    opacity: 0.9;
+/* Topbar */
+.fi-topbar {
+    background: transparent !important;
 }
 
-/* --- Cards & Panels --- */
+.fi-topbar nav {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+    margin: 1rem 2rem !important;
+    border-radius: 20px !important;
+    box-shadow: 0 4px 20px rgba(26, 15, 10, 0.03) !important;
+}
+
+.dark .fi-topbar nav {
+    background: rgba(30, 19, 15, 0.7) !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* --- Components --- */
+
+/* Cards - Deep Redesign */
 .fi-section,
 .fi-wi-stats-overview-stat,
 .fi-ta {
-    background-color: #ffffff !important;
-    border-radius: 20px !important;
-    border: 1px solid rgba(26, 15, 10, 0.05) !important;
-    box-shadow: 0 4px 20px rgba(26, 15, 10, 0.04) !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.fi-wi-stats-overview-stat:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(26, 15, 10, 0.08) !important;
+    background: white !important;
+    border-radius: var(--card-radius) !important;
+    border: 1px solid rgba(26, 15, 10, 0.04) !important;
+    box-shadow: var(--soft-shadow) !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    overflow: hidden !important;
 }
 
 .dark .fi-section,
 .dark .fi-wi-stats-overview-stat,
 .dark .fi-ta {
-    background-color: #1e130f !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+    background: #150d0a !important;
+    border-color: rgba(255, 255, 255, 0.03) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
 }
 
-/* --- Login Page (The Welcome) --- */
-.fi-simple-layout {
-    background-image: url('https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=2071&auto=format&fit=crop');
-    background-size: cover;
-    background-position: center;
-    position: relative;
+/* Stat Widgets Hoover */
+.fi-wi-stats-overview-stat:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.15) !important;
+    border-color: var(--brand-amber) !important;
 }
 
-/* Dark Overlay for Login */
-.fi-simple-layout::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(44, 24, 16, 0.85), rgba(18, 11, 8, 0.95));
-    z-index: 0;
+/* Table Enhancements */
+.fi-ta-header-ctn {
+    padding: 1.5rem !important;
 }
 
-.fi-simple-main,
-.fi-simple-footer {
-    position: relative;
-    z-index: 10;
+.fi-ta-table {
+    border-spacing: 0 0.5rem !important;
+    border-collapse: separate !important;
 }
 
-/* Login Card */
-.fi-simple-main .fi-section {
-    background: rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
-    color: white !important;
+.fi-ta-row {
+    background: rgba(255, 255, 255, 0.2) !important;
+    transition: all 0.2s ease !important;
 }
 
-/* Login Inputs */
-.fi-simple-main input {
-    background: rgba(0, 0, 0, 0.2) !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
-    color: white !important;
+.fi-ta-row:hover {
+    background: rgba(245, 158, 11, 0.03) !important;
 }
 
-.fi-simple-main input::placeholder {
-    color: rgba(255, 255, 255, 0.5) !important;
-}
-
-.fi-simple-main h1 {
-    color: #F59E0B !important;
-    /* Premium Amber */
-    font-weight: 900 !important;
-    font-size: 2rem !important;
-    text-align: center;
-    letter-spacing: -0.02em;
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-/* Button Primary */
+/* Buttons */
 .fi-btn-primary {
-    background: #F59E0B !important;
-    color: #2C1810 !important;
+    background: var(--brand-amber) !important;
+    color: var(--brand-espresso) !important;
+    border-radius: 16px !important;
     font-weight: 800 !important;
-    border-radius: 12px !important;
+    padding: 0.6rem 1.5rem !important;
+    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25) !important;
     border: none !important;
-    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3) !important;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease !important;
 }
 
 .fi-btn-primary:hover {
-    background: #fbbf24 !important;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(245, 158, 11, 0.35) !important;
+    background-color: #fbbf24 !important;
+}
+
+/* Input Styles Dashboard */
+.fi-input-wrp {
+    border-radius: 14px !important;
+    border: 1px solid rgba(26, 15, 10, 0.08) !important;
+    transition: all 0.3s ease !important;
+}
+
+.fi-input-wrp:focus-within {
+    border-color: var(--brand-amber) !important;
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1) !important;
+}
+
+/* Custom Welcome Banner Styling */
+.welcome-banner {
+    background: linear-gradient(135deg, var(--brand-espresso), #2c1810) !important;
+    border-radius: 32px !important;
+    padding: 3rem !important;
+    color: white !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-banner::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: var(--brand-amber);
+    opacity: 0.15;
+    filter: blur(80px);
+    border-radius: 100%;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fi-main {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Breadcrumbs */
+.fi-breadcrumbs {
+    margin-bottom: 0.5rem !important;
+}
+
+.fi-breadcrumbs-item-label {
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    font-size: 0.65rem !important;
+    color: var(--brand-amber) !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(26, 15, 10, 0.1);
+    border-radius: 10px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
 }

@@ -126,6 +126,8 @@ class CafeResource extends Resource
                         Forms\Components\Textarea::make('description')
                             ->label('Tentang Cafe Kamu')
                             ->placeholder('Ceritain dong apa yang bikin cafe kamu spesial...')
+                            ->rows(5)
+                            ->afterStateUpdated(fn($state, $set) => $set('description', clean($state)))
                             ->columnSpanFull(),
 
                         Forms\Components\FileUpload::make('image_path')
@@ -134,7 +136,9 @@ class CafeResource extends Resource
                             ->visibility('public')
                             ->label('Foto Profil Utama')
                             ->imageResizeTargetWidth('1200')
-                            ->imageEditor(),
+                            ->imageEditor()
+                            ->maxSize(2048)
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp']),
 
                         Forms\Components\FileUpload::make('images')
                             ->image()
@@ -147,6 +151,8 @@ class CafeResource extends Resource
                             ->reorderable()
                             ->imageResizeTargetWidth('1200')
                             ->imageEditor()
+                            ->maxSize(2048)
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                             ->columnSpanFull(),
 
                         Forms\Components\Section::make('Fasilitas Cafe 🛋️')
@@ -181,7 +187,8 @@ class CafeResource extends Resource
                                 Forms\Components\TextInput::make('whatsapp_number')
                                     ->tel()
                                     ->placeholder('0812xxxxxxxx')
-                                    ->label('Nomor WhatsApp (Aktif)'),
+                                    ->label('Nomor WhatsApp (Aktif)')
+                                    ->helperText('Format bebas (08xx atau 628xx). Sistem otomatis konversi ke link WA.'),
 
                                 Forms\Components\Select::make('city_id')
                                     ->relationship('city', 'name')

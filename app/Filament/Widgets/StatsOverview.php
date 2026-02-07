@@ -3,7 +3,6 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Cafe;
-use App\Models\Review;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Auth;
@@ -23,16 +22,13 @@ class StatsOverview extends BaseWidget
         $isDeveloper = $user->role === 'developer';
 
         $cafeQuery = Cafe::query();
-        $reviewQuery = Review::query();
-
         if (!$isDeveloper) {
             $cafeQuery->where('owner_id', $user->id);
-            $reviewQuery->whereHas('cafe', fn($q) => $q->where('owner_id', $user->id));
         }
 
         return [
             Stat::make('Total Kafe', $cafeQuery->count())
-                ->description('Cafe terdaftar di sistem')
+                ->description('Eksosistem WadahNgopi ☕')
                 ->descriptionIcon('heroicon-m-building-storefront')
                 ->color('primary')
                 ->chart(
@@ -44,20 +40,14 @@ class StatsOverview extends BaseWidget
                 ),
 
             Stat::make('Kafe Perlu Review', Cafe::where('status', 'review')->count())
-                ->description('Butuh persetujuan admin')
-                ->descriptionIcon('heroicon-m-clipboard-document-check')
+                ->description('Butuh sentuhan admin 🔍')
+                ->descriptionIcon('heroicon-m-magnifying-glass-circle')
                 ->color('warning'),
 
-            Stat::make('Total Pengunjung', \App\Models\Information::sum('views'))
-                ->description('Real traffic pengguna')
-                ->descriptionIcon('heroicon-m-chart-bar')
+            Stat::make('Total Pengunjung', number_format(\App\Models\Information::sum('views')))
+                ->description('Traffic lagi rame nih! 📈')
+                ->descriptionIcon('heroicon-m-bolt')
                 ->color('success'),
-
-            Stat::make('Rating Rata-rata', number_format((float) ($reviewQuery->avg('rating') ?? 0), 1))
-                ->description('Kata mereka soal WadahNgopi ⭐')
-                ->descriptionIcon('heroicon-m-star')
-                ->color('amber')
-                ->chart([4, 4.5, 3, 5, 4.2, 4.8, 5, 4.9, 5]),
         ];
     }
 }

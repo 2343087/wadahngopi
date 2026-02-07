@@ -4,29 +4,29 @@
 
 @section('content')
     <div x-data="{ 
-                        scrolled: 0,
-                        progress: 0,
-                        init() {
-                            window.addEventListener('scroll', () => {
-                                let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-                                let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                                this.progress = (winScroll / height) * 100;
-                                this.scrolled = winScroll;
-                            });
-                        },
-                        share() {
-                            if (navigator.share) {
-                                navigator.share({
-                                    title: '{{ addslashes($information->title) }}',
-                                    text: '{{ addslashes($information->summary ?? "Baca berita terbaru tentang kopi di WadahNgopi!") }}',
-                                    url: window.location.href,
-                                }).catch(console.error);
-                            } else {
-                                navigator.clipboard.writeText(window.location.href);
-                                alert('Link disalin ke clipboard!');
-                            }
-                        }
-                    }" class="min-h-screen bg-white pb-40 font-['Plus_Jakarta_Sans'] antialiased">
+                                scrolled: 0,
+                                progress: 0,
+                                init() {
+                                    window.addEventListener('scroll', () => {
+                                        let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                                        let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                                        this.progress = (winScroll / height) * 100;
+                                        this.scrolled = winScroll;
+                                    });
+                                },
+                                share() {
+                                    if (navigator.share) {
+                                        navigator.share({
+                                            title: '{{ addslashes($information->title) }}',
+                                            text: '{{ addslashes($information->summary ?? "Baca berita terbaru tentang kopi di WadahNgopi!") }}',
+                                            url: window.location.href,
+                                        }).catch(console.error);
+                                    } else {
+                                        navigator.clipboard.writeText(window.location.href);
+                                        alert('Link disalin ke clipboard!');
+                                    }
+                                }
+                            }" class="min-h-screen bg-white pb-40 font-['Plus_Jakarta_Sans'] antialiased">
 
         {{-- Top Reading Bar --}}
         <div class="fixed top-0 left-0 w-full h-[3px] z-[70] pointer-events-none">

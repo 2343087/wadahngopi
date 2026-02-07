@@ -2,7 +2,7 @@
 
 use App\Models\Cafe;
 
-beforeEach(fn () => Cache::flush());
+beforeEach(fn() => Cache::flush());
 
 it('displays the landing page', function () {
     $response = $this->get('/');
@@ -23,7 +23,7 @@ it('displays the list of cafes on the explore page', function () {
 it('displays the cafe detail page', function () {
     $cafe = Cafe::factory()->create(['name' => 'Kopi Sore', 'status' => 'published']);
 
-    $response = $this->get("/cafes/{$cafe->id}");
+    $response = $this->get("/cafes/{$cafe->slug}");
 
     $response->assertStatus(200);
     $response->assertSeeHtml('Kopi Sore');
