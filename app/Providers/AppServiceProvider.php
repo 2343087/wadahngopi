@@ -26,6 +26,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Cafe::observe(CafeObserver::class);
+
+        // Increase memory limit for image processing
+        if (ini_get('memory_limit') !== '-1') {
+            ini_set('memory_limit', '512M');
+        }
         if (app()->isLocal()) {
             //
         } else {

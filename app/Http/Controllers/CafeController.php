@@ -16,7 +16,7 @@ class CafeController extends Controller
     {
         $cafes = Cache::remember('home_cafes', now()->addMinutes(5), function () {
             return Cafe::where('status', 'published')
-                ->with('facilities')
+                ->with(['facilities', 'city'])
                 ->latest()
                 ->get();
         });
@@ -26,12 +26,17 @@ class CafeController extends Controller
 
     /**
      * Display the specified cafe.
+     * Cached per-cafe for 10 minutes.
      */
     public function show(Cafe $cafe): View
     {
         abort_if($cafe->status !== 'published', 404);
 
-        $cafe->load(['facilities']);
+        // Cache individual cafe with relationships
+        $cafe = Cache::remember("cafe_{$cafe->id}", now()->addMinutes(10), function () use ($cafe) {
+            $cafe->load(['facilities', 'city']);
+            return $cafe;
+        });
 
         return view('cafes.show', compact('cafe'));
     }

@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Information;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -16,22 +17,28 @@ class InformationFeed extends Component
     public function setCategory(string $category): void
     {
         $this->activeCategory = $category;
-        $this->resetPage(); // Reset pagination when category changes
+        $this->resetPage();
     }
 
     public function getPopularInformationsProperty()
     {
-        // Always show top 3 popular regardless of category filter, 
-        // OR filtering them? Usually 'Popular' is global, but let's make it global for now to keep the UI consistent.
-        return Information::where('is_published', true)
-            ->orderBy('views', 'desc')
-            ->take(5) // Get 5 for the horizontal scroll
-            ->get();
+        // Cached for 5 minutes with selective columns
+        return Cache::remember(
+            'info_feed_popular',
+            now()->addMinutes(5),
+            fn() =>
+            Information::where('is_published', true)
+                ->select(['id', 'title', 'slug', 'image_path', 'published_at', 'views', 'category', 'created_at', 'content'])
+                ->orderBy('views', 'desc')
+                ->take(5)
+                ->get()
+        );
     }
 
     public function render()
     {
-        $query = Information::where('is_published', true);
+        $query = Information::where('is_published', true)
+            ->select(['id', 'title', 'slug', 'image_path', 'published_at', 'views', 'category', 'created_at']);
 
         if ($this->activeCategory !== 'Semua') {
             $query->where('category', $this->activeCategory);
@@ -46,3 +53,4 @@ class InformationFeed extends Component
         ]);
     }
 }
+

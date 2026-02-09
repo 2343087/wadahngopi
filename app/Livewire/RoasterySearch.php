@@ -2,28 +2,22 @@
 
 namespace App\Livewire;
 
-use App\Models\Cafe;
+use App\Models\Roastery;
 use App\Models\City;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class ExploreSearch extends Component
+class RoasterySearch extends Component
 {
     use WithPagination;
 
     public string $search = '';
-
     public string $filter = 'semua';
-
     public string $sort = 'relevance';
-
-    public ?string $activeLetter = null;
-
     public ?int $cityId = null;
-
     public ?float $userLat = null;
     public ?float $userLng = null;
+    public ?string $activeLetter = null;
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -51,58 +45,35 @@ class ExploreSearch extends Component
         $this->resetPage();
     }
 
-    public function updatedSort(): void
-    {
-        // If sorting A-Z or Z-A, activeLetter might be relevant, 
-        // but if switching back to relevance, maybe clear it? 
-        // For now, keep them independent or just reset page.
-        $this->resetPage();
-    }
-
     public function setSort(string $sort): void
     {
         $this->sort = $sort;
-        // When explicitly setting sort (e.g. from dropdown), clear the specific letter filter
-        // to avoid "getting stuck" on a previously selected letter.
         if (in_array($sort, ['name_az', 'name_za'])) {
             $this->activeLetter = null;
         }
         $this->resetPage();
     }
 
-    public function updatedActiveLetter(): void
-    {
-        $this->resetPage();
-        // If a letter is selected, it implies sorting by name usually, but let's just filter.
-        // Optionally, force sort to name_az if logic dictates.
-        if ($this->activeLetter) {
-            $this->sort = 'name_az';
-        }
-    }
-
     public function setLetter(?string $letter): void
     {
         if ($this->activeLetter === $letter) {
-            $this->activeLetter = null; // Toggle off
+            $this->activeLetter = null;
         } else {
             $this->activeLetter = $letter;
-            $this->sort = 'name_az'; // Auto-sort A-Z when picking a letter
+            $this->sort = 'name_az';
         }
         $this->resetPage();
     }
 
-    /**
-     * Reset all filters to their default state.
-     */
     public function resetAllFilters(): void
     {
         $this->search = '';
         $this->filter = 'semua';
         $this->sort = 'relevance';
-        $this->activeLetter = null;
         $this->cityId = null;
         $this->userLat = null;
         $this->userLng = null;
+        $this->activeLetter = null;
         $this->resetPage();
     }
 
@@ -110,9 +81,8 @@ class ExploreSearch extends Component
     {
         $this->userLat = $lat;
         $this->userLng = $lng;
-        // If filter is currently 'terdekat', we can now process it correctly
         if ($this->filter === 'terdekat') {
-            $this->sort = 'distance'; // Auto switch sort to distance
+            $this->sort = 'distance';
         }
     }
 
@@ -128,7 +98,7 @@ class ExploreSearch extends Component
 
     public function render()
     {
-        $query = Cafe::query()
+        $query = Roastery::query()
             ->where('status', 'published')
             ->select([
                 'id',
@@ -140,12 +110,14 @@ class ExploreSearch extends Component
                 'longitude',
                 'image_path',
                 'social_links',
-                'opening_time',
-                'closing_time',
                 'is_24_hours',
-                'operating_hours'
+                'operating_hours',
+                'weekday_open',
+                'weekday_close',
+                'weekend_open',
+                'weekend_close'
             ])
-            ->with(['facilities:id,cafe_id,name', 'city:id,name']);
+            ->with(['city:id,name']);
 
         if ($this->cityId) {
             $query->where('city_id', $this->cityId);
@@ -156,23 +128,19 @@ class ExploreSearch extends Component
             $query->where('name', 'like', '%' . $search . '%');
         }
 
-        // Letter Filter
         if ($this->activeLetter) {
             $query->where('name', 'like', $this->activeLetter . '%');
         }
 
-        // Filter Logic for "buka" - uses centralized service logic
         if ($this->filter === 'buka') {
             $query->openNow();
         } elseif ($this->filter === 'terdekat' && $this->userLat !== null && $this->userLng !== null) {
-            // "Terdekat" filter: Calculate distance via Haversine Formula & Sort
             $query->selectRaw(
                 '(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance',
                 [$this->userLat, $this->userLng, $this->userLat]
             )->orderBy('distance');
         }
 
-        // Sort Logic (if not already sorted by distance via filter)
         if ($this->filter !== 'terdekat') {
             if ($this->sort === 'name_az') {
                 $query->orderBy('name', 'asc');
@@ -183,19 +151,10 @@ class ExploreSearch extends Component
             }
         }
 
-        $cafesPaginator = $query->paginate(12);
+        $roasteries = $query->paginate(12);
 
-        // Dispatch events for map update if needed
-        $this->dispatch('cafes-updated', cafes: collect($cafesPaginator->items())->map(fn($c) => [
-            'id' => $c->id,
-            'name' => $c->name,
-            'lat' => $c->latitude,
-            'lng' => $c->longitude,
-            'url' => route('cafes.show', $c),
-        ])->toArray());
-
-        return view('livewire.explore-search', [
-            'cafes' => $cafesPaginator,
+        return view('livewire.roastery-search', [
+            'roasteries' => $roasteries,
             'cities' => $this->cities,
         ]);
     }

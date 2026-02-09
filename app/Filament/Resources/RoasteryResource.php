@@ -1,0 +1,261 @@
+<?php
+
+namespace App\Filament\Resources;
+
+use App\Filament\Resources\RoasteryResource\Pages;
+use App\Models\Roastery;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+
+class RoasteryResource extends Resource
+{
+    protected static ?string $model = Roastery::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-sparkles';
+
+    protected static ?string $navigationLabel = 'Roastery Kita';
+
+    protected static ?string $modelLabel = 'Roastery';
+
+    protected static ?string $pluralModelLabel = 'Daftar Roastery';
+
+    protected static ?string $navigationGroup = 'Manajemen Warung';
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->role === 'developer';
+    }
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                // SECTION: ADMIN CONTROL
+                Forms\Components\Section::make('Kendali Admin 🛠️')
+                    ->description('Hanya tim internal yang bisa otir-atik bagian ini.')
+                    ->schema([
+                        Forms\Components\Select::make('city_id')
+                            ->relationship('city', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->label('Kota')
+                            ->required(),
+
+                        Forms\Components\Select::make('owner_id')
+                            ->relationship('owner', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->label('Pemilik Roastery')
+                            ->required(),
+
+                        Forms\Components\Select::make('status')
+                            ->options([
+                                'draft' => 'Masih Draft',
+                                'review' => 'Lagi Di-Review',
+                                'published' => 'Udah Tayang',
+                            ])
+                            ->label('Status')
+                            ->default('draft')
+                            ->required(),
+
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->label('Nama Roastery'),
+                    ])
+                    ->columns(2)
+                    ->visible(fn() => auth()->user()?->role === 'developer'),
+
+                // SECTION: ROASTERY OWNER CONTENT
+                Forms\Components\Section::make('Detail Roastery ✨')
+                    ->description('Lengkapi info roastery kamu biar makin dikenal!')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->readOnly()
+                            ->label('Nama Roastery'),
+
+                        Forms\Components\Select::make('status')
+                            ->options([
+                                'review' => 'Minta Approval Admin',
+                                'published' => 'Langsung Tayangin!',
+                            ])
+                            ->label('Update Status'),
+
+                        Forms\Components\Textarea::make('description')
+                            ->label('Tentang Roastery')
+                            ->rows(5)
+                            ->columnSpanFull(),
+
+                        Forms\Components\FileUpload::make('image_path')
+                            ->image()
+                            ->disk('public')
+                            ->directory('roasteries')
+                            ->label('Foto Utama'),
+
+                        Forms\Components\FileUpload::make('images')
+                            ->image()
+                            ->multiple()
+                            ->disk('public')
+                            ->directory('roasteries/gallery')
+                            ->reorderable()
+                            ->label('Galeri Roastery')
+                            ->columnSpanFull(),
+
+                        Forms\Components\Section::make('Lokasi & Kontak 📍')
+                            ->schema([
+                                Forms\Components\Textarea::make('address')
+                                    ->required()
+                                    ->label('Alamat Lengkap')
+                                    ->columnSpanFull(),
+                                Forms\Components\TextInput::make('google_maps_url')
+                                    ->url()
+                                    ->label('Link Google Maps'),
+                                Forms\Components\TextInput::make('whatsapp_number')
+                                    ->tel()
+                                    ->label('Nomor WhatsApp'),
+                            ])->columns(2),
+
+                        Forms\Components\Section::make('Jam Operasional 🕒')
+                            ->schema([
+                                Forms\Components\Toggle::make('is_24_hours')
+                                    ->label('Buka 24 Jam Non-Stop 🔥')
+                                    ->helperText('Aktifkan jika roastery kamu buka seharian penuh!')
+                                    ->live()
+                                    ->columnSpanFull(),
+
+                                // Jam Weekday (Senin-Jumat)
+                                Forms\Components\Fieldset::make('Jam Hari Kerja (Senin - Jumat)')
+                                    ->schema([
+                                        Forms\Components\TimePicker::make('operating_hours.weekday.open')
+                                            ->label('Buka')
+                                            ->seconds(false)
+                                            ->format('H:i')
+                                            ->displayFormat('H:i'),
+                                        Forms\Components\TimePicker::make('operating_hours.weekday.close')
+                                            ->label('Tutup')
+                                            ->seconds(false)
+                                            ->format('H:i')
+                                            ->displayFormat('H:i'),
+                                    ])
+                                    ->columns(2)
+                                    ->hidden(fn(Forms\Get $get): bool => (bool) $get('is_24_hours')),
+
+                                // Jam Weekend (Sabtu-Minggu)
+                                Forms\Components\Fieldset::make('Jam Akhir Pekan (Sabtu - Minggu)')
+                                    ->schema([
+                                        Forms\Components\TimePicker::make('operating_hours.weekend.open')
+                                            ->label('Buka')
+                                            ->seconds(false)
+                                            ->format('H:i')
+                                            ->displayFormat('H:i'),
+                                        Forms\Components\TimePicker::make('operating_hours.weekend.close')
+                                            ->label('Tutup')
+                                            ->seconds(false)
+                                            ->format('H:i')
+                                            ->displayFormat('H:i'),
+                                    ])
+                                    ->columns(2)
+                                    ->hidden(fn(Forms\Get $get): bool => (bool) $get('is_24_hours')),
+                            ]),
+
+                        Forms\Components\Section::make('Social Media 📱')
+                            ->schema([
+                                Forms\Components\Repeater::make('social_links')
+                                    ->schema([
+                                        Forms\Components\Select::make('platform')
+                                            ->options([
+                                                'instagram' => 'Instagram',
+                                                'tiktok' => 'TikTok',
+                                                'facebook' => 'Facebook',
+                                                'twitter' => 'Twitter/X',
+                                            ])
+                                            ->required(),
+                                        Forms\Components\TextInput::make('url')
+                                            ->url()
+                                            ->required(),
+                                        Forms\Components\Toggle::make('show')
+                                            ->label('Tampilkan')
+                                            ->default(true),
+                                    ])
+                                    ->columns(3)
+                                    ->defaultItems(0)
+                                    ->addActionLabel('+ Tambah Sosmed')
+                                    ->columnSpanFull(),
+                            ]),
+                    ])
+                    ->visible(fn() => auth()->user()?->role === 'roastery'),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\ImageColumn::make('image_path')
+                    ->label('Foto'),
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable()
+                    ->sortable()
+                    ->weight('bold')
+                    ->label('Nama Roastery'),
+                Tables\Columns\TextColumn::make('city.name')
+                    ->label('Kota')
+                    ->badge()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('owner.name')
+                    ->label('Owner')
+                    ->visible(fn() => auth()->user()?->role === 'developer'),
+                Tables\Columns\BadgeColumn::make('status')
+                    ->colors([
+                        'gray' => 'draft',
+                        'warning' => 'review',
+                        'success' => 'published',
+                    ]),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('city_id')
+                    ->relationship('city', 'name'),
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery()->with(['owner', 'city']);
+
+        if (auth()->user()?->role === 'roastery') {
+            $query->where('owner_id', auth()->id());
+        }
+
+        return $query;
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListRoasteries::route('/'),
+            'create' => Pages\CreateRoastery::route('/create'),
+            'edit' => Pages\EditRoastery::route('/{record}/edit'),
+        ];
+    }
+}

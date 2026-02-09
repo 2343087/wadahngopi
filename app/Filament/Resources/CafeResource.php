@@ -91,8 +91,9 @@ class CafeResource extends Resource
                                             ->visibility('public')
                                             ->label('Upload Foto Menu')
                                             ->required()
-                                            ->imageResizeTargetWidth('1200')
-                                            ->imageEditor()
+                                            // ->imageResizeTargetWidth('1200') // Disabled to prevent hang
+                                            // ->imageEditor() 
+                                            ->maxSize(10240) // 10MB
                                             ->columnSpan(2),
                                         Forms\Components\TextInput::make('tag')
                                             ->label('Kategori')
@@ -123,11 +124,11 @@ class CafeResource extends Resource
                             ])
                             ->label('Mau Diapain?'),
 
-                        Forms\Components\Textarea::make('description')
+                        Forms\Components\RichEditor::make('description')
                             ->label('Tentang Cafe Kamu')
                             ->placeholder('Ceritain dong apa yang bikin cafe kamu spesial...')
-                            ->rows(5)
-                            ->afterStateUpdated(fn($state, $set) => $set('description', clean($state)))
+                            ->fileAttachmentsDirectory('cafes/description-images')
+                            ->fileAttachmentsVisibility('public')
                             ->columnSpanFull(),
 
                         Forms\Components\FileUpload::make('image_path')
@@ -135,9 +136,9 @@ class CafeResource extends Resource
                             ->directory('cafes')
                             ->visibility('public')
                             ->label('Foto Profil Utama')
-                            ->imageResizeTargetWidth('1200')
-                            ->imageEditor()
-                            ->maxSize(2048)
+                            // ->imageResizeTargetWidth('1200') // Disabled
+                            // ->imageEditor() 
+                            ->maxSize(10240) // 10MB
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp']),
 
                         Forms\Components\FileUpload::make('images')
@@ -149,9 +150,9 @@ class CafeResource extends Resource
                             ->label('Galeri Foto (Biar Makin Estetik)')
                             ->helperText('Maksimal 5 foto ya boss, usahain yang resolusinya mantap!')
                             ->reorderable()
-                            ->imageResizeTargetWidth('1200')
-                            ->imageEditor()
-                            ->maxSize(2048)
+                            // ->imageResizeTargetWidth('1200') // Disabled
+                            // ->imageEditor() 
+                            ->maxSize(10240) // 10MB
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                             ->columnSpanFull(),
 

@@ -38,13 +38,13 @@ class Cafe extends Model
         return $this->belongsTo(City::class);
     }
 
-    public function owner()
+    public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
 
-    public function facilities()
+    public function facilities(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Facility::class);
     }

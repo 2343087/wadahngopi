@@ -37,7 +37,7 @@
 
     <link rel="manifest" href="/manifest.json?v=2">
     <link rel="icon" type="image/png" href="{{ asset('wadahicon.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('wadahicon.png') }}">
+    <link rel="apple-touch-icon" sizes="192x192" href="{{ asset('icons/icon-192x192.png') }}">
 
     <!-- Fonts - Modern & Premium -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -87,6 +87,10 @@
             <a href="{{ route('home') }}" class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
                 <i class="{{ request()->routeIs('home') ? 'ph-fill ph-house' : 'ph ph-house' }}"></i>
                 <span>BERANDA</span>
+            </a>
+            <a href="{{ route('roastery') }}" class="nav-item {{ request()->routeIs('roastery') ? 'active' : '' }}">
+                <i class="{{ request()->routeIs('roastery') ? 'ph-fill ph-coffee-bean' : 'ph ph-coffee-bean' }}"></i>
+                <span>ROASTERY</span>
             </a>
             <a href="{{ route('explore') }}" class="nav-item {{ request()->routeIs('explore') ? 'active' : '' }}">
                 <i class="{{ request()->routeIs('explore') ? 'ph-fill ph-compass' : 'ph ph-compass' }}"></i>

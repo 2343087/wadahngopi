@@ -37,7 +37,7 @@
                     <span>INSTAGRAM</span>
                 </a>
                 <a href="https://www.tiktok.com/@wadah.ngopi?_r=1&_t=ZS-93dSno0Z0Cu
-                " class="soc soc-tt">
+                            " class="soc soc-tt">
                     <i class="ph-fill ph-tiktok-logo"></i>
                     <span>TIKTOK</span>
                 </a>
@@ -46,20 +46,31 @@
                     <span>YOUTUBE</span>
                 </a>
                 <!-- <a href="https://wa.me/6282199694350" class="soc soc-wa">
-                                <i class="ph-fill ph-whatsapp-logo"></i>
-                                <span>WHATSAPP</span>
-                            </a> -->
+                                            <i class="ph-fill ph-whatsapp-logo"></i>
+                                            <span>WHATSAPP</span>
+                                        </a> -->
             </div>
 
             {{-- CTA Buttons --}}
             <div class="c-actions">
+                <a href="{{ route('roastery') }}" class="cta cta-roastery">
+                    <div class="cta-icon">
+                        <i class="ph-bold ph-coffee-bean"></i>
+                    </div>
+                    <div class="cta-text">
+                        <strong>ROASTERY</strong>
+                        <span>Cari Beans Kopi Favoritmu</span>
+                    </div>
+                    <i class="ph-bold ph-caret-right cta-arrow"></i>
+                </a>
+
                 <a href="{{ route('explore') }}" class="cta cta-primary">
                     <div class="cta-icon">
                         <i class="ph-bold ph-compass"></i>
                     </div>
                     <div class="cta-text">
                         <strong>JELAJAHI</strong>
-                        <span>Ayo Cari Kopi Favoritmu</span>
+                        <span>Ayo Cari Cafe Favoritmu</span>
                     </div>
                     <i class="ph-bold ph-caret-right cta-arrow"></i>
                 </a>
@@ -282,6 +293,11 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        .cta-roastery {
+            background: linear-gradient(135deg, rgba(217, 119, 6, 0.15) 0%, rgba(180, 83, 9, 0.08) 100%);
+            border: 1px solid rgba(217, 119, 6, 0.35);
+        }
+
         .cta:hover {
             transform: translateX(6px);
         }
@@ -294,6 +310,11 @@
         .cta-ghost:hover {
             background: rgba(255, 255, 255, 0.06);
             border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .cta-roastery:hover {
+            background: linear-gradient(135deg, rgba(217, 119, 6, 0.25) 0%, rgba(180, 83, 9, 0.12) 100%);
+            border-color: rgba(217, 119, 6, 0.5);
         }
 
         .cta-icon {
@@ -314,6 +335,11 @@
 
         .cta-ghost .cta-icon {
             background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .cta-roastery .cta-icon {
+            background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
             color: #fff;
         }
 

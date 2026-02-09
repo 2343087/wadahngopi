@@ -1,13 +1,8 @@
-{{-- Livewire Explore Search Component --}}
-{{-- Premium Redesign 2026 - Ultra Modern & Responsive --}}
-<div x-data="exploreLogic()" x-init="initComponent()" class="block min-h-screen">
+{{-- Livewire Roastery Search Component --}}
+{{-- Premium Redesign 2026 - Ultra Modern & Responsive (Matched to Explore) --}}
+<div x-data="roasteryLogic()" x-init="initComponent()" class="block min-h-screen">
     {{-- Livewire data is handled in Alpine x-data script --}}
 
-    @if(config('app.debug'))
-        <div class="hidden" id="cafe-debug-count">{{ $cafes->count() }}</div>
-    @endif
-
-    {{-- Ultra Premium Hero Section --}}
     {{-- Ultra Premium Hero Section --}}
     <header class="explore-hero-2026" :class="{ 'is-compact': isScrolled }"
         @scroll.window="isScrolled = window.pageYOffset > 50">
@@ -19,7 +14,7 @@
                 </div>
                 <div class="flex flex-col">
                     <h1 class="explore-brand">Wadah<span>Ngopi</span></h1>
-                    <p class="explore-tagline">JELAJAHI KOPI FAVORITMU</p>
+                    <p class="explore-tagline">CARI BIJI KOPI FAVORITMU</p>
                 </div>
             </div>
         </div>
@@ -29,7 +24,7 @@
             <div class="search-icon-pulse">
                 <i class="ph-bold ph-magnifying-glass"></i>
             </div>
-            <input type="text" id="cafe-search" name="search" wire:model.live.debounce.500ms="search" placeholder="Cari cafe favoritmu..." 
+            <input type="text" id="roastery-search" name="search" wire:model.live.debounce.500ms="search" placeholder="Cari roastery atau beans..." 
                 class="explore-search-input">
             <button class="explore-sort-btn" @click="showSortMenu = !showSortMenu"
                 :class="showSortMenu ? 'active' : ''">
@@ -51,7 +46,7 @@
                 <div class="sort-dropdown-body custom-scrollbar relative">
                     <button class="sort-dropdown-item"
                         wire:click="setSort('name_az')"
-                        :class="$wire.sort === 'name_az' && !$wire.activeLetter ? 'active' : ''"
+                        :class="$wire.sort === 'name_az' ? 'active' : ''"
                         @click="showSortMenu = false">
                         <i class="ph-fill ph-sort-ascending"></i>
                         <span> (A-Z)</span>
@@ -74,7 +69,7 @@
                             <span> ({{ $char }})</span>
                         </button>
                     @endforeach
-
+                    
                     @if($activeLetter || $search || $filter !== 'semua' || $cityId || $sort !== 'relevance')
                         <div class="sticky bottom-0 left-0 right-0 p-2 bg-white/95 backdrop-blur-sm border-t border-[#F5EFED]">
                             <button wire:click="resetAllFilters" @click="showSortMenu = false"
@@ -92,7 +87,7 @@
         <div class="explore-category-pills">
             <button class="category-pill" :class="$wire.filter === 'semua' ? 'active' : ''"
                 wire:click="$set('filter', 'semua')">
-                <i class="ph-fill ph-coffee"></i>
+                <i class="ph-fill ph-coffee-bean"></i>
                 <span>Semua</span>
             </button>
             <button class="category-pill" :class="$wire.filter === 'terdekat' ? 'active' : ''"
@@ -121,21 +116,9 @@
                 </button>
             @endforeach
         </div>
-
-        {{-- Sengaja Gw Hide Dulu Jangan Di Rubah Jangan Di Aktifkan Kalau Gw Gak nyuruh --}}
-        <!-- <div class="explore-result-counter-wrapper">
-            <div class="explore-result-counter">
-                <span class="counter-number">{{ $cafes->total() }}</span>
-                <span class="counter-text">cafe ditemukan</span>
-            </div>
-            <div wire:loading.delay.shorter class="explore-loading-state">
-                <i class="ph ph-circle-notch animate-spin"></i>
-                <span>Mencari...</span>
-            </div>
-        </div> -->
     </header>
 
-    {{-- Content Spacer for Fixed Header (Static height to prevent jumping) --}}
+    {{-- Content Spacer for Fixed Header --}}
     <div class="header-spacer-2026"></div>
 
     {{-- Skeleton Grid (Shown while loading) --}}
@@ -155,26 +138,25 @@
         </template>
     </div>
 
-    {{-- Cafe Grid Premium --}}
+    {{-- Roastery Grid Premium --}}
     <main class="explore-cafe-grid" wire:loading.remove.delay.shorter>
-        @forelse($cafes as $cafe)
-            <a href="{{ route('cafes.show', $cafe) }}" class="cafe-card-2026 group">
+        @forelse($roasteries as $roastery)
+            <a href="{{ route('roastery.show', $roastery) }}" class="cafe-card-2026 group">
                     {{-- Fixed Height Image Container --}}
                     @php
-                        $image = $cafe->image_path ? (str_starts_with($cafe->image_path, 'http') ? $cafe->image_path : Storage::url($cafe->image_path)) : 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800';
+                        $image = $roastery->image_path ? (str_starts_with($roastery->image_path, 'http') ? $roastery->image_path : Storage::url($roastery->image_path)) : 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=800';
                     @endphp
                     <div class="cafe-card-image">
                          <img src="{{ $image }}"
-                              alt="{{ $cafe->name }}" loading="lazy" 
+                              alt="{{ $roastery->name }}" loading="lazy" 
                               class="cafe-card-img object-cover">
                               
-                        {{-- Hover Quick Actions (Moved Inside Image) --}}
+                        {{-- Hover Quick Actions --}}
                         <div class="cafe-card-actions">
                             @php
-                                $socials = collect($cafe->social_links ?? [])
+                                $socials = collect($roastery->social_links ?? [])
                                     ->filter(fn($s) => filter_var($s['show'] ?? false, FILTER_VALIDATE_BOOLEAN) && !empty($s['url']));
                                 $visibleSocials = $socials->take(3);
-                                $moreSocialsCount = $socials->count() - 3;
                             @endphp
                             
                             @foreach ($visibleSocials as $social)
@@ -182,23 +164,20 @@
                                     <i class="ph-bold ph-@if($social['platform'] === 'twitter')x-logo @else{{ $social['platform'] }}-logo @endif"></i>
                                 </button>
                             @endforeach
-                            
-                            @if($moreSocialsCount > 0)
-                                <div class="quick-action-more">+{{ $moreSocialsCount }}</div>
-                            @endif
                         </div>
                      </div>
 
                     {{-- Gradient Overlay --}}
                     <div class="cafe-card-overlay"></div>
 
+                    {{-- Simple Roastery Badge --}}
                     {{-- Smart Status Badge 2026 --}}
                     @php
-                        $isOpen = $cafe->is_open;
+                        $isOpen = $roastery->is_open;
                         $timeText = '';
-                        $todayHours = $cafe->today_hours;
+                        $todayHours = $roastery->today_hours;
 
-                        if ($cafe->is_24_hours) {
+                        if ($roastery->is_24_hours) {
                             $timeText = '• 24 Jam';
                         } elseif ($isOpen && isset($todayHours['close'])) {
                             $timeText = '• Sampai ' . \Carbon\Carbon::parse($todayHours['close'])->format('H:i');
@@ -223,41 +202,24 @@
                         @endif
                     </div>
 
-
-
-
-                    {{-- Distance Badge (Only when location is available) --}}
-                    @if(isset($cafe->distance))
+                    {{-- Distance Badge --}}
+                    @if(isset($roastery->distance))
                         <div class="cafe-distance-badge">
                             <i class="ph-fill ph-navigation-arrow text-amber-500"></i>
-                            <span>{{ number_format($cafe->distance, 1) }} km</span>
+                            <span>{{ number_format($roastery->distance, 1) }} km</span>
                         </div>
                     @endif
 
                 {{-- Card Content --}}
                 <div class="cafe-card-content">
-                    <h3 class="cafe-card-title">{{ $cafe->name }}</h3>
+                    <h3 class="cafe-card-title">{{ $roastery->name }}</h3>
                     <p class="cafe-card-address">
                         <i class="ph-fill ph-map-pin"></i>
-                        <span class="drop-shadow-sm">{{ $cafe->address }}</span>    
+                        <span class="drop-shadow-sm">{{ $roastery->city?->name ?? 'Kalimantan' }}</span>    
                     </p>
-
-                    {{-- Facilities Tags --}}
-                    @if($cafe->facilities->isNotEmpty())
-                        <div class="cafe-card-tags">
-                            @foreach($cafe->facilities->take(3) as $facility)
-                                <span class="cafe-tag">
-                                    {{ Str::limit($facility->name, 10) }}
-                                </span>
-                            @endforeach
-                            @if($cafe->facilities->count() > 3)
-                                <span class="cafe-tag-more">+{{ $cafe->facilities->count() - 3 }}</span>
-                            @endif
-                        </div>
-                    @else 
-                        {{-- Placeholder separation if no facilities --}}
-                        <div class="mt-auto"></div> 
-                    @endif
+                    
+                    {{-- Spacer --}}
+                    <div class="mt-auto"></div> 
                 </div>
 
                 {{-- Hover Shine Effect --}}
@@ -267,9 +229,9 @@
             {{-- Premium Empty State --}}
             <div class="col-span-full explore-empty-state">
                 <div class="empty-state-icon">
-                    <i class="ph-light ph-coffee"></i>
+                    <i class="ph-light ph-coffee-bean"></i>
                 </div>
-                <h3 class="empty-state-title">Belum Ada Cafe</h3>
+                <h3 class="empty-state-title">Belum Ada Roastery</h3>
                 <p class="empty-state-text">Coba ubah filter atau kata kunci pencarian</p>
                 <button class="empty-state-btn" wire:click="resetAllFilters">
                     <i class="ph-bold ph-arrow-counter-clockwise"></i>
@@ -280,12 +242,12 @@
     </main>
 
     <div class="px-6 pb-20">
-        {{ $cafes->links() }}
+        {{ $roasteries->links() }}
     </div>
 
     {{-- Premium Explore Styles --}}
     <style>
-        /* === EXPLORE PAGE 2026 ULTRA PREMIUM === */
+        /* === EXPLORE PAGE 2026 ULTRA PREMIUM (COPIED FOR ROASTERY) === */
 
         .explore-hero-2026 {
             position: fixed !important;
@@ -334,54 +296,6 @@
         .explore-hero-2026.is-compact .explore-branding-wrapper {
             transform: scale(0.92);
             opacity: 0.95;
-        }
-
-        .hero-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(40px);
-            opacity: 0.1;
-            pointer-events: none;
-            will-change: transform;
-        }
-
-        .hero-orb-1 {
-            width: 200px;
-            height: 200px;
-            background: var(--color-amber);
-            top: -50px;
-            right: -50px;
-            animation: float-orb 8s ease-in-out infinite;
-        }
-
-        .hero-orb-2 {
-            width: 150px;
-            height: 150px;
-            background: var(--color-coffee);
-            bottom: 20%;
-            left: -30px;
-            animation: float-orb 10s ease-in-out infinite reverse;
-        }
-
-        .hero-orb-3 {
-            width: 100px;
-            height: 100px;
-            background: var(--color-amber);
-            top: 40%;
-            right: 10%;
-            animation: float-orb 6s ease-in-out infinite 2s;
-        }
-
-        @keyframes float-orb {
-
-            0%,
-            100% {
-                transform: translate(0, 0) scale(1);
-            }
-
-            50% {
-                transform: translate(20px, -20px) scale(1.1);
-            }
         }
 
         .explore-topbar {
@@ -561,39 +475,6 @@
             color: white;
         }
 
-        .sort-dropdown-alphabet {
-            display: flex;
-            flex-direction: column;
-            padding: 8px;
-            border-top: 1px solid #E6E1DC;
-            max-height: 250px;
-            overflow-y: auto;
-        }
-
-        .alphabet-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 10px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            background: #F5EFED;
-            color: #2C1810;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .alphabet-btn:hover {
-            background: #8B7355;
-            color: white;
-        }
-
-        .alphabet-btn.active {
-            background: #F59E0B;
-            color: white;
-            transform: scale(1.1);
-        }
-
         /* Category Pills 2026 */
         .explore-category-pills {
             display: flex;
@@ -647,32 +528,6 @@
             color: white;
         }
 
-        .pulse-dot {
-            width: 8px;
-            height: 8px;
-            background: #10B981;
-            border-radius: 50%;
-            animation: pulse-green 2s infinite;
-        }
-
-        .category-pill.active .pulse-dot {
-            background: white;
-        }
-
-        @keyframes pulse-green {
-
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.5;
-                transform: scale(1.3);
-            }
-        }
-
         /* City Filter Pills */
         .explore-city-pills {
             display: flex;
@@ -711,29 +566,6 @@
             border-color: #2C1810;
         }
 
-        /* Results Counter */
-        .explore-result-counter {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 16px;
-            background: rgba(26, 15, 10, 0.03);
-            border-radius: 100px;
-            width: fit-content;
-        }
-
-        .counter-number {
-            font-size: 1.1rem;
-            font-weight: 900;
-            color: var(--color-amber);
-        }
-
-        .counter-text {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--color-text-muted);
-        }
-
         /* Cafe Grid */
         .explore-cafe-grid {
             display: grid;
@@ -767,13 +599,7 @@
         }
 
         .cafe-card-2026:hover {
-            transform: translateY(-8px) !important;
-            box-shadow: 0 20px 50px rgba(26, 15, 10, 0.15);
-            border-color: rgba(245, 158, 11, 0.3);
-        }
-
-        .cafe-card-2026:hover {
-            transform: translateY(-8px) scale(1.02);
+            transform: translateY(-8px) scale(1.02) !important;
             box-shadow: 0 20px 50px rgba(26, 15, 10, 0.15);
             border-color: rgba(245, 158, 11, 0.3);
         }
@@ -930,22 +756,6 @@
             color: #F59E0B;
         }
 
-        .quick-action-more {
-            width: 32px;
-            height: 32px;
-            background: rgba(44, 24, 16, 0.8);
-            backdrop-filter: blur(4px);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.75rem;
-            font-weight: 700;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-
         /* Card Content */
         .cafe-card-content {
             padding: 12px 14px; /* Compact Padding */
@@ -978,31 +788,6 @@
         .cafe-card-address i {
             color: #F59E0B;
             font-size: 0.85rem;
-        }
-
-        .cafe-card-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: auto; /* Push to bottom */
-        }
-
-        .cafe-tag {
-            font-size: 0.6rem;
-            font-weight: 700;
-            color: #5C4A3D;
-            background: #F5EFED;
-            padding: 4px 10px;
-            border-radius: 20px;
-            letter-spacing: 0.02em;
-            border: 1px solid rgba(26, 15, 10, 0.05);
-        }
-
-        .cafe-tag-more {
-            font-size: 0.6rem;
-            font-weight: 700;
-            color: #8B7355;
-            padding: 4px 6px;
         }
 
         /* Card Shine Effect */
@@ -1050,15 +835,8 @@
         }
 
         @keyframes float-icon {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-10px);
-            }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .empty-state-title {
@@ -1093,52 +871,6 @@
         .empty-state-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 12px 32px rgba(26, 15, 10, 0.25);
-        }
-
-        /* Responsive Tweaks */
-        @media (min-width: 400px) {
-            .explore-main-title {
-                font-size: 2.8rem;
-            }
-        }
-
-        /* City Selector 2026 */
-        .explore-city-selector {
-            margin-bottom: 24px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .city-select-premium {
-            width: 100%;
-            max-width: 300px;
-            padding: 14px 24px;
-            background: white;
-            border: 2px solid rgba(26, 15, 10, 0.05);
-            border-radius: 20px;
-            font-size: 0.95rem;
-            font-weight: 800;
-            color: #2C1810;
-            appearance: none;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 4px 16px rgba(26, 15, 10, 0.04);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath fill='%232C1810' d='M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80a8,8,0,0,1,11.32-11.32L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 18px center;
-            background-size: 18px;
-        }
-
-        .city-select-premium:focus {
-            outline: none;
-            border-color: var(--color-amber);
-            box-shadow: 0 8px 32px rgba(245, 158, 11, 0.15);
-            transform: translateY(-2px);
-        }
-
-        .city-select-premium:hover {
-            border-color: rgba(26, 15, 10, 0.2);
-            background-color: #F8F7F5;
         }
 
         /* Skeleton Loaders */
@@ -1179,70 +911,15 @@
         }
 
         @keyframes skeleton-pulse {
-            0% {
-                background-position: 200% 0;
-            }
-
-            100% {
-                background-position: -200% 0;
-            }
-        }
-
-        .explore-result-counter-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 8px;
-            padding: 0 4px;
-        }
-
-        .explore-result-counter {
-            background: rgba(245, 158, 11, 0.05);
-            padding: 4px 12px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .counter-number {
-            font-size: 0.9rem;
-            font-weight: 800;
-            color: #F59E0B;
-        }
-
-        .counter-text {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: #8B7355;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .explore-loading-state {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #8B7355;
-            opacity: 0.6;
-        }
-
-        .explore-loading-state i {
-            font-size: 1.1rem;
-        }
-
-        .explore-loading-state span {
-            font-size: 0.65rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
     </style>
 </div>
 
 @script
 <script>
-    Alpine.data('exploreLogic', () => ({
+    Alpine.data('roasteryLogic', () => ({
         isScrolled: false,
         showSortMenu: false,
         isLocating: false,

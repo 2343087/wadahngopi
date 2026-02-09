@@ -12,7 +12,7 @@ class CafeObserver
      */
     public function created(Cafe $cafe): void
     {
-        $this->clearCache();
+        $this->clearCache($cafe);
     }
 
     /**
@@ -20,7 +20,7 @@ class CafeObserver
      */
     public function updated(Cafe $cafe): void
     {
-        $this->clearCache();
+        $this->clearCache($cafe);
     }
 
     /**
@@ -28,7 +28,7 @@ class CafeObserver
      */
     public function deleted(Cafe $cafe): void
     {
-        $this->clearCache();
+        $this->clearCache($cafe);
     }
 
     /**
@@ -36,7 +36,7 @@ class CafeObserver
      */
     public function restored(Cafe $cafe): void
     {
-        $this->clearCache();
+        $this->clearCache($cafe);
     }
 
     /**
@@ -44,14 +44,18 @@ class CafeObserver
      */
     public function forceDeleted(Cafe $cafe): void
     {
-        $this->clearCache();
+        $this->clearCache($cafe);
     }
 
     /**
      * Clear relevant caches.
      */
-    private function clearCache(): void
+    private function clearCache(?Cafe $cafe = null): void
     {
         Cache::forget('home_cafes');
+
+        if ($cafe) {
+            Cache::forget("cafe_{$cafe->id}");
+        }
     }
 }

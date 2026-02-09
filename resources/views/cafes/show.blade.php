@@ -62,12 +62,12 @@
     </style>
 
     <div class="detail-wrapper" x-data="cafeDetailComponent({
-                        id: {{ $cafe->id }},
-                        images: {{ json_encode($galleryImages) }},
-                        allCategories: {{ json_encode($allCats) }},
-                        defaultTab: {{ json_encode($defaultTab) }},
-                        menuImages: {{ json_encode($activeGalleryImages->map(fn($img) => ['url' => Storage::url($img['image']), 'tag' => $img['tag']])->values()) }}
-                    })">
+                                        id: {{ $cafe->id }},
+                                        images: {{ json_encode($galleryImages) }},
+                                        allCategories: {{ json_encode($allCats) }},
+                                        defaultTab: {{ json_encode($defaultTab) }},
+                                        menuImages: {{ json_encode($activeGalleryImages->map(fn($img) => ['url' => Storage::url($img['image']), 'tag' => $img['tag']])->values()) }}
+                                    })">
 
         {{-- Hero Slider Section --}}
         <div class="detail-hero-luxury" @touchstart="touchStart($event)" @touchend="touchEnd($event)">
@@ -95,8 +95,7 @@
 
             {{-- Slider Images --}}
             <template x-for="(img, idx) in images" :key="idx">
-                <div x-show="currentSlide === idx" class="absolute inset-0 z-0 cursor-pointer"
-                    @click="activeHeroLightboxIdx = idx">
+                <div x-show="currentSlide === idx" class="absolute inset-0 z-0">
                     <img :src="img" class="detail-gallery-img w-full h-full object-cover" alt="Cafe">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20"></div>
                 </div>
@@ -110,11 +109,6 @@
             {{-- Slider Info Overlay --}}
             <div class="absolute bottom-16 left-6 right-6 z-20">
                 <livewire:cafe-detail :cafe-id="$cafe->id" />
-                <h1 class="text-4xl font-black text-white leading-tight drop-shadow-lg">{{ $cafe->name }}</h1>
-                <div class="flex items-center gap-2 text-white/80 font-bold text-sm mt-3">
-                    <i class="ph-fill ph-map-pin text-[--color-amber]"></i>
-                    <span class="drop-shadow-sm">{{ $cafe->address }}</span>
-                </div>
             </div>
 
             {{-- Dot Indicators --}}
@@ -129,8 +123,15 @@
 
         {{-- Main Detail Content --}}
         <div class="detail-content-luxury animate-up">
+            <div class="mb-6">
+                <h1 class="text-3xl font-black text-[#2C1810] leading-tight mb-2">{{ $cafe->name }}</h1>
+                <div class="flex items-start gap-2 text-slate-500 font-medium text-sm">
+                    <i class="ph-fill ph-map-pin text-amber-600 text-lg mt-0.5"></i>
+                    <span>{{ $cafe->address }}</span>
+                </div>
+            </div>
             <div class="text-slate-600 leading-[1.8] text-[1rem] font-medium mb-10 opacity-90">
-                {{ $cafe->description }}
+                {!! $cafe->description !!}
             </div>
 
             {{-- Kontak & Sosmed Section --}}
@@ -249,46 +250,46 @@
 
             {{-- Hero-Style Menu Section --}}
             <section x-data="{ 
-                                                                activeMenuIdx: 0,
-                                                                activeLightboxIdx: null,
-                                                                touchStartX: 0,
-                                                                lastWheelTime: 0,
+                                                                                activeMenuIdx: 0,
+                                                                                activeLightboxIdx: null,
+                                                                                touchStartX: 0,
+                                                                                lastWheelTime: 0,
 
-                                                                scrollTo(idx) {
-                                                                    const el = this.$refs.menuSlider;
-                                                                    const item = el.children[idx];
-                                                                    el.scrollTo({ left: item.offsetLeft - (el.offsetWidth - item.offsetWidth) / 2, behavior: 'smooth' });
-                                                                },
-                                                                updateIdx() {
-                                                                    const el = this.$refs.menuSlider;
-                                                                    const center = el.scrollLeft + el.offsetWidth / 2;
-                                                                    let minDiff = Infinity;
-                                                                    let closestIdx = 0;
-                                                                    Array.from(el.children).forEach((child, i) => {
-                                                                        const diff = Math.abs((child.offsetLeft + child.offsetWidth / 2) - center);
-                                                                        if(diff < minDiff) { minDiff = diff; closestIdx = i; }
-                                                                    });
-                                                                    this.activeMenuIdx = closestIdx;
-                                                                },
-                                                                nextLightbox() {
-                                                                    const len = this.menuImages.length;
-                                                                    if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx + 1) % len;
-                                                                },
-                                                                prevLightbox() {
-                                                                    const len = this.menuImages.length;
-                                                                    if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx - 1 + len) % len;
-                                                                },
-                                                                handleWheel(e) {
-                                                                    const now = Date.now();
-                                                                    if (now - this.lastWheelTime < 250) return; // Cooldown biar gak lompat-lompat
-                                                                    if (Math.abs(e.deltaY) < 30) return; // Abaikan scroll halus
+                                                                                scrollTo(idx) {
+                                                                                    const el = this.$refs.menuSlider;
+                                                                                    const item = el.children[idx];
+                                                                                    el.scrollTo({ left: item.offsetLeft - (el.offsetWidth - item.offsetWidth) / 2, behavior: 'smooth' });
+                                                                                },
+                                                                                updateIdx() {
+                                                                                    const el = this.$refs.menuSlider;
+                                                                                    const center = el.scrollLeft + el.offsetWidth / 2;
+                                                                                    let minDiff = Infinity;
+                                                                                    let closestIdx = 0;
+                                                                                    Array.from(el.children).forEach((child, i) => {
+                                                                                        const diff = Math.abs((child.offsetLeft + child.offsetWidth / 2) - center);
+                                                                                        if(diff < minDiff) { minDiff = diff; closestIdx = i; }
+                                                                                    });
+                                                                                    this.activeMenuIdx = closestIdx;
+                                                                                },
+                                                                                nextLightbox() {
+                                                                                    const len = this.menuImages.length;
+                                                                                    if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx + 1) % len;
+                                                                                },
+                                                                                prevLightbox() {
+                                                                                    const len = this.menuImages.length;
+                                                                                    if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx - 1 + len) % len;
+                                                                                },
+                                                                                handleWheel(e) {
+                                                                                    const now = Date.now();
+                                                                                    if (now - this.lastWheelTime < 250) return; // Cooldown biar gak lompat-lompat
+                                                                                    if (Math.abs(e.deltaY) < 30) return; // Abaikan scroll halus
 
-                                                                    if (e.deltaY > 0) this.nextLightbox();
-                                                                    else this.prevLightbox();
+                                                                                    if (e.deltaY > 0) this.nextLightbox();
+                                                                                    else this.prevLightbox();
 
-                                                                    this.lastWheelTime = now;
-                                                                }
-                                                            }" class="relative">
+                                                                                    this.lastWheelTime = now;
+                                                                                }
+                                                                            }" class="relative">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-2xl font-black text-[#2C1810] tracking-tight">Daftar Menu</h2>
                     <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-full">

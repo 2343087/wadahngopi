@@ -63,8 +63,8 @@ class UserResource extends Resource
                 Forms\Components\Select::make('role')
                     ->options([
                         'developer' => 'Developer',
-                        'admin' => 'Admin Cafe',
-                        'user' => 'User Biasa',
+                        'admin' => 'Admin Cafe (Owner)',
+                        'roastery' => 'Admin Roastery (Owner)',
                     ])
                     ->required(),
                 Forms\Components\TextInput::make('password')
@@ -87,6 +87,7 @@ class UserResource extends Resource
                     ->colors([
                         'danger' => 'developer',
                         'warning' => 'admin',
+                        'info' => 'roastery',
                         'success' => 'user',
                     ]),
                 Tables\Columns\TextColumn::make('created_at')

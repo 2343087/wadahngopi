@@ -181,7 +181,7 @@
         </style>
 
         <main class="px-6 flex-1 mb-24">
-            <livewire:saved-cafes />
+            <livewire:saved-items />
         </main>
     </div>
 @endsection
