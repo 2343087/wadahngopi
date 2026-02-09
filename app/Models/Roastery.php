@@ -16,6 +16,7 @@ class Roastery extends Model
         'whatsapp_number',
         'image_path',
         'images',
+        'menu_images',
         'latitude',
         'longitude',
         'social_links',
@@ -43,6 +44,7 @@ class Roastery extends Model
     {
         return [
             'images' => 'array',
+            'menu_images' => 'array',
             'social_links' => 'array',
             'latitude' => 'decimal:8',
             'longitude' => 'decimal:8',
@@ -188,6 +190,11 @@ class Roastery extends Model
                 $roastery->weekend_open = $hours['weekend']['open'] ?? null;
                 $roastery->weekend_close = $hours['weekend']['close'] ?? null;
             }
+        });
+
+        static::saved(function ($roastery) {
+            // Invalidate cache
+            \Illuminate\Support\Facades\Cache::forget("roastery_{$roastery->id}");
         });
 
         static::updating(function ($roastery) {

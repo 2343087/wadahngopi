@@ -104,7 +104,18 @@ class RoasteryResource extends Resource
                             ->disk('public')
                             ->directory('roasteries/gallery')
                             ->reorderable()
-                            ->label('Galeri Roastery')
+                            ->label('Galeri Suasana Roastery')
+                            ->helperText('Foto interior, eksterior, dan vibes roastery.')
+                            ->columnSpanFull(),
+
+                        Forms\Components\FileUpload::make('menu_images')
+                            ->image()
+                            ->multiple()
+                            ->disk('public')
+                            ->directory('roasteries/menus')
+                            ->reorderable()
+                            ->label('Daftar Menu Biji Kopi')
+                            ->helperText('Foto daftar menu, varian beans, atau packaging.')
                             ->columnSpanFull(),
 
                         Forms\Components\Section::make('Lokasi & Kontak 📍')
