@@ -762,14 +762,6 @@
             box-shadow: 0 4px 20px rgba(26, 15, 10, 0.06);
             border: 1px solid rgba(26, 15, 10, 0.03);
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            opacity: 1 !important;
-            transform: none !important;
-        }
-
-        .cafe-card-2026:hover {
-            transform: translateY(-8px) !important;
-            box-shadow: 0 20px 50px rgba(26, 15, 10, 0.15);
-            border-color: rgba(245, 158, 11, 0.3);
         }
 
         .cafe-card-2026:hover {
@@ -824,14 +816,20 @@
             align-items: center;
             padding: 6px 10px;
             border-radius: 12px;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             transition: all 0.3s ease;
             z-index: 20;
             color: white;
             line-height: normal;
+        }
+
+        /* Only enable blur on devices that can handle it */
+        @media (min-width: 768px) {
+            .cafe-status-badge-smart {
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+            }
         }
 
         .cafe-status-badge-smart.open {

@@ -19,27 +19,27 @@ it('cannot see draft cafes on explore page', function () {
         ->assertDontSeeHtml('Draft Cafe');
 });
 
-it('filters saved cafes by id', function () {
+it('filters saved items by id', function () {
     $cafe1 = Cafe::factory()->create(['name' => 'Cafe One', 'status' => 'published']);
     $cafe2 = Cafe::factory()->create(['name' => 'Cafe Two', 'status' => 'published']);
 
-    Livewire::test(SavedCafes::class, ['ids' => [$cafe1->id]])
+    Livewire::test(\App\Livewire\SavedItems::class, ['cafeIds' => [$cafe1->id]])
         ->assertSeeHtml('Cafe One')
         ->assertDontSeeHtml('Cafe Two');
 });
 
-it('limits saved cafes to 50 items for security', function () {
+it('limits saved items to 50 items for security', function () {
     $cafes = Cafe::factory()->count(60)->create(['status' => 'published']);
     $ids = $cafes->pluck('id')->toArray();
 
-    Livewire::test(SavedCafes::class, ['ids' => $ids])
+    Livewire::test(\App\Livewire\SavedItems::class, ['cafeIds' => $ids])
         ->assertCount('cafeIds', 50);
 });
 
 it('prevents XSS in cafe names', function () {
     $xss = "<script>alert('xss')</script>";
     $cafe = Cafe::factory()->create([
-        'name' => 'Safe Name '.$xss,
+        'name' => 'Safe Name ' . $xss,
         'status' => 'published',
     ]);
 

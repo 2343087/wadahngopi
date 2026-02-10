@@ -5,23 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Cafe;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
+// Note: Cafe + Cache still used in show() method
 
 class CafeController extends Controller
 {
     /**
-     * Display a listing of the cafes.
-     * Cached for 5 minutes to improve performance.
+     * Display the home landing page.
+     * Note: Home page is pure branding/CTA — no cafe data needed.
      */
     public function index(): View
     {
-        $cafes = Cache::remember('home_cafes', now()->addMinutes(5), function () {
-            return Cafe::where('status', 'published')
-                ->with(['facilities', 'city'])
-                ->latest()
-                ->get();
-        });
-
-        return view('home', compact('cafes'));
+        return view('home');
     }
 
     /**

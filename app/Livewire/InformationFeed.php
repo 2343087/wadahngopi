@@ -28,7 +28,7 @@ class InformationFeed extends Component
             now()->addMinutes(5),
             fn() =>
             Information::where('is_published', true)
-                ->select(['id', 'title', 'slug', 'image_path', 'published_at', 'views', 'category', 'created_at', 'content'])
+                ->select(['id', 'title', 'slug', 'image_path', 'published_at', 'views', 'category', 'created_at'])
                 ->orderBy('views', 'desc')
                 ->take(5)
                 ->get()

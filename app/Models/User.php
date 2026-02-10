@@ -25,6 +25,11 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Cafe::class, 'owner_id');
     }
 
+    public function roasteries()
+    {
+        return $this->hasMany(Roastery::class, 'owner_id');
+    }
+
     /**
      * The attributes that are mass assignable.
      *

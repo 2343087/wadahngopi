@@ -27,13 +27,20 @@ class RoasterySearch extends Component
         'activeLetter' => ['except' => null],
     ];
 
+    protected $rules = [
+        'search' => 'max:100',
+        'cityId' => 'nullable|exists:cities,id',
+    ];
+
     public function updatedSearch(): void
     {
+        $this->validate(['search' => 'max:100']);
         $this->resetPage();
     }
 
     public function updatedCityId(): void
     {
+        $this->validate(['cityId' => 'nullable|exists:cities,id']);
         $this->resetPage();
     }
 

@@ -62,12 +62,12 @@
     </style>
 
     <div class="detail-wrapper" x-data="cafeDetailComponent({
-                                                    id: {{ $cafe->id }},
-                                                    images: {{ json_encode($galleryImages) }},
-                                                    allCategories: {{ json_encode($allCats) }},
-                                                    defaultTab: {{ json_encode($defaultTab) }},
-                                                    menuImages: {{ json_encode($activeGalleryImages->map(fn($img) => ['url' => Storage::url($img['image']), 'tag' => $img['tag']])->values()) }}
-                                                })">
+                                                                    id: {{ $cafe->id }},
+                                                                    images: {{ json_encode($galleryImages) }},
+                                                                    allCategories: {{ json_encode($allCats) }},
+                                                                    defaultTab: {{ json_encode($defaultTab) }},
+                                                                    menuImages: {{ json_encode($activeGalleryImages->map(fn($img) => ['url' => Storage::url($img['image']), 'tag' => $img['tag']])->values()) }}
+                                                                })">
 
         {{-- Hero Slider Section --}}
         <div class="detail-hero-luxury" @touchstart="touchStart($event)" @touchend="touchEnd($event)">
@@ -131,7 +131,7 @@
                 </div>
             </div>
             <div class="text-slate-600 leading-[1.8] text-[1rem] font-medium mb-10 opacity-90">
-                {!! $cafe->description !!}
+                {!! clean($cafe->description) !!}
             </div>
 
             {{-- Kontak & Sosmed Section --}}
@@ -248,107 +248,106 @@
                 </div>
             </section>
 
-            {{-- Hero-Style Menu Section --}}
+            {{-- Premium Menu Section --}}
             <section x-data="{ 
-                                                                                            activeMenuIdx: 0,
-                                                                                            activeLightboxIdx: null,
-                                                                                            touchStartX: 0,
-                                                                                            lastWheelTime: 0,
+                        activeLightboxIdx: null,
+                        touchStartX: 0,
+                        lastWheelTime: 0,
 
-                                                                                            scrollTo(idx) {
-                                                                                                const el = this.$refs.menuSlider;
-                                                                                                const item = el.children[idx];
-                                                                                                el.scrollTo({ left: item.offsetLeft - (el.offsetWidth - item.offsetWidth) / 2, behavior: 'smooth' });
-                                                                                            },
-                                                                                            updateIdx() {
-                                                                                                const el = this.$refs.menuSlider;
-                                                                                                const center = el.scrollLeft + el.offsetWidth / 2;
-                                                                                                let minDiff = Infinity;
-                                                                                                let closestIdx = 0;
-                                                                                                Array.from(el.children).forEach((child, i) => {
-                                                                                                    const diff = Math.abs((child.offsetLeft + child.offsetWidth / 2) - center);
-                                                                                                    if(diff < minDiff) { minDiff = diff; closestIdx = i; }
-                                                                                                });
-                                                                                                this.activeMenuIdx = closestIdx;
-                                                                                            },
-                                                                                            nextLightbox() {
-                                                                                                const len = this.menuImages.length;
-                                                                                                if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx + 1) % len;
-                                                                                            },
-                                                                                            prevLightbox() {
-                                                                                                const len = this.menuImages.length;
-                                                                                                if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx - 1 + len) % len;
-                                                                                            },
-                                                                                            handleWheel(e) {
-                                                                                                const now = Date.now();
-                                                                                                if (now - this.lastWheelTime < 250) return; // Cooldown biar gak lompat-lompat
-                                                                                                if (Math.abs(e.deltaY) < 30) return; // Abaikan scroll halus
+                        nextLightbox() {
+                            const len = this.menuImages.length;
+                            if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx + 1) % len;
+                        },
+                        prevLightbox() {
+                            const len = this.menuImages.length;
+                            if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx - 1 + len) % len;
+                        },
+                        handleWheel(e) {
+                            const now = Date.now();
+                            if (now - this.lastWheelTime < 250) return; 
+                            if (Math.abs(e.deltaY) < 30) return; 
 
-                                                                                                if (e.deltaY > 0) this.nextLightbox();
-                                                                                                else this.prevLightbox();
+                            if (e.deltaY > 0) this.nextLightbox();
+                            else this.prevLightbox();
 
-                                                                                                this.lastWheelTime = now;
-                                                                                            }
-                                                                                        }" class="relative">
+                            this.lastWheelTime = now;
+                        }
+                    }" class="relative section-premium-fade mb-16">
+
+                {{-- Section Header --}}
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-black text-[#2C1810] tracking-tight">Daftar Menu</h2>
-                    <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-full">
-                        <i class="ph ph-image text-slate-400"></i>
+                    <div>
+                        <h2 class="text-2xl font-black text-[#2C1810] tracking-tight mb-1">Daftar Menu</h2>
+                        <div class="h-1 w-16 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
+                    </div>
+                    <div
+                        class="flex items-center gap-2 bg-gradient-to-br from-amber-50 to-orange-50 backdrop-blur-sm border border-amber-200/50 px-4 py-2.5 rounded-2xl shadow-sm">
+                        <i class="ph-fill ph-image text-amber-600 text-lg"></i>
                         <span
-                            class="text-[0.7rem] font-black text-slate-500 uppercase tracking-tighter">{{ $activeGalleryImages->count() }}
+                            class="text-[0.7rem] font-black text-amber-900 uppercase tracking-widest">{{ $activeGalleryImages->count() }}
                             Foto</span>
                     </div>
                 </div>
 
                 @if($activeGalleryImages->count() > 0)
-                    {{-- Large Hero-Style Menu Slider --}}
-                    <div class="relative group">
-                        <div x-ref="menuSlider" @scroll.debounce.50ms="updateIdx()"
-                            class="flex gap-4 overflow-x-auto pb-8 scrollbar-hide snap-x snap-mandatory -mx-6 px-6 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-6 md:overflow-visible md:pb-0 md:px-0 md:mx-0">
-                            @foreach($activeGalleryImages as $index => $img)
-                                <div class="flex-none w-[80%] md:w-auto snap-center cursor-pointer group/item"
-                                    @click="activeLightboxIdx = {{ $index }}">
+                    {{-- Premium Masonry Grid --}}
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+                        @foreach($activeGalleryImages as $index => $img)
+                            <div class="relative group/menu cursor-pointer transform transition-all duration-500 hover:-translate-y-2"
+                                @click="activeLightboxIdx = {{ $index }}"
+                                style="animation: fadeInUp 0.6s ease-out {{ $index * 0.05 }}s both;">
+
+                                {{-- Card Container --}}
+                                <div
+                                    class="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-white/50">
+
+                                    {{-- Image --}}
+                                    <img src="{{ Storage::url($img['image']) }}"
+                                        class="w-full h-full object-cover transition-transform duration-700 group-hover/menu:scale-110"
+                                        alt="{{ $img['tag'] }}" loading="lazy">
+
+                                    {{-- Gradient Overlay --}}
                                     <div
-                                        class="relative aspect-[3/4] rounded-[24px] overflow-hidden shadow-lg border border-white/20 bg-white/5 backdrop-blur-sm transition-all duration-500 hover:shadow-2xl hover:-translate-y-1">
+                                        class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover/menu:opacity-80 transition-opacity duration-300">
+                                    </div>
 
-                                        {{-- Image --}}
-                                        <img src="{{ Storage::url($img['image']) }}"
-                                            class="w-full h-full object-cover transition-transform duration-700 group-hover/item:scale-110"
-                                            alt="{{ $img['tag'] }}" loading="lazy">
-
-                                        {{-- Glass Overlay --}}
+                                    {{-- Tag Badge (Always Visible on Mobile, Hover on Desktop) --}}
+                                    @if(!empty($img['tag']))
                                         <div
-                                            class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 transition-opacity duration-300 group-hover/item:opacity-60">
-                                        </div>
-
-                                        {{-- Floating Tag Badge --}}
-                                        @if(!empty($img['tag']))
-                                            <div class="absolute bottom-4 left-4">
-                                                <div
-                                                    class="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1.5 rounded-xl shadow-sm">
-                                                    <i class="ph-fill ph-tag text-amber-400 text-xs"></i>
-                                                    <span
-                                                        class="text-[0.65rem] font-bold text-white uppercase tracking-wider">{{ $img['tag'] }}</span>
-                                                </div>
-                                            </div>
-                                        @endif
-
-                                        {{-- View Icon (Hover State) --}}
-                                        <div
-                                            class="absolute inset-0 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-opacity duration-300">
+                                            class="absolute bottom-3 left-3 right-3 md:transform md:translate-y-4 md:opacity-0 md:group-hover/menu:translate-y-0 md:group-hover/menu:opacity-100 transition-all duration-300">
                                             <div
-                                                class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 text-white shadow-lg transform scale-75 group-hover/item:scale-100 transition-transform">
-                                                <i class="ph-bold ph-arrows-out-simple text-xl"></i>
+                                                class="flex items-center gap-2 bg-white/95 backdrop-blur-md px-3 py-2 rounded-xl shadow-lg">
+                                                <i class="ph-fill ph-coffee text-amber-600 text-sm"></i>
+                                                <span class="text-[0.7rem] font-black text-[#2C1810] uppercase tracking-wider truncate">
+                                                    {{ $img['tag'] }}
+                                                </span>
                                             </div>
+                                        </div>
+                                    @endif
+
+                                    {{-- Zoom Icon (Desktop Only) --}}
+                                    <div
+                                        class="hidden md:flex absolute inset-0 items-center justify-center opacity-0 group-hover/menu:opacity-100 transition-opacity duration-300">
+                                        <div
+                                            class="w-14 h-14 bg-white/20 backdrop-blur-xl rounded-full flex items-center justify-center border-2 border-white/40 shadow-xl transform scale-90 group-hover/menu:scale-100 transition-transform duration-300">
+                                            <i class="ph-bold ph-magnifying-glass-plus text-white text-2xl"></i>
                                         </div>
                                     </div>
+
+                                    {{-- Corner Accent --}}
+                                    <div
+                                        class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-amber-500/20 to-transparent rounded-bl-3xl opacity-0 group-hover/menu:opacity-100 transition-opacity duration-300">
+                                    </div>
                                 </div>
-                            @endforeach
-                        </div>
+                            </div>
+                        @endforeach
                     </div>
 
-                    {{-- Lightbox (Hero Style with Slider) --}}
-                    <div x-show="activeLightboxIdx !== null" x-transition.opacity.duration.300ms
+                    {{-- Lightbox (Premium Gallery Viewer) --}}
+                    <div x-show="activeLightboxIdx !== null" x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                        x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
                         class="fixed inset-0 z-[10000] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-4 md:p-8"
                         @keydown.escape.window="activeLightboxIdx = null" @keydown.left.window="prevLightbox()"
                         @keydown.right.window="nextLightbox()" @wheel.prevent="handleWheel($event)"
@@ -358,21 +357,21 @@
 
                         {{-- Close Button --}}
                         <button @click.stop="activeLightboxIdx = null"
-                            class="absolute top-4 right-4 md:top-8 md:right-8 z-[10001] w-10 h-10 md:w-12 md:h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white border border-white/10 transition-all active:scale-90 cursor-pointer">
+                            class="absolute top-4 right-4 md:top-8 md:right-8 z-[10001] w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white border border-white/20 transition-all active:scale-90 backdrop-blur-md shadow-xl">
                             <i class="ph-bold ph-x text-xl"></i>
                         </button>
 
-                        {{-- Nav Arrows (Desktop Focus) --}}
+                        {{-- Navigation Arrows (Desktop) --}}
                         <button x-show="menuImages.length > 1" @click.stop="prevLightbox()"
-                            class="hidden md:flex absolute left-8 z-[10001] w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full items-center justify-center text-white transition-all active:scale-90 border border-white/10 hover:border-white/30 cursor-pointer">
+                            class="hidden md:flex absolute left-8 z-[10001] w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full items-center justify-center text-white transition-all active:scale-90 border border-white/20 hover:border-white/40 backdrop-blur-md shadow-xl">
                             <i class="ph-bold ph-caret-left text-3xl"></i>
                         </button>
                         <button x-show="menuImages.length > 1" @click.stop="nextLightbox()"
-                            class="hidden md:flex absolute right-8 z-[10001] w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full items-center justify-center text-white transition-all active:scale-90 border border-white/10 hover:border-white/30 cursor-pointer">
+                            class="hidden md:flex absolute right-8 z-[10001] w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full items-center justify-center text-white transition-all active:scale-90 border border-white/20 hover:border-white/40 backdrop-blur-md shadow-xl">
                             <i class="ph-bold ph-caret-right text-3xl"></i>
                         </button>
 
-                        {{-- Slides Container --}}
+                        {{-- Image Container --}}
                         <div
                             class="w-full h-full flex items-center justify-center relative overflow-hidden pointer-events-none">
                             <template x-for="(m, i) in menuImages" :key="i">
@@ -382,29 +381,47 @@
                                     x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
                                     class="text-center w-full max-w-5xl h-full flex items-center justify-center p-2 pointer-events-auto">
                                     <img :src="m.url"
-                                        class="max-w-full max-h-[85vh] md:max-h-[90vh] object-contain rounded-xl md:rounded-[32px] shadow-2xl mx-auto cursor-default"
+                                        class="max-w-full max-h-[85vh] md:max-h-[90vh] object-contain rounded-2xl md:rounded-3xl shadow-2xl mx-auto cursor-default border-2 border-white/10"
                                         :alt="m.tag" @click.stop>
                                 </div>
                             </template>
                         </div>
 
-                        {{-- Counter Indicator --}}
-                        <div class="absolute bottom-10 bg-white/10 backdrop-blur-md px-5 py-2 rounded-full border border-white/10"
+                        {{-- Counter Badge --}}
+                        <div class="absolute bottom-10 bg-white/10 backdrop-blur-md px-6 py-3 rounded-full border border-white/20 shadow-xl"
                             @click.stop>
-                            <span class="text-white font-black text-xs tracking-[0.2em]">
+                            <span class="text-white font-black text-sm tracking-[0.2em]">
                                 <span x-text="activeLightboxIdx + 1"></span> / <span x-text="menuImages.length"></span>
                             </span>
                         </div>
                     </div>
                 @else
-                    <div class="py-16 text-center bg-slate-50/50 rounded-[32px] border-2 border-dashed border-slate-200">
-                        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="ph ph-image-square text-3xl text-slate-300"></i>
+                    {{-- Empty State --}}
+                    <div
+                        class="py-20 text-center bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-3xl border-2 border-dashed border-slate-200">
+                        <div
+                            class="w-20 h-20 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner">
+                            <i class="ph-fill ph-image-square text-4xl text-amber-400"></i>
                         </div>
                         <p class="text-slate-400 font-bold text-sm">Belum ada menu yang diunggah</p>
+                        <p class="text-slate-300 text-xs mt-1">Menu akan tampil di sini setelah ditambahkan</p>
                     </div>
                 @endif
             </section>
+
+            <style>
+                @keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            </style>
 
             <div class="h-24"></div>
         </div>
@@ -471,8 +488,11 @@
                     try {
                         let vid = localStorage.getItem('wadah-visitor-id'); if (!vid) { vid = 'visitor-' + Math.random().toString(36).substr(2, 9) + Date.now(); localStorage.setItem('wadah-visitor-id', vid); } this.visitorId = vid;
                         const saved = JSON.parse(localStorage.getItem('wadah-bookmarks') || '[]'); this.isBookmarked = saved.includes(props.id);
-                    } catch (e) { }
-                    setInterval(() => { if (this.activeHeroLightboxIdx === null) this.nextSlide(); }, 6000);
+                    } catch (e) {
+                        console.error('[Cafe Detail] LocalStorage error:', e);
+                    }
+                    const AUTO_SLIDE_INTERVAL = 6000; // 6 seconds
+                    setInterval(() => { if (this.activeHeroLightboxIdx === null) this.nextSlide(); }, AUTO_SLIDE_INTERVAL);
                 },
                 nextSlide() { const len = this.images.length; if (len > 0) this.currentSlide = (this.currentSlide + 1) % len; },
                 prevSlide() { const len = this.images.length; if (len > 0) this.currentSlide = (this.currentSlide - 1 + len) % len; },
@@ -488,7 +508,16 @@
                     this.lastHeroWheelTime = now;
                 },
 
-                toggleBookmark() { let b = JSON.parse(localStorage.getItem('wadah-bookmarks') || '[]'); this.isBookmarked ? b = b.filter(id => id !== props.id) : b.push(props.id); localStorage.setItem('wadah-bookmarks', JSON.stringify(b)); this.isBookmarked = !this.isBookmarked; },
+                toggleBookmark() {
+                    try {
+                        let b = JSON.parse(localStorage.getItem('wadah-bookmarks') || '[]');
+                        this.isBookmarked ? b = b.filter(id => id !== props.id) : b.push(props.id);
+                        localStorage.setItem('wadah-bookmarks', JSON.stringify(b));
+                        this.isBookmarked = !this.isBookmarked;
+                    } catch (e) {
+                        console.error('[Cafe Detail] Bookmark error:', e);
+                    }
+                },
                 shareCafe() {
                     const shareData = {
                         title: '{{ $cafe->name }} - WadahNgopi',

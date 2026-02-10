@@ -29,8 +29,11 @@ class SecurityHeaders
         // Control referrer information
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
-        // Restrict browser features
-        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+        // Restrict browser features — geolocation=(self) needed for "Terdekat" feature
+        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self), payment=()');
+
+        // Block Adobe Flash/PDF cross-domain access
+        $response->headers->set('X-Permitted-Cross-Domain-Policies', 'none');
 
         // Content Security Policy - prevent XSS and injection attacks
         // Note: Icons use fonts from jsdelivr (Bootstrap Icons) and scripts from unpkg (Phosphor)

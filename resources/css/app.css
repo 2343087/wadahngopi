@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+/* Font loaded via <link> in layout head — no @import needed */
 @import "tailwindcss";
 
 /* --- 1. Imports & Theme --- */
@@ -111,11 +111,8 @@ img {
     width: calc(100% - 40px);
     max-width: 400px;
     height: 72px;
-    background: rgba(255, 255, 255, 0.95);
-    /* Solid-ish for performance */
-    backdrop-filter: blur(10px);
-    /* Reduced blur */
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.97);
+    /* Solid fallback — blur only on desktop for perf */
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -128,6 +125,13 @@ img {
     z-index: 2000;
     border: none;
     transition: var(--transition-bounce);
+}
+
+@media (min-width: 768px) {
+    .bottom-nav {
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
 }
 
 .nav-item {
@@ -530,8 +534,7 @@ header {
     top: calc(100% + 12px);
     right: 0;
     width: 220px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(25px);
+    background: rgba(255, 255, 255, 0.98);
     border-radius: 28px;
     padding: 12px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
@@ -541,6 +544,13 @@ header {
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+}
+
+@media (min-width: 768px) {
+    .sort-luxury-menu {
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+    }
 }
 
 .sort-luxury-menu::-webkit-scrollbar {
@@ -706,6 +716,14 @@ header {
     box-shadow: 0 -20px 40px rgba(0, 0, 0, 0.05);
 }
 
+/* --- 2. Luxury Design Tokens --- */
+:root {
+    --shadow-premium: 0 10px 30px -5px rgba(26, 15, 10, 0.08), 0 4px 12px -2px rgba(26, 15, 10, 0.04);
+    --shadow-glass: 0 8px 32px 0 rgba(26, 15, 10, 0.1);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.2);
+    --transition-premium: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 /* --- 9. Animations --- */
 .animate-up {
     animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -718,6 +736,35 @@ header {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.section-premium-fade {
+    animation: premiumFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+@keyframes premiumFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.glass-morphism {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: var(--glass-border);
+}
+
+.luxury-card-hover {
+    transition: var(--transition-premium);
+}
+
+.luxury-card-hover:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px -12px rgba(26, 15, 10, 0.25);
 }
 
 /* Pills Scrollbar Hidden */

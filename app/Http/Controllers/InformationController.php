@@ -39,9 +39,13 @@ class InformationController extends Controller
     {
         abort_unless($information->is_published, 404);
 
-        // Direct DB increment to ensure immediate real-time updates for the user.
-        // "Anti-ngebug" - simple and reliable.
-        $information->increment('views');
+        // Rate-limited view counter: 1 increment per article per session
+        // Prevents bot/crawler view inflation abuse
+        $sessionKey = "info_viewed_{$information->id}";
+        if (!session()->has($sessionKey)) {
+            $information->increment('views');
+            session()->put($sessionKey, true);
+        }
 
         return view('information.show', compact('information'));
     }

@@ -85,11 +85,12 @@
     FIX: Use single quotes for x-data attribute to avoid conflict with double quotes in JSON.
     We use @json($galleryImages) which outputs a JSON string.
     --}}
-    <div class="detail-wrapper" x-data='roasteryDetailComponent({
-                                                                                                                id: {{ $roastery->id }},
-                                                                                                                images: @json($galleryImages),
-                                                                                                                menuImages: @json($menuImages)
-                                                                                                            })'>
+    <div class="detail-wrapper"
+        x-data='roasteryDetailComponent({
+                                                                                                                            id: {{ $roastery->id }},
+                                                                                                                            images: @json($galleryImages),
+                                                                                                                            menuImages: @json($menuImages)
+                                                                                                                        })'>
 
         {{-- Hero Slider Section --}}
         <div class="detail-hero-luxury" @touchstart="touchStart($event)" @touchend="touchEnd($event)">
@@ -182,7 +183,7 @@
 
         {{-- Description --}}
         <div class="text-slate-600 leading-[1.8] text-[1rem] font-medium mb-10 opacity-90">
-            {{ strip_tags($roastery->description) ?: 'Deskripsi roastery belum tersedia.' }}
+            {!! clean($roastery->description ?: 'Deskripsi roastery belum tersedia.') !!}
         </div>
 
         {{-- Kontak & Sosmed Section --}}
@@ -283,114 +284,113 @@
 
 
         {{-- Menu Biji Kopi Section --}}
-        <section x-data='roasteryMenuComponent(@json($menuImages))' class="relative mb-12">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-black text-[#2C1810] tracking-tight">Daftar Menu Biji Kopi</h2>
-                <div class="flex items-center gap-2 bg-amber-100 px-3 py-1.5 rounded-full">
-                    <i class="ph-fill ph-coffee-bean text-amber-600"></i>
-                    <span class="text-[0.7rem] font-black text-amber-700 uppercase tracking-tighter"
+        <section x-data='roasteryMenuComponent(@json($menuImages))' class="relative mb-12 section-premium-fade">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-2xl font-black text-[#2C1810] tracking-tight mb-1">Daftar Menu Biji Kopi</h2>
+                    <div class="h-1 w-12 bg-amber-500 rounded-full"></div>
+                </div>
+                <div
+                    class="flex items-center gap-2 bg-white/50 backdrop-blur-sm border border-espresso/5 px-4 py-2 rounded-2xl shadow-soft">
+                    <i class="ph ph-coffee-bean text-amber-600 font-bold"></i>
+                    <span class="text-[0.7rem] font-bold text-espresso/70 uppercase tracking-widest"
                         x-text="menuImages.length + ' Foto'"></span>
                 </div>
             </div>
 
             <template x-if="menuImages.length > 0">
-                <div class="relative group">
-                    <div x-ref="menuSlider" @scroll.debounce.50ms="updateIdx()"
-                        class="flex gap-4 overflow-x-auto pb-8 scrollbar-hide snap-x snap-mandatory -mx-6 px-6 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-6 md:overflow-visible md:pb-0 md:px-0 md:mx-0">
-                        <template x-for="(img, index) in menuImages" :key="index">
-                            <div class="flex-none w-[80%] md:w-auto snap-center cursor-pointer group/item"
-                                @click="activeLightboxIdx = index">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                    <template x-for="(img, index) in menuImages" :key="index">
+                        <div class="relative group/menu cursor-pointer" @click="activeLightboxIdx = index">
+                            <div
+                                class="relative aspect-[3/4] rounded-[28px] overflow-hidden shadow-soft transition-all duration-500 group-hover/menu:shadow-xl group-hover/menu:-translate-y-2 border border-espresso/5">
+                                {{-- Image --}}
+                                <img :src="img"
+                                    class="w-full h-full object-cover transition-transform duration-700 group-hover/menu:scale-110"
+                                    loading="lazy">
+
+                                {{-- Gradient Overlay --}}
                                 <div
-                                    class="relative aspect-[3/4] rounded-[24px] overflow-hidden shadow-lg border border-white/20 bg-white/5 backdrop-blur-sm transition-all duration-500 hover:shadow-2xl hover:-translate-y-1">
+                                    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover/menu:opacity-100 transition-opacity duration-300">
+                                </div>
 
-                                    {{-- Image --}}
-                                    <img :src="img"
-                                        class="w-full h-full object-cover transition-transform duration-700 group-hover/item:scale-110"
-                                        loading="lazy">
-
-                                    {{-- Glass Overlay --}}
+                                {{-- Icon Overlay --}}
+                                <div
+                                    class="absolute inset-0 flex items-center justify-center opacity-0 group-hover/menu:opacity-100 transition-opacity">
                                     <div
-                                        class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 transition-opacity duration-300 group-hover/item:opacity-60">
-                                    </div>
-
-                                    {{-- View Icon (Hover State) --}}
-                                    <div
-                                        class="absolute inset-0 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-opacity duration-300">
-                                        <div
-                                            class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 text-white shadow-lg transform scale-75 group-hover/item:scale-100 transition-transform">
-                                            <i class="ph-bold ph-arrows-out-simple text-xl"></i>
-                                        </div>
+                                        class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 text-white shadow-lg">
+                                        <i class="ph-bold ph-magnifying-glass-plus text-xl"></i>
                                     </div>
                                 </div>
                             </div>
-                        </template>
-                    </div>
-
-                    {{-- Lightbox (Gallery) --}}
-                    <div x-show="activeLightboxIdx !== null" x-transition.opacity.duration.300ms
-                        class="fixed inset-0 z-[10000] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-4 md:p-8"
-                        @keydown.escape.window="activeLightboxIdx = null" @keydown.left.window="prevLightbox()"
-                        @keydown.right.window="nextLightbox()" @wheel.prevent="handleWheel($event)"
-                        @touchstart="touchStartX = $event.touches[0].clientX"
-                        @touchend="if (touchStartX - $event.changedTouches[0].clientX > 50) nextLightbox(); if (touchStartX - $event.changedTouches[0].clientX < -50) prevLightbox();"
-                        @click="activeLightboxIdx = null" x-cloak>
-
-                        {{-- Close Button --}}
-                        <button @click.stop="activeLightboxIdx = null"
-                            class="absolute top-4 right-4 md:top-8 md:right-8 z-[10001] w-10 h-10 md:w-12 md:h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white border border-white/10 transition-all active:scale-90 cursor-pointer">
-                            <i class="ph-bold ph-x text-xl"></i>
-                        </button>
-
-                        {{-- Nav Arrows --}}
-                        <button x-show="menuImages.length > 1" @click.stop="prevLightbox()"
-                            class="hidden md:flex absolute left-8 z-[10001] w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full items-center justify-center text-white transition-all active:scale-90 border border-white/10 hover:border-white/30 cursor-pointer">
-                            <i class="ph-bold ph-caret-left text-3xl"></i>
-                        </button>
-                        <button x-show="menuImages.length > 1" @click.stop="nextLightbox()"
-                            class="hidden md:flex absolute right-8 z-[10001] w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full items-center justify-center text-white transition-all active:scale-90 border border-white/10 hover:border-white/30 cursor-pointer">
-                            <i class="ph-bold ph-caret-right text-3xl"></i>
-                        </button>
-
-                        {{-- Slides Container --}}
-                        <div class="w-full h-full flex items-center justify-center relative overflow-hidden pointer-events-none"
-                            @click.self="activeLightboxIdx = null">
-                            <template x-for="(img, i) in menuImages" :key="i">
-                                <div x-show="activeLightboxIdx === i" x-transition:enter="transition duration-300 ease-out"
-                                    x-transition:enter-start="opacity-0 scale-95"
-                                    x-transition:enter-end="opacity-100 scale-100"
-                                    x-transition:leave="transition duration-200 ease-in"
-                                    x-transition:leave-start="opacity-100 scale-100"
-                                    x-transition:leave-end="opacity-0 scale-95"
-                                    class="text-center w-full max-w-5xl h-full flex items-center justify-center p-2 pointer-events-auto">
-                                    <img :src="img"
-                                        class="max-w-full max-h-[85vh] md:max-h-[90vh] object-contain rounded-xl md:rounded-[32px] shadow-2xl mx-auto cursor-default"
-                                        draggable="false" @click.stop>
-                                </div>
-                            </template>
                         </div>
-
-                        {{-- Counter Indicator --}}
-                        <div class="absolute bottom-10 bg-white/10 backdrop-blur-md px-5 py-2 rounded-full border border-white/10"
-                            @click.stop>
-                            <span class="text-white font-black text-xs tracking-[0.2em]">
-                                <span x-text="activeLightboxIdx + 1"></span> / <span x-text="menuImages.length"></span>
-                            </span>
-                        </div>
-                    </div>
+                    </template>
                 </div>
             </template>
 
-            <template x-if="menuImages.length === 0">
-                <div class="py-16 text-center bg-slate-50/50 rounded-[32px] border-2 border-dashed border-slate-200">
-                    <div class="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="ph-fill ph-coffee-bean text-3xl text-amber-300"></i>
-                    </div>
-                    <p class="text-slate-400 font-bold text-sm">Belum ada menu biji kopi</p>
-                </div>
-            </template>
-        </section>
+            {{-- Lightbox (Gallery) --}}
+            <div x-show="activeLightboxIdx !== null" x-transition.opacity.duration.300ms
+                class="fixed inset-0 z-[10000] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-4 md:p-8"
+                @keydown.escape.window="activeLightboxIdx = null" @keydown.left.window="prevLightbox()"
+                @keydown.right.window="nextLightbox()" @wheel.prevent="handleWheel($event)"
+                @touchstart="touchStartX = $event.touches[0].clientX"
+                @touchend="if (touchStartX - $event.changedTouches[0].clientX > 50) nextLightbox(); if (touchStartX - $event.changedTouches[0].clientX < -50) prevLightbox();"
+                @click="activeLightboxIdx = null" x-cloak>
 
-        <div class="h-24"></div>
+                {{-- Close Button --}}
+                <button @click.stop="activeLightboxIdx = null"
+                    class="absolute top-4 right-4 md:top-8 md:right-8 z-[10001] w-10 h-10 md:w-12 md:h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white border border-white/10 transition-all active:scale-90 cursor-pointer">
+                    <i class="ph-bold ph-x text-xl"></i>
+                </button>
+
+                {{-- Nav Arrows --}}
+                <button x-show="menuImages.length > 1" @click.stop="prevLightbox()"
+                    class="hidden md:flex absolute left-8 z-[10001] w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full items-center justify-center text-white transition-all active:scale-90 border border-white/10 hover:border-white/30 cursor-pointer">
+                    <i class="ph-bold ph-caret-left text-3xl"></i>
+                </button>
+                <button x-show="menuImages.length > 1" @click.stop="nextLightbox()"
+                    class="hidden md:flex absolute right-8 z-[10001] w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full items-center justify-center text-white transition-all active:scale-90 border border-white/10 hover:border-white/30 cursor-pointer">
+                    <i class="ph-bold ph-caret-right text-3xl"></i>
+                </button>
+
+                {{-- Slides Container --}}
+                <div class="w-full h-full flex items-center justify-center relative overflow-hidden pointer-events-none"
+                    @click.self="activeLightboxIdx = null">
+                    <template x-for="(img, i) in menuImages" :key="i">
+                        <div x-show="activeLightboxIdx === i" x-transition:enter="transition duration-300 ease-out"
+                            x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                            x-transition:leave="transition duration-200 ease-in"
+                            x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                            class="text-center w-full max-w-5xl h-full flex items-center justify-center p-2 pointer-events-auto">
+                            <img :src="img"
+                                class="max-w-full max-h-[85vh] md:max-h-[90vh] object-contain rounded-xl md:rounded-[32px] shadow-2xl mx-auto cursor-default"
+                                draggable="false" @click.stop>
+                        </div>
+                    </template>
+                </div>
+
+                {{-- Counter Indicator --}}
+                <div class="absolute bottom-10 bg-white/10 backdrop-blur-md px-5 py-2 rounded-full border border-white/10"
+                    @click.stop>
+                    <span class="text-white font-black text-xs tracking-[0.2em]">
+                        <span x-text="activeLightboxIdx + 1"></span> / <span x-text="menuImages.length"></span>
+                    </span>
+                </div>
+            </div>
+    </div>
+    </template>
+
+    <template x-if="menuImages.length === 0">
+        <div class="py-16 text-center bg-slate-50/50 rounded-[32px] border-2 border-dashed border-slate-200">
+            <div class="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ph-fill ph-coffee-bean text-3xl text-amber-300"></i>
+            </div>
+            <p class="text-slate-400 font-bold text-sm">Belum ada menu biji kopi</p>
+        </div>
+    </template>
+    </section>
+
+    <div class="h-24"></div>
     </div>
 
     {{-- Hero Gallery Lightbox (Premium Slider) --}}
@@ -465,10 +465,13 @@
                     try {
                         const saved = JSON.parse(localStorage.getItem('wadah-roastery-bookmarks') || '[]');
                         this.isBookmarked = saved.includes(props.id);
-                    } catch (e) { }
+                    } catch (e) {
+                        console.error('[Roastery Detail] LocalStorage error:', e);
+                    }
 
                     // Auto slide hero
-                    setInterval(() => { if (this.activeHeroLightboxIdx === null) this.nextSlide(); }, 6000);
+                    const AUTO_SLIDE_INTERVAL = 6000; // 6 seconds
+                    setInterval(() => { if (this.activeHeroLightboxIdx === null) this.nextSlide(); }, AUTO_SLIDE_INTERVAL);
                 },
 
                 nextSlide() { const len = this.images.length; if (len > 0) this.currentSlide = (this.currentSlide + 1) % len; },
@@ -490,10 +493,14 @@
                 },
 
                 toggleBookmark() {
-                    let b = JSON.parse(localStorage.getItem('wadah-roastery-bookmarks') || '[]');
-                    this.isBookmarked ? b = b.filter(id => id !== props.id) : b.push(props.id);
-                    localStorage.setItem('wadah-roastery-bookmarks', JSON.stringify(b));
-                    this.isBookmarked = !this.isBookmarked;
+                    try {
+                        let b = JSON.parse(localStorage.getItem('wadah-roastery-bookmarks') || '[]');
+                        this.isBookmarked ? b = b.filter(id => id !== props.id) : b.push(props.id);
+                        localStorage.setItem('wadah-roastery-bookmarks', JSON.stringify(b));
+                        this.isBookmarked = !this.isBookmarked;
+                    } catch (e) {
+                        console.error('[Roastery Detail] Bookmark error:', e);
+                    }
                 },
 
                 shareRoastery() {

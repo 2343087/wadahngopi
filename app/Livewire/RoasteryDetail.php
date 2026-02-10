@@ -7,27 +7,24 @@ use Livewire\Component;
 
 class RoasteryDetail extends Component
 {
-    public $roasteryId;
-    public $isOpen = false;
-    public $hasRoastery = false;
+    public int $roasteryId;
+    public bool $isOpen = false;
+    public bool $hasRoastery = false;
 
-    public function mount($roasteryId)
+    public function mount(int $roasteryId): void
     {
         $this->roasteryId = $roasteryId;
         $this->checkStatus();
     }
 
-    public function checkStatus()
+    public function checkStatus(): void
     {
-        $roastery = Roastery::find($this->roasteryId);
-        if ($roastery) {
-            $this->hasRoastery = true;
-            // Force re-evaluation of the accessor
-            $this->isOpen = $roastery->is_open;
-        }
+        $roastery = Roastery::where('status', 'published')->find($this->roasteryId);
+        $this->hasRoastery = $roastery !== null;
+        $this->isOpen = $roastery?->is_open ?? false;
     }
 
-    public function refreshStatus()
+    public function refreshStatus(): void
     {
         $this->checkStatus();
     }

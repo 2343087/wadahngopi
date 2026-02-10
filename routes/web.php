@@ -18,4 +18,5 @@ Route::middleware(['throttle:web'])->group(function () {
     Route::get('/roastery', [RoasteryController::class, 'index'])->name('roastery');
     Route::get('/roastery/{roastery}', [RoasteryController::class, 'show'])->name('roastery.show');
     Route::get('/cafes/{cafe}', [CafeController::class, 'show'])->name('cafes.show');
+    Route::redirect('/cafes', '/explore'); // Ensure no 404 for list request
 });

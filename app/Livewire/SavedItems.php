@@ -56,6 +56,7 @@ class SavedItems extends Component
         if (!empty($this->roasteryIds)) {
             $roasteries = Roastery::query()
                 ->whereIn('id', $this->roasteryIds)
+                ->where('status', 'published')
                 ->select(['id', 'name', 'slug', 'address', 'image_path', 'is_24_hours', 'operating_hours', 'weekday_open', 'weekday_close', 'weekend_open', 'weekend_close'])
                 ->get()
                 ->map(fn($r) => [
