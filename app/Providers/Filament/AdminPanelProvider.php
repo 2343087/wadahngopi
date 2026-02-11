@@ -27,9 +27,9 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(\App\Filament\Pages\Auth\CustomLogin::class)
             ->brandName('WadahNgopi')
-            ->brandLogo(asset('wadahicon.png'))
+            ->brandLogo(asset('icon-512x512.png'))
             ->brandLogoHeight('3.5rem')
-            ->favicon(asset('wadahicon.png'))
+            ->favicon(asset('icon-512x512.png'))
             ->colors([
                 'primary' => Color::Amber,
                 'gray' => Color::Stone,

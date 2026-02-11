@@ -27,7 +27,7 @@ class CafeController extends Controller
         abort_if($cafe->status !== 'published', 404);
 
         // Cache individual cafe with relationships
-        $cafe = Cache::remember("cafe_{$cafe->id}", now()->addMinutes(10), function () use ($cafe) {
+        $cafe = Cache::remember("cafe_{$cafe->slug}", now()->addMinutes(10), function () use ($cafe) {
             $cafe->load(['facilities', 'city']);
             return $cafe;
         });

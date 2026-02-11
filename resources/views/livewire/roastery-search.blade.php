@@ -144,10 +144,10 @@
             <a href="{{ route('roastery.show', $roastery) }}" class="cafe-card-2026 group">
                     {{-- Fixed Height Image Container --}}
                     @php
-                        $image = $roastery->image_path ? (str_starts_with($roastery->image_path, 'http') ? $roastery->image_path : Storage::url($roastery->image_path)) : 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=800';
+                        $featuredImage = $roastery->processed_images[0] ?? 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=800';
                     @endphp
                     <div class="cafe-card-image">
-                         <img src="{{ $image }}"
+                         <img src="{{ $featuredImage }}"
                               alt="{{ $roastery->name }}" loading="lazy" 
                               class="cafe-card-img object-cover">
                               

@@ -9,7 +9,7 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-seri f;
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
 
     /* Luxury Branding Colors */
     --color-espresso: #1A0F0A;

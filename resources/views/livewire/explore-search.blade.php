@@ -164,7 +164,11 @@
                         $image = $cafe->image_path ? (str_starts_with($cafe->image_path, 'http') ? $cafe->image_path : Storage::url($cafe->image_path)) : 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800';
                     @endphp
                     <div class="cafe-card-image">
-                         <img src="{{ $image }}"
+                        @php
+                            $images = $cafe->processed_images;
+                            $firstImage = count($images) > 0 ? $images[0] : 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800';
+                        @endphp
+                         <img src="{{ $firstImage }}"
                               alt="{{ $cafe->name }}" loading="lazy" 
                               class="cafe-card-img object-cover">
                               

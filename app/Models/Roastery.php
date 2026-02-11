@@ -116,10 +116,10 @@ class Roastery extends Model
             // Sync operating_hours JSON to dedicated columns for performance query scope
             if (!empty($roastery->operating_hours) && $roastery->isDirty('operating_hours')) {
                 $hours = $roastery->operating_hours;
-                $roastery->weekday_open = $hours['weekday']['open'] ?? null;
-                $roastery->weekday_close = $hours['weekday']['close'] ?? null;
-                $roastery->weekend_open = $hours['weekend']['open'] ?? null;
-                $roastery->weekend_close = $hours['weekend']['close'] ?? null;
+                $roastery->weekday_open = data_get($hours, 'weekday.open');
+                $roastery->weekday_close = data_get($hours, 'weekday.close');
+                $roastery->weekend_open = data_get($hours, 'weekend.open');
+                $roastery->weekend_close = data_get($hours, 'weekend.close');
             }
         });
 
@@ -141,5 +141,41 @@ class Roastery extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /**
+     * Accessor: Clean and process ambience images.
+     */
+    public function getProcessedImagesAttribute(): array
+    {
+        return $this->processImagesList(collect([$this->image_path])->merge($this->images ?? [])->all());
+    }
+
+    /**
+     * Accessor: Clean and process menu images.
+     */
+    public function getProcessedMenuImagesAttribute(): array
+    {
+        return $this->processImagesList($this->menu_images ?? []);
+    }
+
+    /**
+     * Helper to clean image paths.
+     */
+    protected function processImagesList(array $list): array
+    {
+        return collect($list)
+            ->filter()
+            ->map(function ($img) {
+                if (empty($img))
+                    return null;
+                $cleanImg = preg_replace('/[\x00-\x1F\x7F\xA0\s]+/', '', $img);
+                if (str_starts_with($cleanImg, 'http'))
+                    return $cleanImg;
+                return '/storage/' . $cleanImg;
+            })
+            ->filter()
+            ->values()
+            ->all() ?: ['https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=1200'];
     }
 }

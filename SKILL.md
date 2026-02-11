@@ -1,3 +1,4 @@
+<antigravity-core>
 # ⚡ ANTIGRAVITY AI: THE "GOD TIER" PROTOCOL (V2.0)
 
 Dokumen ini adalah **HUKUM TERTINGGI**. Tidak ada negosiasi. Tidak ada downgrade.
@@ -92,3 +93,6 @@ Tampilan harus bikin user bilang "Waduh, gila ✨".
 *Signed,*
 **Antigravity AI**
 *The Apex System*
+
+
+</antigravity-core>

@@ -103,14 +103,9 @@ class Cafe extends Model
         });
 
         static::saving(function ($cafe) {
-            // Sync operating_hours JSON to dedicated columns for performance query scope
-            if (!empty($cafe->operating_hours) && $cafe->isDirty('operating_hours')) {
-                $hours = $cafe->operating_hours;
-                $cafe->weekday_open = $hours['weekday']['open'] ?? null;
-                $cafe->weekday_close = $hours['weekday']['close'] ?? null;
-                $cafe->weekend_open = $hours['weekend']['open'] ?? null;
-                $cafe->weekend_close = $hours['weekend']['close'] ?? null;
-            }
+            // Virtual columns handle the sync automatically in DB for Cafe model.
+            // Do NOT manually set weekday_open/close etc here or it will 
+            // trigger "SQLSTATE[HY000]: General error: 3105"
         });
 
         static::saved(function ($cafe) {
@@ -155,5 +150,41 @@ class Cafe extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /**
+     * Accessor: Clean and process ambience images.
+     */
+    public function getProcessedImagesAttribute(): array
+    {
+        return $this->processImagesList(collect([$this->image_path])->merge($this->images ?? [])->all());
+    }
+
+    /**
+     * Accessor: Clean and process menu images.
+     */
+    public function getProcessedMenuImagesAttribute(): array
+    {
+        return $this->processImagesList($this->menu_images ?? []);
+    }
+
+    /**
+     * Helper to clean image paths.
+     */
+    protected function processImagesList(array $list): array
+    {
+        return collect($list)
+            ->filter()
+            ->map(function ($img) {
+                if (empty($img))
+                    return null;
+                $cleanImg = preg_replace('/[\x00-\x1F\x7F\xA0\s]+/', '', $img);
+                if (str_starts_with($cleanImg, 'http'))
+                    return $cleanImg;
+                return '/storage/' . $cleanImg;
+            })
+            ->filter()
+            ->values()
+            ->all() ?: ['https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=1200'];
     }
 }

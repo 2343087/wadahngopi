@@ -8,36 +8,8 @@
 
 @section('content')
     @php
-        use Illuminate\Support\Facades\Storage;
-
-        $processImages = function ($images) {
-            return collect($images ?? [])
-                ->filter()
-                ->map(function ($img) {
-                    if (empty($img))
-                        return null;
-                    // Aggressively remove all whitespace and control characters
-                    $cleanImg = preg_replace('/[\x00-\x1F\x7F\xA0\s]+/', '', $img);
-                    if (str_starts_with($cleanImg, 'http'))
-                        return $cleanImg;
-                    return '/storage/' . $cleanImg;
-                })
-                ->filter()
-                ->values()
-                ->all();
-        };
-
-        // Ambience (Suasana) includes Main Image + Gallery
-        $rawAmbience = collect([$roastery->image_path])->merge($roastery->images ?? [])->all();
-        $galleryImages = $processImages($rawAmbience);
-
-        // Menu Images (Biji Kopi)
-        $menuImages = $processImages($roastery->menu_images);
-
-        // Fallback for Hero if empty
-        if (empty($galleryImages)) {
-            $galleryImages = ['https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=1200'];
-        }
+        $galleryImages = $roastery->processed_images;
+        $menuImages = $roastery->processed_menu_images;
     @endphp
 
     <style>
@@ -87,10 +59,10 @@
     --}}
     <div class="detail-wrapper"
         x-data='roasteryDetailComponent({
-                                                                                                                            id: {{ $roastery->id }},
-                                                                                                                            images: @json($galleryImages),
-                                                                                                                            menuImages: @json($menuImages)
-                                                                                                                        })'>
+                                                                                                                                id: {{ $roastery->id }},
+                                                                                                                                images: @json($galleryImages),
+                                                                                                                                menuImages: @json($menuImages)
+                                                                                                                            })'>
 
         {{-- Hero Slider Section --}}
         <div class="detail-hero-luxury" @touchstart="touchStart($event)" @touchend="touchEnd($event)">

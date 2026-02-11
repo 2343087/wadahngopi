@@ -8,24 +8,11 @@
 
 @section('content')
     @php
-        use Illuminate\Support\Facades\Storage;
-
-        $rawImages = collect([$cafe->image_path])
-            ->merge($cafe->images ?? [])
-            ->filter()
-            ->map(function ($img) {
-                return str_starts_with($img, 'http') ? $img : Storage::url($img);
-            })
-            ->values()
-            ->all();
-
-        $galleryImages = empty($rawImages)
-            ? ['https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=1200']
-            : $rawImages;
+        $galleryImages = $cafe->processed_images;
 
         // PRECOMPUTE CATEGORIES
-        $menuImages = $cafe->menu_images ?? [];
-        $activeGalleryImages = collect($menuImages)->filter(fn($img) => is_array($img) && ($img['is_active'] ?? true) === true);
+        $menuRaw = $cafe->menu_images ?? [];
+        $activeGalleryImages = collect($menuRaw)->filter(fn($img) => is_array($img) && ($img['is_active'] ?? true) === true);
         $allCats = $activeGalleryImages->pluck('tag')->unique()->filter()->values()->all();
         $defaultTab = !empty($allCats) ? $allCats[0] : '';
     @endphp
@@ -62,12 +49,12 @@
     </style>
 
     <div class="detail-wrapper" x-data="cafeDetailComponent({
-                                                                    id: {{ $cafe->id }},
-                                                                    images: {{ json_encode($galleryImages) }},
-                                                                    allCategories: {{ json_encode($allCats) }},
-                                                                    defaultTab: {{ json_encode($defaultTab) }},
-                                                                    menuImages: {{ json_encode($activeGalleryImages->map(fn($img) => ['url' => Storage::url($img['image']), 'tag' => $img['tag']])->values()) }}
-                                                                })">
+                                                                        id: {{ $cafe->id }},
+                                                                        images: {{ json_encode($galleryImages) }},
+                                                                        allCategories: {{ json_encode($allCats) }},
+                                                                        defaultTab: {{ json_encode($defaultTab) }},
+                                                                        menuImages: {{ json_encode($activeGalleryImages->map(fn($img) => ['url' => str_starts_with($img['image'], 'http') ? $img['image'] : '/storage/' . $img['image'], 'tag' => $img['tag']])->values()) }}
+                                                                    })">
 
         {{-- Hero Slider Section --}}
         <div class="detail-hero-luxury" @touchstart="touchStart($event)" @touchend="touchEnd($event)">
@@ -125,7 +112,7 @@
         <div class="detail-content-luxury animate-up">
             <div class="mb-6">
                 <h1 class="text-3xl font-black text-[#2C1810] leading-tight mb-2">{{ $cafe->name }}</h1>
-                <div class="flex items-start gap-2 text-slate-500 font-medium text-sm">
+                <div class="flex items-start gap-2 tphp artisan testext-slate-500 font-medium text-sm">
                     <i class="ph-fill ph-map-pin text-amber-600 text-lg mt-0.5"></i>
                     <span>{{ $cafe->address }}</span>
                 </div>
@@ -250,29 +237,29 @@
 
             {{-- Premium Menu Section --}}
             <section x-data="{ 
-                        activeLightboxIdx: null,
-                        touchStartX: 0,
-                        lastWheelTime: 0,
+                            activeLightboxIdx: null,
+                            touchStartX: 0,
+                            lastWheelTime: 0,
 
-                        nextLightbox() {
-                            const len = this.menuImages.length;
-                            if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx + 1) % len;
-                        },
-                        prevLightbox() {
-                            const len = this.menuImages.length;
-                            if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx - 1 + len) % len;
-                        },
-                        handleWheel(e) {
-                            const now = Date.now();
-                            if (now - this.lastWheelTime < 250) return; 
-                            if (Math.abs(e.deltaY) < 30) return; 
+                            nextLightbox() {
+                                const len = this.menuImages.length;
+                                if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx + 1) % len;
+                            },
+                            prevLightbox() {
+                                const len = this.menuImages.length;
+                                if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx - 1 + len) % len;
+                            },
+                            handleWheel(e) {
+                                const now = Date.now();
+                                if (now - this.lastWheelTime < 250) return; 
+                                if (Math.abs(e.deltaY) < 30) return; 
 
-                            if (e.deltaY > 0) this.nextLightbox();
-                            else this.prevLightbox();
+                                if (e.deltaY > 0) this.nextLightbox();
+                                else this.prevLightbox();
 
-                            this.lastWheelTime = now;
-                        }
-                    }" class="relative section-premium-fade mb-16">
+                                this.lastWheelTime = now;
+                            }
+                        }" class="relative section-premium-fade mb-16">
 
                 {{-- Section Header --}}
                 <div class="flex items-center justify-between mb-6">
@@ -302,7 +289,7 @@
                                     class="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-white/50">
 
                                     {{-- Image --}}
-                                    <img src="{{ Storage::url($img['image']) }}"
+                                    <img src="{{ str_starts_with($img['image'], 'http') ? $img['image'] : '/storage/' . $img['image'] }}"
                                         class="w-full h-full object-cover transition-transform duration-700 group-hover/menu:scale-110"
                                         alt="{{ $img['tag'] }}" loading="lazy">
 
