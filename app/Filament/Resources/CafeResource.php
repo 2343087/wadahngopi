@@ -91,9 +91,10 @@ class CafeResource extends Resource
                                             ->visibility('public')
                                             ->label('Upload Foto Menu')
                                             ->required()
-                                            // ->imageResizeTargetWidth('1200') // Disabled to prevent hang
-                                            // ->imageEditor() 
-                                            ->maxSize(10240) // 10MB
+                                            // ->imageResizeMode('cover')
+                                            // ->imageResizeTargetWidth('1280')
+                                            // ->imageResizeTargetHeight('1920')
+                                            ->maxSize(5120) // 5MB Limit
                                             ->columnSpan(2),
                                         Forms\Components\TextInput::make('tag')
                                             ->label('Kategori')
@@ -136,9 +137,11 @@ class CafeResource extends Resource
                             ->directory('cafes')
                             ->visibility('public')
                             ->label('Foto Profil Utama')
-                            // ->imageResizeTargetWidth('1200') // Disabled
-                            // ->imageEditor() 
-                            ->maxSize(10240) // 10MB
+                            // ->imageResizeMode('cover')
+                            // ->imageCropAspectRatio('1:1')
+                            // ->imageResizeTargetWidth('1080')
+                            // ->imageResizeTargetHeight('1080')
+                            ->maxSize(5120) // 5MB Limit
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp']),
 
                         Forms\Components\FileUpload::make('images')
@@ -150,9 +153,10 @@ class CafeResource extends Resource
                             ->label('Galeri Foto (Biar Makin Estetik)')
                             ->helperText('Maksimal 5 foto ya boss, usahain yang resolusinya mantap!')
                             ->reorderable()
-                            // ->imageResizeTargetWidth('1200') // Disabled
-                            // ->imageEditor() 
-                            ->maxSize(10240) // 10MB
+                            // ->imageResizeMode('cover')
+                            // ->imageResizeTargetWidth('1280')
+                            // ->imageResizeTargetHeight('1280')
+                            ->maxSize(5120) // 5MB Limit
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                             ->columnSpanFull(),
 
@@ -257,22 +261,20 @@ class CafeResource extends Resource
                                             ->extraAttributes([
                                                 'class' => 'cursor-pointer text-primary-500',
                                                 'title' => 'Ambil Lokasi Saat Ini',
-                                                'x-on:click' => <<<'JS'
+                                                'x-on:click.prevent' => <<<'JS'
                                                     if (!navigator.geolocation) {
                                                         alert('Browser kamu tidak mendukung geolocation.');
                                                         return;
                                                     }
                                                     navigator.geolocation.getCurrentPosition(
                                                         (position) => {
-                                                            // Fill both Lat and Long
                                                             $wire.set('data.latitude', position.coords.latitude);
                                                             $wire.set('data.longitude', position.coords.longitude);
-                                                            
-                                                            // Optional: Show success feedback
                                                             new Notification('Lokasi Berhasil Diambil!');
                                                         },
                                                         (error) => {
-                                                            alert('Gagal mengambil lokasi (Pastikan GPS aktif & Izin diberikan): ' + error.message);
+                                                            console.error(error);
+                                                            alert('Gagal mengambil lokasi: ' + error.message);
                                                         }
                                                     );
                                                 JS,

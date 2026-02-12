@@ -26,8 +26,8 @@ class Cafe extends Model
         'images',
         'latitude',
         'longitude',
-        'opening_time',
-        'closing_time',
+        // 'opening_time', // DEPRECATED: Use operating_hours
+        // 'closing_time', // DEPRECATED: Use operating_hours
         'is_24_hours',
         'operating_hours',
         'owner_id',

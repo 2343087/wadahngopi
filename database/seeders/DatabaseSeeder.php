@@ -8,8 +8,6 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
      * Seed the application's database.
      */
@@ -58,25 +56,12 @@ class DatabaseSeeder extends Seeder
         );
 
         foreach ($samarindaCafes as $cafeData) {
-            $rating = $cafeData['rating'] ?? null;
-            unset($cafeData['rating']);
+            unset($cafeData['rating']); // Rating column no longer exists
 
-            $cafe = \App\Models\Cafe::factory()
-                ->create(array_merge($cafeData, ['owner_id' => $admin->id]));
-
-            if ($rating) {
-                \App\Models\Review::factory()->create([
-                    'cafe_id' => $cafe->id,
-                    'rating' => $rating,
-                    'user_name' => 'Wadah Hunter',
-                    'comment' => 'Tempat yang sangat direkomendasikan!',
-                ]);
-            }
-
-            // Add more random reviews
-            \App\Models\Review::factory()->count(fake()->numberBetween(2, 4))->create([
-                'cafe_id' => $cafe->id,
-            ]);
+            \App\Models\Cafe::factory()->create(array_merge($cafeData, [
+                'owner_id' => $admin->id,
+                'status' => 'published',
+            ]));
         }
     }
 }

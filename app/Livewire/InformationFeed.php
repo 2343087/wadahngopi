@@ -16,6 +16,10 @@ class InformationFeed extends Component
 
     public function setCategory(string $category): void
     {
+        if (!in_array($category, ['Semua', 'Berita', 'Edukasi', 'Lomba', 'Promo'])) {
+            return;
+        }
+
         $this->activeCategory = $category;
         $this->resetPage();
     }

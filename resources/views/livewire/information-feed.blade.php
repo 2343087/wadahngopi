@@ -22,19 +22,31 @@
 
         {{-- Category Pills (Matches Explore Style) --}}
         <div class="explore-category-pills">
-            <button class="category-pill" :class="$wire.activeCategory === 'Semua' ? 'active' : ''"
-                wire:click="setCategory('Semua')">
-                <i class="ph-fill ph-check-square" x-show="$wire.activeCategory === 'Semua'"></i>
+            <button class="category-pill disabled:opacity-50 disabled:cursor-not-allowed"
+                :class="$wire.activeCategory === 'Semua' ? 'active' : ''" wire:click="setCategory('Semua')"
+                wire:loading.attr="disabled" wire:target="setCategory('Semua')">
+                <i class="ph-fill ph-check-square" x-show="$wire.activeCategory === 'Semua'" wire:loading.remove
+                    wire:target="setCategory('Semua')"></i>
+                <i class="ph-bold ph-spinner animate-spin" wire:loading wire:target="setCategory('Semua')"></i>
                 <span>Semua</span>
             </button>
             @foreach (['Berita', 'Edukasi', 'Lomba', 'Promo'] as $cat)
-                <button class="category-pill" :class="$wire.activeCategory === '{{ $cat }}' ? 'active' : ''"
-                    wire:click="setCategory('{{ $cat }}')">
-                    @if($cat === 'Berita') <i class="ph-fill ph-newspaper"></i>
-                    @elseif($cat === 'Edukasi') <i class="ph-fill ph-book-open"></i>
-                    @elseif($cat === 'Lomba') <i class="ph-fill ph-trophy"></i>
-                    @elseif($cat === 'Promo') <i class="ph-fill ph-tag"></i>
-                    @endif
+                <button class="category-pill disabled:opacity-50 disabled:cursor-not-allowed"
+                    :class="$wire.activeCategory === '{{ $cat }}' ? 'active' : ''" wire:click="setCategory('{{ $cat }}')"
+                    wire:loading.attr="disabled" wire:target="setCategory('{{ $cat }}')">
+
+                    {{-- Icon --}}
+                    <span wire:loading.remove wire:target="setCategory('{{ $cat }}')">
+                        @if($cat === 'Berita') <i class="ph-fill ph-newspaper"></i>
+                        @elseif($cat === 'Edukasi') <i class="ph-fill ph-book-open"></i>
+                        @elseif($cat === 'Lomba') <i class="ph-fill ph-trophy"></i>
+                        @elseif($cat === 'Promo') <i class="ph-fill ph-tag"></i>
+                        @endif
+                    </span>
+
+                    {{-- Spinner --}}
+                    <i class="ph-bold ph-spinner animate-spin" wire:loading wire:target="setCategory('{{ $cat }}')"></i>
+
                     <span>{{ $cat }}</span>
                 </button>
             @endforeach
@@ -42,7 +54,7 @@
     </header>
 
     {{-- Content Spacer --}}
-    <div class="header-spacer-2026"></div>
+    <div class="header-spacer-info"></div>
 
     {{-- Main Content Window --}}
     <div class="px-6 space-y-10">
@@ -220,230 +232,4 @@
             @endif
         </div>
     </div>
-
-    {{-- Shared Explore/Saved Styles --}}
-    <style>
-        /* Font Family - Must be at top */
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap');
-
-        /* === PREMIUM HEADER / EXPLORE STYLE === */
-        body {
-            background-color: #FAF9F6;
-            /* Premium Off-white background */
-        }
-
-        .explore-hero-2026 {
-            position: fixed !important;
-            top: 0;
-            left: 0;
-            right: 0;
-            margin-left: auto;
-            margin-right: auto;
-            width: 100%;
-            max-width: 480px;
-            z-index: 1000;
-            padding: 40px 24px 14px;
-            background: #FFFDFB;
-            border-radius: 0 0 32px 32px;
-            overflow: visible;
-            box-shadow: 0 4px 20px rgba(26, 15, 10, 0.03);
-            transition: padding 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
-            will-change: padding, background, box-shadow;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .header-spacer-2026 {
-            height: 190px;
-            width: 100%;
-        }
-
-        .explore-hero-2026.is-compact {
-            padding-top: 35px;
-            padding-bottom: 12px;
-            gap: 8px;
-            background: rgba(255, 253, 251, 0.98);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(111, 78, 55, 0.05);
-            box-shadow: 0 10px 40px rgba(26, 15, 10, 0.08);
-        }
-
-        /* Branding */
-        .explore-branding-wrapper {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: left top;
-            will-change: transform, opacity;
-        }
-
-        .explore-hero-2026.is-compact .explore-branding-wrapper {
-            transform: scale(0.92);
-            opacity: 0.95;
-        }
-
-        .explore-topbar {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            position: relative;
-            z-index: 10;
-        }
-
-        .explore-brand {
-            font-size: 1.35rem;
-            font-weight: 900;
-            color: #2C1810;
-            letter-spacing: -0.02em;
-            line-height: 1;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        .explore-brand span {
-            color: #F59E0B;
-        }
-
-        .explore-tagline {
-            font-size: 0.6rem;
-            font-weight: 800;
-            color: #8B7355;
-            letter-spacing: 0.12em;
-            margin-top: 2px;
-            opacity: 0.8;
-        }
-
-        .explore-logo-box {
-            width: 40px;
-            height: 40px;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 16px rgba(26, 15, 10, 0.08);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(26, 15, 10, 0.03);
-        }
-
-        .explore-logo-box img {
-            width: 28px;
-            height: 28px;
-            object-fit: contain;
-        }
-
-        /* Orbs */
-        .hero-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(50px);
-            opacity: 0.15;
-            pointer-events: none;
-            will-change: transform;
-        }
-
-        .hero-orb-1 {
-            width: 200px;
-            height: 200px;
-            background: var(--color-amber, #F59E0B);
-            top: -50px;
-            right: -50px;
-            animation: float-orb 8s ease-in-out infinite;
-        }
-
-        .hero-orb-2 {
-            width: 150px;
-            height: 150px;
-            background: var(--color-coffee, #6F4E37);
-            bottom: 20%;
-            left: -30px;
-            animation: float-orb 10s ease-in-out infinite reverse;
-        }
-
-        .hero-orb-3 {
-            width: 120px;
-            height: 120px;
-            background: var(--color-amber, #F59E0B);
-            top: 40%;
-            right: 10%;
-            animation: float-orb 6s ease-in-out infinite 2s;
-        }
-
-        @keyframes float-orb {
-
-            0%,
-            100% {
-                transform: translate(0, 0) scale(1);
-            }
-
-            50% {
-                transform: translate(20px, -20px) scale(1.1);
-            }
-        }
-
-        /* Category Pills */
-        .explore-category-pills {
-            display: flex;
-            gap: 12px;
-            overflow-x: auto;
-            padding: 4px 4px 8px 4px;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-
-        .category-pill {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 10px 18px;
-            background: white;
-            border: 1px solid rgba(26, 15, 10, 0.06);
-            border-radius: 16px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #8B7355;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            box-shadow: 0 2px 4px rgba(26, 15, 10, 0.02);
-        }
-
-        .category-pill i {
-            font-size: 1rem;
-            color: #D7CCC8;
-            transition: color 0.3s ease;
-        }
-
-        .category-pill:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(26, 15, 10, 0.08);
-            border-color: rgba(26, 15, 10, 0.15);
-            color: #2C1810;
-        }
-
-        .category-pill:hover i {
-            color: #F59E0B;
-        }
-
-        .category-pill.active {
-            background: #2C1810;
-            color: white;
-            border-color: #2C1810;
-            box-shadow: 0 8px 20px rgba(44, 24, 16, 0.25);
-            transform: scale(1.02);
-        }
-
-        .category-pill.active i {
-            color: #F59E0B;
-        }
-
-        /* Utilities */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-    </style>
 </div>

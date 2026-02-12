@@ -30,7 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
             '172.64.0.0/13',
             '131.0.72.0/22',
             // Local development
-            '127.0.0.1',
+            '*',
         ]);
 
         // Add security headers

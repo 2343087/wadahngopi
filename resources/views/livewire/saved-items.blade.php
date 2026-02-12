@@ -51,7 +51,7 @@
 
                     {{-- Right: Actions --}}
                     <div class="pl-2 border-l border-[#1a0f0a]/5 flex flex-col justify-center">
-                        <button @click.prevent.stop="confirmDelete(item)"
+                        <button @click.prevent.stop="confirmDelete(item)" 
                             class="flex items-center justify-center w-10 h-10 bg-[#FEF2F2] text-[#EF4444] rounded-xl hover:bg-[#FEE2E2] active:scale-90 transition-all shadow-sm">
                             <i class="ph-bold ph-trash text-lg"></i>
                         </button>
@@ -62,7 +62,8 @@
     </div>
 
     {{-- Premium Empty State --}}
-    <div x-show="$wire.items.length === 0" x-cloak class="flex flex-col items-center justify-center py-20 text-center">
+    <div x-show="$wire.items.length === 0" x-cloak
+        class="fixed inset-x-0 top-[180px] bottom-[80px] flex flex-col items-center justify-center text-center px-6 z-0">
         <div class="w-20 h-20 bg-[#F5EFED] rounded-full flex items-center justify-center mb-6 animate-pulse">
             <i class="ph-fill ph-bookmark-simple text-3xl text-[#8B7355]"></i>
         </div>

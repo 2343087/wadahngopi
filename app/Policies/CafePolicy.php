@@ -12,7 +12,7 @@ class CafePolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->role === 'developer' || $user->role === 'admin';
     }
 
     public function view(User $user, Cafe $cafe): bool
@@ -22,7 +22,7 @@ class CafePolicy
 
     public function create(User $user): bool
     {
-        return $user->role === 'developer' || $user->role === 'admin';
+        return $user->role === 'developer';
     }
 
     public function update(User $user, Cafe $cafe): bool

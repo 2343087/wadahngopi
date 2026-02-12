@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('title', $cafe->name . ' - WadahNgopi.Com')
-@section('meta_description', Str::limit($cafe->description, 155) ?: 'Temukan ' . $cafe->name . ' di ' . ($cafe->address ?? 'Kalimantan') . '. Cafe dengan fasilitas lengkap.')
+@section('meta_description', Str::limit(strip_tags($cafe->description), 155) ?: 'Temukan ' . $cafe->name . ' di ' . ($cafe->address ?? 'Kalimantan') . '. Cafe dengan fasilitas lengkap.')
 @section('og_title', $cafe->name . ' - WadahNgopi')
-@section('og_description', Str::limit($cafe->description, 100) ?: 'Cafe nyaman di ' . ($cafe->address ?? 'Kalimantan'))
+@section('og_description', Str::limit(strip_tags($cafe->description), 100) ?: 'Cafe nyaman di ' . ($cafe->address ?? 'Kalimantan'))
 @section('og_image', $cafe->image_path ? Storage::url($cafe->image_path) : asset('wadahicon.png'))
 
 @section('content')
@@ -49,12 +49,12 @@
     </style>
 
     <div class="detail-wrapper" x-data="cafeDetailComponent({
-                                                                        id: {{ $cafe->id }},
-                                                                        images: {{ json_encode($galleryImages) }},
-                                                                        allCategories: {{ json_encode($allCats) }},
-                                                                        defaultTab: {{ json_encode($defaultTab) }},
-                                                                        menuImages: {{ json_encode($activeGalleryImages->map(fn($img) => ['url' => str_starts_with($img['image'], 'http') ? $img['image'] : '/storage/' . $img['image'], 'tag' => $img['tag']])->values()) }}
-                                                                    })">
+                                                                            id: {{ $cafe->id }},
+                                                                            images: {{ json_encode($galleryImages) }},
+                                                                            allCategories: {{ json_encode($allCats) }},
+                                                                            defaultTab: {{ json_encode($defaultTab) }},
+                                                                            menuImages: {{ json_encode($activeGalleryImages->map(fn($img) => ['url' => str_starts_with($img['image'], 'http') ? $img['image'] : '/storage/' . $img['image'], 'tag' => $img['tag']])->values()) }}
+                                                                        })">
 
         {{-- Hero Slider Section --}}
         <div class="detail-hero-luxury" @touchstart="touchStart($event)" @touchend="touchEnd($event)">
@@ -237,29 +237,29 @@
 
             {{-- Premium Menu Section --}}
             <section x-data="{ 
-                            activeLightboxIdx: null,
-                            touchStartX: 0,
-                            lastWheelTime: 0,
+                                activeLightboxIdx: null,
+                                touchStartX: 0,
+                                lastWheelTime: 0,
 
-                            nextLightbox() {
-                                const len = this.menuImages.length;
-                                if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx + 1) % len;
-                            },
-                            prevLightbox() {
-                                const len = this.menuImages.length;
-                                if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx - 1 + len) % len;
-                            },
-                            handleWheel(e) {
-                                const now = Date.now();
-                                if (now - this.lastWheelTime < 250) return; 
-                                if (Math.abs(e.deltaY) < 30) return; 
+                                nextLightbox() {
+                                    const len = this.menuImages.length;
+                                    if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx + 1) % len;
+                                },
+                                prevLightbox() {
+                                    const len = this.menuImages.length;
+                                    if(this.activeLightboxIdx !== null) this.activeLightboxIdx = (this.activeLightboxIdx - 1 + len) % len;
+                                },
+                                handleWheel(e) {
+                                    const now = Date.now();
+                                    if (now - this.lastWheelTime < 250) return; 
+                                    if (Math.abs(e.deltaY) < 30) return; 
 
-                                if (e.deltaY > 0) this.nextLightbox();
-                                else this.prevLightbox();
+                                    if (e.deltaY > 0) this.nextLightbox();
+                                    else this.prevLightbox();
 
-                                this.lastWheelTime = now;
-                            }
-                        }" class="relative section-premium-fade mb-16">
+                                    this.lastWheelTime = now;
+                                }
+                            }" class="relative section-premium-fade mb-16">
 
                 {{-- Section Header --}}
                 <div class="flex items-center justify-between mb-6">

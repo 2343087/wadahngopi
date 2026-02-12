@@ -41,27 +41,6 @@ class CafeSearchService
                                         ->orWhereRaw("? <= $closeCol", [$now]));
                             });
                         });
-                })
-
-                // 3. Fallback to Legacy Fields (opening_time, closing_time) if virtual columns are null
-                // This handles cases where 'operating_hours' JSON might be null but legacy columns are set
-                ->orWhere(function ($sub) use ($now) {
-                    $sub->whereNull('operating_hours')
-                        ->where('is_24_hours', false)
-                        ->where(function ($legacy) use ($now) {
-                            // Same logic for legacy columns
-                            $legacy->where(function ($normal) use ($now) {
-                                $normal->whereColumn('closing_time', '>', 'opening_time')
-                                    ->where('opening_time', '<=', $now)
-                                    ->where('closing_time', '>=', $now);
-                            })->orWhere(function ($overnight) use ($now) {
-                                $overnight->whereColumn('closing_time', '<', 'opening_time')
-                                    ->where(function ($time) use ($now) {
-                                        $time->where('opening_time', '<=', $now)
-                                            ->orWhere('closing_time', '>=', $now);
-                                    });
-                            });
-                        });
                 });
         });
     }
