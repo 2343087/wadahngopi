@@ -84,25 +84,29 @@
         @yield('content')
 
         <nav class="bottom-nav">
-            <a href="{{ route('home') }}" class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
+            <a href="{{ route('home') }}" class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}"
+                wire:navigate>
                 <i class="{{ request()->routeIs('home') ? 'ph-fill ph-house' : 'ph ph-house' }}"></i>
                 <span>BERANDA</span>
             </a>
-            <a href="{{ route('roastery') }}" class="nav-item {{ request()->routeIs('roastery') ? 'active' : '' }}">
+            <a href="{{ route('roastery') }}" class="nav-item {{ request()->routeIs('roastery') ? 'active' : '' }}"
+                wire:navigate>
                 <i class="{{ request()->routeIs('roastery') ? 'ph-fill ph-coffee-bean' : 'ph ph-coffee-bean' }}"></i>
                 <span>ROASTERY</span>
             </a>
-            <a href="{{ route('explore') }}" class="nav-item {{ request()->routeIs('explore') ? 'active' : '' }}">
+            <a href="{{ route('explore') }}" class="nav-item {{ request()->routeIs('explore') ? 'active' : '' }}"
+                wire:navigate>
                 <i class="{{ request()->routeIs('explore') ? 'ph-fill ph-compass' : 'ph ph-compass' }}"></i>
                 <span>JELAJAHI</span>
             </a>
-            <a href="{{ route('saved') }}" class="nav-item {{ request()->routeIs('saved') ? 'active' : '' }}">
+            <a href="{{ route('saved') }}" class="nav-item {{ request()->routeIs('saved') ? 'active' : '' }}"
+                wire:navigate>
                 <i
                     class="{{ request()->routeIs('saved') ? 'ph-fill ph-bookmark-simple' : 'ph ph-bookmark-simple' }}"></i>
                 <span>SIMPAN</span>
             </a>
             <a href="{{ route('information') }}"
-                class="nav-item {{ request()->routeIs('information*') ? 'active' : '' }}">
+                class="nav-item {{ request()->routeIs('information*') ? 'active' : '' }}" wire:navigate>
                 <i class="{{ request()->routeIs('information*') ? 'ph-fill ph-newspaper' : 'ph ph-newspaper' }}"></i>
                 <span>INFO</span>
             </a>
@@ -110,12 +114,16 @@
     </div>
 
     <script>
-        // Register Service Worker
+        // Register Service Worker for PWA
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(registrations => {
-                for (let registration of registrations) {
-                    registration.unregister();
-                }
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
             });
         }
 
