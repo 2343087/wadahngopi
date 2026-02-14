@@ -135,8 +135,8 @@ img {
 
 .nav-item {
     text-decoration: none !important;
-    color: #9CA3AF;
-    /* Slate 400 - Inactive */
+    color: #4B5563;
+    /* Lebih gelap (Gray 600) dari sebelumnya Slate 400 */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -146,20 +146,27 @@ img {
     position: relative;
     transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     gap: 4px;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+    /* Outline putih biar kebaca di dark bg */
 }
 
 .nav-item i {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
+    /* Sedikit lebih besar */
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s ease;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0));
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
+    font-weight: bold;
 }
 
 .nav-item span {
-    font-size: 0.6rem;
-    font-weight: 700;
+    font-size: 0.65rem;
+    /* Sedikit lebih besar */
+    font-weight: 800;
+    /* Lebih tebal */
     text-transform: uppercase;
     letter-spacing: 0.02em;
-    opacity: 0.7;
+    opacity: 0.8;
+    /* Lebih jelas */
     transition: all 0.3s ease;
 }
 
