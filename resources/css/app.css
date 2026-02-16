@@ -295,8 +295,158 @@ img {
     font-size: 0.7rem;
     font-weight: 600;
     display: flex;
-    align-items: center;
     gap: 4px;
+}
+
+/* --- PREMIUM ANIMATIONS 2026 --- */
+
+/* 1. Text Shimmer (flowing gradient) */
+.text-shimmer {
+    background: linear-gradient(to right,
+            #F59E0B 20%,
+            #FFD699 40%,
+            #F59E0B 60%,
+            #D97706 80%);
+    background-size: 200% auto;
+    color: #000;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 4s linear infinite;
+}
+
+@keyframes shine {
+    to {
+        background-position: 200% center;
+    }
+}
+
+/* 2. Staggered Fade Up */
+.animate-fade-up {
+    opacity: 0;
+    animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 3. Hover Floating Effect */
+.hover-float {
+    transition: transform 0.3s ease, text-shadow 0.3s ease;
+    display: inline-block;
+}
+
+.hover-float:hover {
+    transform: translateY(-2px);
+    text-shadow: 0 4px 12px rgba(42, 28, 21, 0.1);
+}
+
+/* --- PREMIUM UI REFRESH 2026 (Safe Mode) --- */
+
+/* 1. Backgrounds & Textures */
+.bg-noise {
+    position: relative;
+    background-color: #FFFDFB;
+}
+
+.bg-noise::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 2. Premium Gradients */
+.card-premium-gradient {
+    /* Deep Espresso to Rich Coffee */
+    background: linear-gradient(135deg, #2A1C15 0%, #3E2723 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.card-premium-gradient::after {
+    /* Subtle Glow Overlay */
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(245, 158, 11, 0.08) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+/* 3. Badges & Tags */
+.glass-badge {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    color: #FFFDFB;
+    /* Cream text */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.glass-badge-dark {
+    background: rgba(42, 28, 21, 0.05);
+    /* Espresso tint */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(42, 28, 21, 0.1);
+    color: var(--color-espresso);
+}
+
+/* 4. Buttons (Premium Interactive) */
+.btn-premium {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-premium:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.3);
+    /* Amber glow */
+}
+
+.btn-premium:active {
+    transform: scale(0.98);
+}
+
+/* 5. Typography Enhancements */
+.text-tracking-tighter {
+    letter-spacing: -0.04em;
+}
+
+.text-tracking-wide {
+    letter-spacing: 0.15em;
 }
 
 .trash-btn-subtle {
