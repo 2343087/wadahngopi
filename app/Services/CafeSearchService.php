@@ -46,6 +46,60 @@ class CafeSearchService
     }
 
     /**
+     * Scope query to order by nearest location using Bounding Box optimization.
+     * 1. First filters by rough bounding box (using index)
+     * 2. Then calculates exact distance
+     */
+    public function scopeNearest(Builder $query, float $lat, float $lng, int $radiusKm = 20): Builder
+    {
+        // 1. Bounding Box Optimization (Earth Radius ~6371km)
+        // 1 deg lat ~= 111km
+        // 1 deg lng ~= 111km * cos(lat)
+        $latDelta = $radiusKm / 111;
+        $lngDelta = $radiusKm / (111 * cos(deg2rad($lat)));
+
+        $minLat = $lat - $latDelta;
+        $maxLat = $lat + $latDelta;
+        $minLng = $lng - $lngDelta;
+        $maxLng = $lng + $lngDelta;
+
+        return $query
+            ->whereBetween('latitude', [$minLat, $maxLat])
+            ->whereBetween('longitude', [$minLng, $maxLng])
+            ->addSelect(DB::raw(sprintf(
+                '(6371 * acos(cos(radians(%1$.8f)) * cos(radians(latitude)) * cos(radians(longitude) - radians(%2$.8f)) + sin(radians(%1$.8f)) * sin(radians(latitude)))) AS distance',
+                $lat,
+                $lng
+            )))
+            ->orderBy('distance');
+    }
+
+    /**
+     * Scope query to search using Fulltext Index.
+     * Fallback to LIKE if search term is short or no results.
+     */
+    public function scopeSearch(Builder $query, string $term): void
+    {
+        // For short terms, Fulltext might not trigger well, use LIKE
+        if (strlen($term) <= 3) {
+            $query->where('name', 'like', "%{$term}%");
+            return;
+        }
+
+        // Fulltext Search in Boolean Mode
+        // +term* means "must contain term, and * is wildcard"
+        // $searchString = '+' . implode('* +', explode(' ', $term)) . '*';
+
+        $query->where(function ($q) use ($term) {
+            $q->whereFullText(['name', 'address', 'description'], $term, ['mode' => 'boolean'])
+                ->orWhere('name', 'like', "%{$term}%"); // Hybrid approach: Prefer FT, fallback/combine LIKE for partial matches not covered by FT
+        });
+
+        // Note: In pure boolean mode we might not need "like", but for user expectations (partial words), hybrid is safer initially.
+        // Optimization: If dataset is huge, remove the OR LIKE part.
+    }
+
+    /**
      * Check if a specific time is within range.
      * Handles overnight hours.
      */

@@ -131,8 +131,7 @@ class RoasterySearch extends Component
         }
 
         if ($this->search) {
-            $search = str_replace(['%', '_'], ['\\%', '\\_'], $this->search);
-            $query->where('name', 'like', '%' . $search . '%');
+            $query->search($this->search);
         }
 
         if ($this->activeLetter) {
@@ -142,10 +141,7 @@ class RoasterySearch extends Component
         if ($this->filter === 'buka') {
             $query->openNow();
         } elseif ($this->filter === 'terdekat' && $this->userLat !== null && $this->userLng !== null) {
-            $query->selectRaw(
-                '(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance',
-                [$this->userLat, $this->userLng, $this->userLat]
-            )->orderBy('distance');
+            $query->nearest($this->userLat, $this->userLng);
         }
 
         if ($this->filter !== 'terdekat') {

@@ -59,6 +59,22 @@ class Roastery extends Model
     }
 
     /**
+     * Scope a query to only include roasteries near a location.
+     */
+    public function scopeNearest($query, $lat, $lng): \Illuminate\Database\Eloquent\Builder
+    {
+        return app(\App\Services\CafeSearchService::class)->scopeNearest($query, $lat, $lng);
+    }
+
+    /**
+     * Scope a query to search roasteries by term.
+     */
+    public function scopeSearch($query, $term): void
+    {
+        app(\App\Services\CafeSearchService::class)->scopeSearch($query, $term);
+    }
+
+    /**
      * Set the whatsapp_number attribute.
      */
     public function setWhatsappNumberAttribute($value): void

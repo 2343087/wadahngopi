@@ -69,6 +69,22 @@ class Cafe extends Model
     }
 
     /**
+     * Scope a query to only include cafes near a location.
+     */
+    public function scopeNearest($query, $lat, $lng): \Illuminate\Database\Eloquent\Builder
+    {
+        return app(\App\Services\CafeSearchService::class)->scopeNearest($query, $lat, $lng);
+    }
+
+    /**
+     * Scope a query to search cafes by term.
+     */
+    public function scopeSearch($query, $term): void
+    {
+        app(\App\Services\CafeSearchService::class)->scopeSearch($query, $term);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

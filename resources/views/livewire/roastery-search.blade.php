@@ -931,7 +931,7 @@
 
         getLocation() {
             if (!navigator.geolocation) {
-                alert('Geolocation is not supported by your browser');
+                this.$dispatch('toast', { message: 'Browser tidak mendukung Geolocation', type: 'error' });
                 return;
             }
             this.isLocating = true;
@@ -948,14 +948,14 @@
                     
                     if (err.code === 1) { // PERMISSION_DENIED
                         if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
-                            alert('⚠️ Fitur "Terdekat" butuh koneksi aman (HTTPS). Gunakan "herd secure" atau akses via localhost.');
+                            this.$dispatch('toast', { message: 'Fitur Terdekat butuh HTTPS/Secure connection', type: 'error' });
                         } else {
-                            alert('Gagal: Izin lokasi ditolak. Cek pengaturan browser lo.');
+                            this.$dispatch('toast', { message: 'Izin lokasi ditolak. Cek pengaturan browser.', type: 'error' });
                         }
                     } else if (err.code === 2) { // POSITION_UNAVAILABLE
-                        alert('Gagal: Lokasi gak ketemu. Cek GPS atau sinyal.');
+                        this.$dispatch('toast', { message: 'Lokasi tidak ditemukan. Cek GPS.', type: 'error' });
                     } else {
-                        alert('Gagal mendapatkan lokasi. Masalah teknis.');
+                        this.$dispatch('toast', { message: 'Gagal mendapatkan lokasi.', type: 'error' });
                     }
                 }
             );

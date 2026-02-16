@@ -159,8 +159,7 @@ class ExploreSearch extends Component
         }
 
         if ($this->search) {
-            $search = str_replace(['%', '_'], ['\\%', '\\_'], $this->search);
-            $query->where('name', 'like', '%' . $search . '%');
+            $query->search($this->search);
         }
 
         // Letter Filter
@@ -172,11 +171,7 @@ class ExploreSearch extends Component
         if ($this->filter === 'buka') {
             $query->openNow();
         } elseif ($this->filter === 'terdekat' && $this->userLat !== null && $this->userLng !== null) {
-            // "Terdekat" filter: Calculate distance via Haversine Formula & Sort
-            $query->selectRaw(
-                '(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance',
-                [$this->userLat, $this->userLng, $this->userLat]
-            )->orderBy('distance');
+            $query->nearest($this->userLat, $this->userLng);
         }
 
         // Sort Logic (if not already sorted by distance via filter)
