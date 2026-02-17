@@ -1,0 +1,27 @@
+/* =============================================
+   TYPOGRAPHY UTILITIES
+   ============================================= */
+
+/* Text Shimmer (flowing gradient) */
+.text-shimmer {
+    background: linear-gradient(to right,
+            #F59E0B 20%,
+            #FFD699 40%,
+            #F59E0B 60%,
+            #D97706 80%);
+    background-size: 200% auto;
+    color: #000;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 4s linear infinite;
+}
+
+/* Tracking Utils */
+.text-tracking-tighter {
+    letter-spacing: -0.04em;
+}
+
+.text-tracking-wide {
+    letter-spacing: 0.15em;
+}

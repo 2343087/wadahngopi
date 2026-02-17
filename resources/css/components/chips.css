@@ -1,0 +1,183 @@
+/* =============================================
+   CHIPS & PILLS — Single Definition (No Dupes)
+   ============================================= */
+
+/* Luxury Pill — SINGLE SOURCE */
+.pill-luxury {
+    background: white;
+    padding: 10px 22px;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--color-espresso);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: var(--transition-bounce);
+}
+
+.pill-luxury.active {
+    background: var(--color-espresso);
+    color: white;
+    border-color: var(--color-espresso);
+    box-shadow: 0 4px 12px rgba(44, 24, 16, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Pills Container (horizontal scroll) */
+.pills-container-luxury {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 10px 24px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.pills-container-luxury::-webkit-scrollbar {
+    display: none;
+}
+
+/* Category Pill */
+.category-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: white;
+    border: 1px solid rgba(26, 15, 10, 0.1);
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #2C1810;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 2px 8px rgba(26, 15, 10, 0.06);
+}
+
+.category-pill i {
+    color: #8B7355;
+    font-size: 0.95rem;
+}
+
+.category-pill:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(26, 15, 10, 0.12);
+    border-color: rgba(26, 15, 10, 0.15);
+}
+
+.category-pill.active {
+    background: #2C1810;
+    color: white;
+    border-color: #2C1810;
+    box-shadow: 0 8px 24px rgba(26, 15, 10, 0.3);
+}
+
+.category-pill.active i {
+    color: white;
+}
+
+/* City Pill */
+.city-pill {
+    padding: 8px 14px;
+    background: white;
+    border: 1px solid rgba(26, 15, 10, 0.12);
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #5C4A3D;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.city-pill:hover {
+    background: #F5EFED;
+    border-color: rgba(26, 15, 10, 0.2);
+}
+
+.city-pill.active {
+    background: #2C1810;
+    color: white;
+    border-color: #2C1810;
+}
+
+/* Explore Category & City Pill Containers */
+.explore-category-pills,
+.explore-city-pills {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 4px 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.explore-category-pills::-webkit-scrollbar,
+.explore-city-pills::-webkit-scrollbar {
+    display: none;
+}
+
+/* Luxury Tag */
+.luxury-tag-v2 {
+    background: var(--color-cream-dark);
+    color: var(--color-coffee);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(26, 15, 10, 0.02);
+}
+
+/* Info Category Pill */
+.info-cat-pill {
+    font-size: 0.6rem;
+    font-weight: 800;
+    color: var(--color-coffee);
+    background: #F8F4F1;
+    padding: 3px 10px;
+    border-radius: 100px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: inline-block;
+}
+
+/* Pulse Dot (inside pills) */
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: #10B981;
+    border-radius: 50%;
+    animation: pulse-green 2s infinite;
+}
+
+.category-pill.active .pulse-dot {
+    background: white;
+}
+
+/* Alphabet Buttons (Sort) */
+.alphabet-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    background: #F5EFED;
+    color: #2C1810;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.alphabet-btn:hover {
+    background: #8B7355;
+    color: white;
+}
+
+.alphabet-btn.active {
+    background: #F59E0B;
+    color: white;
+    transform: scale(1.1);
+}
