@@ -42,14 +42,22 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 'panels::head.done',
                 fn() => new \Illuminate\Support\HtmlString('
-                    <link rel="stylesheet" href="' . asset('css/filament-custom.css') . '">
-                    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap" rel="stylesheet">
+                    <link rel="stylesheet" href="' . asset('css/filament-custom.css') . '?v=' . filemtime(public_path('css/filament-custom.css')) . '">
                     <meta name="theme-color" content="#1A0F0A">
+                    <meta name="referrer" content="strict-origin-when-cross-origin">
                     <style>
                         :root {
                             --font-family: "Outfit", sans-serif;
                         }
                     </style>
+                '),
+            )
+            ->renderHook(
+                'panels::head.start',
+                fn() => new \Illuminate\Support\HtmlString('
+                    <meta http-equiv="X-Frame-Options" content="DENY">
+                    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+                    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(self)">
                 '),
             )
             ->darkMode(true)
@@ -75,6 +83,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                \Illuminate\Routing\Middleware\ThrottleRequests::class . ':60,1',
             ])
             ->authMiddleware([
                 Authenticate::class,

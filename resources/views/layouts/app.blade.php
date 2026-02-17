@@ -80,6 +80,9 @@
         </div>
     </div>
 
+    {{-- Onboarding Flow (first visit only) --}}
+    <x-onboarding />
+
     <div class="main-container">
         @yield('content')
 

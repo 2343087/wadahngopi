@@ -11,6 +11,8 @@ class RoasterySearch extends Component
 {
     use WithPagination;
 
+    public int $perPage = 12;
+
     public string $search = '';
     public string $filter = 'semua';
     public string $sort = 'relevance';
@@ -35,12 +37,14 @@ class RoasterySearch extends Component
     public function updatedSearch(): void
     {
         $this->validate(['search' => 'max:100']);
+        $this->perPage = 12;
         $this->resetPage();
     }
 
     public function updatedCityId(): void
     {
         $this->validate(['cityId' => 'nullable|exists:cities,id']);
+        $this->perPage = 12;
         $this->resetPage();
     }
 
@@ -72,6 +76,11 @@ class RoasterySearch extends Component
         $this->resetPage();
     }
 
+    public function loadMore(): void
+    {
+        $this->perPage += 12;
+    }
+
     public function resetAllFilters(): void
     {
         $this->search = '';
@@ -81,6 +90,7 @@ class RoasterySearch extends Component
         $this->userLat = null;
         $this->userLng = null;
         $this->activeLetter = null;
+        $this->perPage = 12;
         $this->resetPage();
     }
 
@@ -154,7 +164,7 @@ class RoasterySearch extends Component
             }
         }
 
-        $roasteries = $query->paginate(12);
+        $roasteries = $query->paginate($this->perPage);
 
         return view('livewire.roastery-search', [
             'roasteries' => $roasteries,

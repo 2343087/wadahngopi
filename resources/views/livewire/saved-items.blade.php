@@ -51,7 +51,7 @@
 
                     {{-- Right: Actions --}}
                     <div class="pl-2 border-l border-[#1a0f0a]/5 flex flex-col justify-center">
-                        <button @click.prevent.stop="confirmDelete(item)" 
+                        <button @click.prevent.stop="confirmDelete(item)"
                             class="flex items-center justify-center w-10 h-10 bg-[#FEF2F2] text-[#EF4444] rounded-xl hover:bg-[#FEE2E2] active:scale-90 transition-all shadow-sm">
                             <i class="ph-bold ph-trash text-lg"></i>
                         </button>
@@ -63,25 +63,37 @@
 
     {{-- Premium Empty State --}}
     <div x-show="$wire.items.length === 0" x-cloak
-        class="fixed inset-x-0 top-[180px] bottom-[80px] flex flex-col items-center justify-center text-center px-6 z-0">
-        <div class="w-20 h-20 bg-[#F5EFED] rounded-full flex items-center justify-center mb-6 animate-pulse">
-            <i class="ph-fill ph-bookmark-simple text-3xl text-[#8B7355]"></i>
-        </div>
-        <h3 class="text-lg font-black text-[#2C1810] mb-2">Belum Ada Simpanan</h3>
-        <p class="text-sm text-[#8B7355] max-w-[240px] leading-relaxed mb-8">
-            Jelajahi cafe dan roastery estetik di sekitarmu dan simpan favoritmu di sini.
-        </p>
-        <div class="flex gap-3">
-            <a href="{{ route('explore') }}"
-                class="flex items-center gap-2 px-6 py-3.5 bg-[#2C1810] text-[#FFFDFB] rounded-2xl font-bold text-sm shadow-lg shadow-[#2C1810]/20 hover:bg-[#4A2C20] hover:-translate-y-1 transition-all">
-                <i class="ph-bold ph-coffee text-lg"></i>
-                Cari Kopi
-            </a>
-            <a href="{{ route('roastery') }}"
-                class="flex items-center gap-2 px-6 py-3.5 bg-[#F59E0B] text-[#FFFDFB] rounded-2xl font-bold text-sm shadow-lg shadow-[#F59E0B]/20 hover:bg-[#D97706] hover:-translate-y-1 transition-all">
-                <i class="ph-bold ph-coffee-bean text-lg"></i>
-                Cari Beans
-            </a>
+        class="fixed inset-x-0 top-[180px] bottom-[80px] flex items-center justify-center z-0">
+        <div class="empty-state-premium">
+            <div class="empty-state-illustration">
+                <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="100" cy="150" rx="55" ry="10" fill="#F5EFED" />
+                    <rect x="55" y="30" width="90" height="120" rx="12" fill="white" stroke="#2C1810"
+                        stroke-width="2" />
+                    <path d="M70 30 L70 95 L100 78 L130 95 L130 30" fill="#F59E0B" stroke="#D97706" stroke-width="1" />
+                    <circle cx="100" cy="120" r="8" fill="#F5EFED" stroke="#E6E1DC" stroke-width="1" />
+                    <path d="M96 120 L99 123 L104 117" stroke="#2C1810" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" opacity="0.3" />
+                    <path d="M85 25 Q100 15 115 25" stroke="#B08968" stroke-width="1.5" stroke-linecap="round"
+                        fill="none" opacity="0.3">
+                        <animate attributeName="d"
+                            values="M85 25 Q100 15 115 25;M85 25 Q100 10 115 25;M85 25 Q100 15 115 25" dur="3s"
+                            repeatCount="indefinite" />
+                    </path>
+                </svg>
+            </div>
+            <h3>Belum Ada Simpanan</h3>
+            <p>Jelajahi cafe dan roastery estetik di sekitarmu dan simpan favoritmu di sini.</p>
+            <div class="flex gap-3 mt-2">
+                <a href="{{ route('explore') }}" class="empty-state-cta">
+                    <i class="ph-bold ph-coffee"></i>
+                    Cari Kopi
+                </a>
+                <a href="{{ route('roastery') }}" class="empty-state-cta" style="background: #F59E0B;">
+                    <i class="ph-bold ph-coffee-bean"></i>
+                    Cari Beans
+                </a>
+            </div>
         </div>
     </div>
 

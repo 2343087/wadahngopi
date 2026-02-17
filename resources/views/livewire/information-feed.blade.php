@@ -21,35 +21,33 @@
         </div>
 
         {{-- Category Pills (Matches Explore Style) --}}
-        <div class="explore-category-pills">
-            <button class="category-pill disabled:opacity-50 disabled:cursor-not-allowed"
-                :class="$wire.activeCategory === 'Semua' ? 'active' : ''" wire:click="setCategory('Semua')"
-                wire:loading.attr="disabled" wire:target="setCategory('Semua')">
-                <i class="ph-fill ph-check-square" x-show="$wire.activeCategory === 'Semua'" wire:loading.remove
-                    wire:target="setCategory('Semua')"></i>
-                <i class="ph-bold ph-spinner animate-spin" wire:loading wire:target="setCategory('Semua')"></i>
-                <span>Semua</span>
-            </button>
-            @foreach (['Berita', 'Edukasi', 'Lomba', 'Promo'] as $cat)
+        <div class="filter-scroll-wrapper">
+            <div class="explore-category-pills">
                 <button class="category-pill disabled:opacity-50 disabled:cursor-not-allowed"
-                    :class="$wire.activeCategory === '{{ $cat }}' ? 'active' : ''" wire:click="setCategory('{{ $cat }}')"
-                    wire:loading.attr="disabled" wire:target="setCategory('{{ $cat }}')">
-
-                    {{-- Icon --}}
-                    <span wire:loading.remove wire:target="setCategory('{{ $cat }}')">
-                        @if($cat === 'Berita') <i class="ph-fill ph-newspaper"></i>
-                        @elseif($cat === 'Edukasi') <i class="ph-fill ph-book-open"></i>
-                        @elseif($cat === 'Lomba') <i class="ph-fill ph-trophy"></i>
-                        @elseif($cat === 'Promo') <i class="ph-fill ph-tag"></i>
-                        @endif
-                    </span>
-
-                    {{-- Spinner --}}
-                    <i class="ph-bold ph-spinner animate-spin" wire:loading wire:target="setCategory('{{ $cat }}')"></i>
-
-                    <span>{{ $cat }}</span>
+                    :class="$wire.activeCategory === 'Semua' ? 'active' : ''" wire:click="setCategory('Semua')"
+                    wire:loading.attr="disabled" wire:target="setCategory('Semua')">
+                    <i class="ph-fill ph-check-square" x-show="$wire.activeCategory === 'Semua'" wire:loading.remove
+                        wire:target="setCategory('Semua')"></i>
+                    <i class="ph-bold ph-spinner animate-spin" wire:loading wire:target="setCategory('Semua')"></i>
+                    <span>Semua</span>
                 </button>
-            @endforeach
+                @foreach (['Berita', 'Edukasi', 'Lomba', 'Promo'] as $cat)
+                    <button class="category-pill disabled:opacity-50 disabled:cursor-not-allowed"
+                        :class="$wire.activeCategory === '{{ $cat }}' ? 'active' : ''"
+                        wire:click="setCategory('{{ $cat }}')" wire:loading.attr="disabled"
+                        wire:target="setCategory('{{ $cat }}')">
+                        <span wire:loading.remove wire:target="setCategory('{{ $cat }}')">
+                            @if($cat === 'Berita') <i class="ph-fill ph-newspaper"></i>
+                            @elseif($cat === 'Edukasi') <i class="ph-fill ph-book-open"></i>
+                            @elseif($cat === 'Lomba') <i class="ph-fill ph-trophy"></i>
+                            @elseif($cat === 'Promo') <i class="ph-fill ph-tag"></i>
+                            @endif
+                        </span>
+                        <i class="ph-bold ph-spinner animate-spin" wire:loading wire:target="setCategory('{{ $cat }}')"></i>
+                        <span>{{ $cat }}</span>
+                    </button>
+                @endforeach
+            </div>
         </div>
     </header>
 
@@ -203,32 +201,60 @@
                         </div>
                     </a>
                 @empty
-                    <div
-                        class="flex flex-col items-center justify-center py-20 text-center bg-white rounded-[32px] border border-dashed border-gray-200">
-                        <div
-                            class="w-20 h-20 bg-[#F5EFED] rounded-full flex items-center justify-center mb-5 animate-pulse">
-                            <i class="ph-fill ph-magnifying-glass text-3xl text-[#8B7355]"></i>
+                    <div class="col-span-full empty-state-premium">
+                        <div class="empty-state-illustration">
+                            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="40" y="40" width="120" height="120" rx="16" fill="#F5EFED" stroke="#E6E1DC"
+                                    stroke-width="1" />
+                                <rect x="50" y="50" width="100" height="100" rx="10" fill="white" stroke="#2C1810"
+                                    stroke-width="2" />
+                                <rect x="62" y="62" width="40" height="28" rx="4" fill="#F59E0B" />
+                                <line x1="62" y1="100" x2="138" y2="100" stroke="#E6E1DC" stroke-width="3"
+                                    stroke-linecap="round" />
+                                <line x1="62" y1="115" x2="120" y2="115" stroke="#E6E1DC" stroke-width="3"
+                                    stroke-linecap="round" />
+                                <line x1="62" y1="130" x2="100" y2="130" stroke="#E6E1DC" stroke-width="3"
+                                    stroke-linecap="round" />
+                                <line x1="110" y1="65" x2="138" y2="65" stroke="#E6E1DC" stroke-width="2"
+                                    stroke-linecap="round" />
+                                <line x1="110" y1="75" x2="130" y2="75" stroke="#E6E1DC" stroke-width="2"
+                                    stroke-linecap="round" />
+                                <line x1="110" y1="85" x2="138" y2="85" stroke="#E6E1DC" stroke-width="2"
+                                    stroke-linecap="round" />
+                            </svg>
                         </div>
-                        <h3 class="text-base font-black text-[#2C1810] mb-2">Belum ada konten</h3>
-                        <p class="text-sm text-[#8B7355] max-w-[200px] leading-relaxed">Kategori <span
-                                class="font-bold text-[#F59E0B]">{{ $activeCategory }}</span> belum memiliki artikel.</p>
-                        <button wire:click="setCategory('Semua')"
-                            class="mt-6 px-6 py-2.5 bg-[#2C1810] text-white text-xs font-bold rounded-xl hover:bg-[#4A2C20] transition-colors shadow-lg shadow-[#2C1810]/20">
+                        <h3>Belum Ada Konten</h3>
+                        <p>Kategori <span class="font-bold text-[#F59E0B]">{{ $activeCategory }}</span> belum memiliki
+                            artikel.</p>
+                        <button class="empty-state-cta" wire:click="setCategory('Semua')">
+                            <i class="ph-bold ph-arrow-counter-clockwise"></i>
                             Kembali ke Semua
                         </button>
                     </div>
                 @endforelse
             </div>
 
-            {{-- Pagination Load More --}}
+            {{-- Infinite Scroll Sentinel --}}
             @if($informations->hasMorePages())
-                <div class="mt-10 mb-8 text-center">
-                    <button wire:click="loadMore"
-                        class="px-8 py-3.5 bg-white border border-[#F5EFED] text-[#2C1810] text-xs font-bold uppercase tracking-widest rounded-2xl hover:bg-[#2C1810] hover:text-white transition-all shadow-sm hover:shadow-xl hover:-translate-y-1">
-                        <span wire:loading.remove>Muat Lebih Banyak</span>
-                        <span wire:loading><i class="ph-bold ph-spinner animate-spin"></i> Memuat...</span>
-                    </button>
+                <div class="scroll-sentinel" x-data="{ observer: null }" x-init="
+                            observer = new IntersectionObserver((entries) => {
+                                entries.forEach(e => { if (e.isIntersecting) $wire.loadMore(); });
+                            }, { rootMargin: '200px' });
+                            observer.observe($el);
+                        " x-destroy="observer?.disconnect()">
+                    <div class="loading-more-spinner" wire:loading.delay wire:target="loadMore"></div>
+                    <span class="text-xs font-bold text-[#8B7355]/60 uppercase tracking-widest" wire:loading.delay
+                        wire:target="loadMore">Memuat...</span>
                 </div>
+            @else
+                @if($informations->count() > 0)
+                    <div class="scroll-sentinel">
+                        <div class="end-of-results">
+                            <i class="ph-fill ph-check-circle"></i>
+                            <span>Semua artikel sudah ditampilkan</span>
+                        </div>
+                    </div>
+                @endif
             @endif
         </div>
     </div>

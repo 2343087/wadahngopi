@@ -12,6 +12,8 @@ class ExploreSearch extends Component
 {
     use WithPagination;
 
+    public int $perPage = 12;
+
     public string $search = '';
 
     public string $filter = 'semua';
@@ -41,12 +43,14 @@ class ExploreSearch extends Component
     public function updatedSearch(): void
     {
         $this->validate(['search' => 'max:100']);
+        $this->perPage = 12;
         $this->resetPage();
     }
 
     public function updatedCityId(): void
     {
         $this->validate(['cityId' => 'nullable|exists:cities,id']);
+        $this->perPage = 12;
         $this->resetPage();
     }
 
@@ -101,6 +105,11 @@ class ExploreSearch extends Component
     /**
      * Reset all filters to their default state.
      */
+    public function loadMore(): void
+    {
+        $this->perPage += 12;
+    }
+
     public function resetAllFilters(): void
     {
         $this->search = '';
@@ -110,6 +119,7 @@ class ExploreSearch extends Component
         $this->cityId = null;
         $this->userLat = null;
         $this->userLng = null;
+        $this->perPage = 12;
         $this->resetPage();
     }
 
@@ -185,7 +195,7 @@ class ExploreSearch extends Component
             }
         }
 
-        $cafesPaginator = $query->paginate(12);
+        $cafesPaginator = $query->paginate($this->perPage);
 
         // Dispatch events for map update if needed
         $this->dispatch('cafes-updated', cafes: collect($cafesPaginator->items())->map(fn($c) => [

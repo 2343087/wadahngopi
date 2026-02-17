@@ -93,41 +93,45 @@
         </div>
 
         {{-- Category Filter Pills --}}
-        <div class="explore-category-pills">
-            <button class="category-pill disabled:opacity-50" :class="$wire.filter === 'semua' ? 'active' : ''"
-                wire:click="$set('filter', 'semua')" wire:loading.attr="disabled">
-                <i class="ph-fill ph-coffee" wire:loading.remove wire:target="$set('filter', 'semua')"></i>
-                <i class="ph-bold ph-spinner animate-spin" wire:loading wire:target="$set('filter', 'semua')"></i>
-                <span>Semua</span>
-            </button>
-            <button class="category-pill" :class="$wire.filter === 'terdekat' ? 'active' : ''"
-                @click="getLocation()">
-                <i class="ph-fill ph-map-pin" x-show="!isLocating" wire:loading.remove wire:target="setUserLocation"></i>
-                <i class="ph ph-circle-notch animate-spin" x-show="isLocating" wire:loading wire:target="setUserLocation"></i>
-                <span>Terdekat</span>
-            </button>
-            <button class="category-pill pill-open disabled:opacity-50" :class="$wire.filter === 'buka' ? 'active' : ''"
-                wire:click="$set('filter', 'buka')" wire:loading.attr="disabled">
-                <span class="pulse-dot" wire:loading.remove wire:target="$set('filter', 'buka')"></span>
-                <i class="ph-bold ph-spinner animate-spin" wire:loading wire:target="$set('filter', 'buka')"></i>
-                <span>Sedang Buka</span>
-            </button>
+        <div class="filter-scroll-wrapper">
+            <div class="explore-category-pills">
+                <button class="category-pill disabled:opacity-50" :class="$wire.filter === 'semua' ? 'active' : ''"
+                    wire:click="$set('filter', 'semua')" wire:loading.attr="disabled">
+                    <i class="ph-fill ph-coffee" wire:loading.remove wire:target="$set('filter', 'semua')"></i>
+                    <i class="ph-bold ph-spinner animate-spin" wire:loading wire:target="$set('filter', 'semua')"></i>
+                    <span>Semua</span>
+                </button>
+                <button class="category-pill" :class="$wire.filter === 'terdekat' ? 'active' : ''"
+                    @click="getLocation()">
+                    <i class="ph-fill ph-map-pin" x-show="!isLocating" wire:loading.remove wire:target="setUserLocation"></i>
+                    <i class="ph ph-circle-notch animate-spin" x-show="isLocating" wire:loading wire:target="setUserLocation"></i>
+                    <span>Terdekat</span>
+                </button>
+                <button class="category-pill pill-open disabled:opacity-50" :class="$wire.filter === 'buka' ? 'active' : ''"
+                    wire:click="$set('filter', 'buka')" wire:loading.attr="disabled">
+                    <span class="pulse-dot" wire:loading.remove wire:target="$set('filter', 'buka')"></span>
+                    <i class="ph-bold ph-spinner animate-spin" wire:loading wire:target="$set('filter', 'buka')"></i>
+                    <span>Sedang Buka</span>
+                </button>
+            </div>
         </div>
 
         {{-- City Filter Pills --}}
-        <div class="explore-city-pills">
-            <button wire:click="$set('cityId', '')" wire:loading.attr="disabled"
-                class="city-pill {{ $cityId === '' || $cityId === null ? 'active' : '' }} disabled:opacity-50">
-                <span wire:loading.remove wire:target="$set('cityId', '')">Semua Kota</span>
-                <span wire:loading wire:target="$set('cityId', '')"><i class="ph-bold ph-spinner animate-spin"></i></span>
-            </button>
-            @foreach($cities as $city)
-                <button wire:click="$set('cityId', '{{ $city['id'] }}')" wire:loading.attr="disabled"
-                    class="city-pill {{ $cityId == $city['id'] ? 'active' : '' }} disabled:opacity-50">
-                    <span wire:loading.remove wire:target="$set('cityId', '{{ $city['id'] }}')">{{ $city['name'] }}</span>
-                    <span wire:loading wire:target="$set('cityId', '{{ $city['id'] }}')"><i class="ph-bold ph-spinner animate-spin"></i></span>
+        <div class="filter-scroll-wrapper">
+            <div class="explore-city-pills">
+                <button wire:click="$set('cityId', '')" wire:loading.attr="disabled"
+                    class="city-pill {{ $cityId === '' || $cityId === null ? 'active' : '' }} disabled:opacity-50">
+                    <span wire:loading.remove wire:target="$set('cityId', '')">Semua Kota</span>
+                    <span wire:loading wire:target="$set('cityId', '')"><i class="ph-bold ph-spinner animate-spin"></i></span>
                 </button>
-            @endforeach
+                @foreach($cities as $city)
+                    <button wire:click="$set('cityId', '{{ $city['id'] }}')" wire:loading.attr="disabled"
+                        class="city-pill {{ $cityId == $city['id'] ? 'active' : '' }} disabled:opacity-50">
+                        <span wire:loading.remove wire:target="$set('cityId', '{{ $city['id'] }}')">{{ $city['name'] }}</span>
+                        <span wire:loading wire:target="$set('cityId', '{{ $city['id'] }}')"><i class="ph-bold ph-spinner animate-spin"></i></span>
+                    </button>
+                @endforeach
+            </div>
         </div>
 
         {{-- Sengaja Gw Hide Dulu Jangan Di Rubah Jangan Di Aktifkan Kalau Gw Gak nyuruh --}}
@@ -146,17 +150,17 @@
     {{-- Content Spacer for Fixed Header (Static height to prevent jumping) --}}
     <div class="header-spacer-2026"></div>
 
-    {{-- Skeleton Grid (Shown while loading) --}}
+    {{-- Premium Skeleton Shimmer (Shown while loading) --}}
     <div class="explore-cafe-grid" wire:loading.delay.shorter>
-        <template x-for="i in 4" :key="i">
+        <template x-for="i in 6" :key="'skel-'+i">
             <div class="cafe-card-2026 skeleton-card">
-                <div class="skeleton-image"></div>
-                <div class="p-5 flex flex-col gap-3">
-                    <div class="skeleton-title"></div>
-                    <div class="skeleton-text w-3/4"></div>
-                    <div class="flex gap-2">
-                        <div class="skeleton-pill"></div>
-                        <div class="skeleton-pill"></div>
+                <div class="skeleton-image skeleton-shimmer"></div>
+                <div class="cafe-card-content">
+                    <div class="skeleton-title skeleton-shimmer"></div>
+                    <div class="skeleton-text skeleton-shimmer" style="width: 65%"></div>
+                    <div class="flex gap-2 mt-auto">
+                        <div class="skeleton-pill skeleton-shimmer"></div>
+                        <div class="skeleton-pill skeleton-shimmer"></div>
                     </div>
                 </div>
             </div>
@@ -166,7 +170,7 @@
     {{-- Cafe Grid Premium --}}
     <main class="explore-cafe-grid" wire:loading.remove.delay.shorter>
         @forelse($cafes as $cafe)
-            <a href="{{ route('cafes.show', $cafe) }}" class="cafe-card-2026 group">
+            <a href="{{ route('cafes.show', $cafe) }}" class="cafe-card-2026 group card-stagger" wire:key="cafe-{{ $cafe->id }}">
                     {{-- Fixed Height Image Container --}}
                     @php
                         $image = $cafe->image_path ? (str_starts_with($cafe->image_path, 'http') ? $cafe->image_path : Storage::url($cafe->image_path)) : 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800';
@@ -180,7 +184,49 @@
                               alt="{{ $cafe->name }}" loading="lazy" 
                               class="cafe-card-img object-cover">
                               
-                        {{-- Hover Quick Actions (Moved Inside Image) --}}
+                        {{-- Gradient Overlay --}}
+                        <div class="cafe-card-overlay"></div>
+
+                        {{-- Smart Status Badge --}}
+                        @php
+                            $isOpen = $cafe->is_open;
+                            $timeText = '';
+                            $todayHours = $cafe->today_hours;
+
+                            if ($cafe->is_24_hours) {
+                                $timeText = '24 Jam';
+                            } elseif ($isOpen && isset($todayHours['close'])) {
+                                $timeText = 'Sampai ' . \Carbon\Carbon::parse($todayHours['close'])->format('H:i');
+                            } elseif (!$isOpen && isset($todayHours['open'])) {
+                                $timeText = 'Buka ' . \Carbon\Carbon::parse($todayHours['open'])->format('H:i');
+                            }
+                        @endphp
+                        <div class="cafe-status-badge-smart {{ $isOpen ? 'open' : 'closed' }}">
+                            <div class="flex items-center gap-1">
+                                <span class="status-indicator">
+                                    <span class="status-ping"></span>
+                                    <span class="status-dot"></span>
+                                </span>
+                                <span class="font-black tracking-wider uppercase">
+                                    {{ $isOpen ? 'Buka' : 'Tutup' }}
+                                </span>
+                            </div>
+                            @if($timeText)
+                                <span class="text-[0.5rem] sm:text-[0.55rem] font-bold opacity-90 ml-1 border-l border-white/20 pl-1 leading-none whitespace-nowrap">
+                                    {{ $timeText }}
+                                </span>
+                            @endif
+                        </div>
+
+                        {{-- Distance Badge --}}
+                        @if(isset($cafe->distance))
+                            <div class="cafe-distance-badge">
+                                <i class="ph-fill ph-navigation-arrow text-amber-400"></i>
+                                <span>{{ number_format($cafe->distance, 1) }} km</span>
+                            </div>
+                        @endif
+
+                        {{-- Hover Quick Actions --}}
                         <div class="cafe-card-actions">
                             @php
                                 $socials = collect($cafe->social_links ?? [])
@@ -200,51 +246,6 @@
                             @endif
                         </div>
                      </div>
-
-                    {{-- Gradient Overlay --}}
-                    <div class="cafe-card-overlay"></div>
-
-                    {{-- Smart Status Badge 2026 --}}
-                    @php
-                        $isOpen = $cafe->is_open;
-                        $timeText = '';
-                        $todayHours = $cafe->today_hours;
-
-                        if ($cafe->is_24_hours) {
-                            $timeText = '• 24 Jam';
-                        } elseif ($isOpen && isset($todayHours['close'])) {
-                            $timeText = '• Sampai ' . \Carbon\Carbon::parse($todayHours['close'])->format('H:i');
-                        } elseif (!$isOpen && isset($todayHours['open'])) {
-                            $timeText = '• Buka ' . \Carbon\Carbon::parse($todayHours['open'])->format('H:i');
-                        }
-                    @endphp
-                    <div class="cafe-status-badge-smart {{ $isOpen ? 'open' : 'closed' }}">
-                        <div class="flex items-center gap-1.5">
-                            <span class="status-indicator">
-                                <span class="status-ping"></span>
-                                <span class="status-dot"></span>
-                            </span>
-                            <span class="font-black text-[0.65rem] tracking-wider uppercase">
-                                {{ $isOpen ? 'Buka' : 'Tutup' }}
-                            </span>
-                        </div>
-                        @if($timeText)
-                            <span class="text-[0.6rem] font-bold opacity-90 ml-1 border-l border-white/20 pl-1.5 leading-none">
-                                {{ $timeText }}
-                            </span>
-                        @endif
-                    </div>
-
-
-
-
-                    {{-- Distance Badge (Only when location is available) --}}
-                    @if(isset($cafe->distance))
-                        <div class="cafe-distance-badge">
-                            <i class="ph-fill ph-navigation-arrow text-amber-500"></i>
-                            <span>{{ number_format($cafe->distance, 1) }} km</span>
-                        </div>
-                    @endif
 
                 {{-- Card Content --}}
                 <div class="cafe-card-content">
@@ -276,24 +277,59 @@
                 <div class="card-shine"></div>
             </a>
         @empty
-            {{-- Premium Empty State --}}
-            <div class="col-span-full explore-empty-state">
-                <div class="empty-state-icon">
-                    <i class="ph-light ph-coffee"></i>
+            {{-- Premium Empty State with SVG --}}
+            <div class="col-span-full empty-state-premium">
+                <div class="empty-state-illustration">
+                    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="100" cy="130" rx="60" ry="12" fill="#F5EFED"/>
+                        <path d="M60 70 C60 50, 80 35, 100 35 C120 35, 140 50, 140 70 L140 110 C140 120, 130 130, 120 130 L80 130 C70 130, 60 120, 60 110 Z" fill="#2C1810" stroke="#1A0F0A" stroke-width="2"/>
+                        <path d="M140 80 C155 80, 165 90, 165 100 C165 110, 155 120, 140 115" stroke="#2C1810" stroke-width="4" fill="none" stroke-linecap="round"/>
+                        <ellipse cx="100" cy="60" rx="25" ry="6" fill="#3E2723" opacity="0.3"/>
+                        <path d="M85 30 C85 20, 90 15, 90 10" stroke="#B08968" stroke-width="2" stroke-linecap="round" opacity="0.5">
+                            <animate attributeName="d" values="M85 30 C85 20, 90 15, 90 10;M85 30 C83 18, 88 12, 92 5;M85 30 C85 20, 90 15, 90 10" dur="2.5s" repeatCount="indefinite"/>
+                        </path>
+                        <path d="M100 28 C100 16, 105 10, 105 2" stroke="#B08968" stroke-width="2" stroke-linecap="round" opacity="0.4">
+                            <animate attributeName="d" values="M100 28 C100 16, 105 10, 105 2;M100 28 C98 14, 103 8, 107 0;M100 28 C100 16, 105 10, 105 2" dur="3s" repeatCount="indefinite"/>
+                        </path>
+                        <path d="M115 30 C115 22, 118 18, 118 12" stroke="#B08968" stroke-width="2" stroke-linecap="round" opacity="0.3">
+                            <animate attributeName="d" values="M115 30 C115 22, 118 18, 118 12;M115 30 C113 20, 116 15, 120 8;M115 30 C115 22, 118 18, 118 12" dur="2s" repeatCount="indefinite"/>
+                        </path>
+                    </svg>
                 </div>
-                <h3 class="empty-state-title">Belum Ada Cafe</h3>
-                <p class="empty-state-text">Coba ubah filter atau kata kunci pencarian</p>
-                <button class="empty-state-btn" wire:click="resetAllFilters">
+                <h3>Cafe Tidak Ditemukan</h3>
+                <p>Hmm, belum ada cafe yang cocok. Coba ubah filter atau kata kunci pencarianmu.</p>
+                <button class="empty-state-cta" wire:click="resetAllFilters">
                     <i class="ph-bold ph-arrow-counter-clockwise"></i>
-                    Reset Filter
+                    Reset Pencarian
                 </button>
             </div>
         @endforelse
     </main>
 
-    <div class="px-6 pb-20">
-        {{ $cafes->links() }}
-    </div>
+    {{-- Infinite Scroll Sentinel --}}
+    @if($cafes->hasMorePages())
+        <div class="scroll-sentinel" 
+            x-data="{ observer: null }"
+            x-init="
+                observer = new IntersectionObserver((entries) => {
+                    entries.forEach(e => { if (e.isIntersecting) $wire.loadMore(); });
+                }, { rootMargin: '200px' });
+                observer.observe($el);
+            "
+            x-destroy="observer?.disconnect()">
+            <div class="loading-more-spinner" wire:loading.delay wire:target="loadMore"></div>
+            <span class="text-xs font-bold text-[#8B7355]/60 uppercase tracking-widest" wire:loading.delay wire:target="loadMore">Memuat...</span>
+        </div>
+    @else
+        @if($cafes->count() > 0)
+            <div class="scroll-sentinel">
+                <div class="end-of-results">
+                    <i class="ph-fill ph-check-circle"></i>
+                    <span>Semua cafe sudah ditampilkan</span>
+                </div>
+            </div>
+        @endif
+    @endif
 
     {{-- Styles moved to resources/css/app.css --}}
 </div>
