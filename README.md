@@ -1,114 +1,132 @@
-# ☕️ WadahNgopi (Next-Gen)
+<p align="center">
+  <img src="public/wadahicon.png" width="80" alt="WadahNgopi Logo">
+</p>
 
-> **Platform Direktori Kopi Paling Canggih di Kalimantan**
-> *Cafe & Roastery Explorer • Hyper-Localized • Luxury Experience*
+<h1 align="center">WadahNgopi</h1>
 
-[![Laravel 12](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel)](https://laravel.com)
-[![Livewire 3](https://img.shields.io/badge/Livewire-3.x-FB70A9?style=for-the-badge&logo=livewire)](https://livewire.laravel.com)
-[![Tailwind v4](https://img.shields.io/badge/Tailwind_Soon-v4.0-06B6D4?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com)
-[![Filament v3](https://img.shields.io/badge/Filament-v3-EEBB0B?style=for-the-badge&logo=filament)](https://filamentphp.com)
+<p align="center">
+  <strong>Platform Pencarian Cafe & Roastery Terlengkap di Kalimantan</strong><br>
+  <em>Temukan tempat ngopi terbaik — kapan aja, di mana aja.</em>
+</p>
 
-**WadahNgopi** bukan sekadar direktori. Ini adalah ekosistem digital yang menghubungkan pecinta kopi dengan *coffee shop* dan *roastery* terbaik. Dibangun dengan standar engineering "God Tier", aplikasi ini fokus pada performa, estetika *glassmorphism*, dan akurasi data.
-
----
-
-## 🚀 Fitur Utama (Core Features)
-
-### 🏪 Cafe Explorer
-- **Smart Search:** Filter by *Fasilitas*, *Kategori*, *Kota*, dan *Nama*.
-- **Live Geolocation:** Urutkan cafe dari yang **Terdekat** (Real-time Haversine Formula).
-- **Opening Status:** Status "Buka/Tutup" yang akurat, support jam operasional kompleks (Weekend vs Weekday).
-
-### 🏭 Roastery Hub (New!)
-- **Dedicated Space:** Modul khusus untuk mencari penyangrai kopi (Roastery).
-- **Beans Showcase:** Lihat biji kopi andalan setiap roastery.
-- **Advanced Filter:** Filter Roastery yang "Sedang Buka" sekarang juga.
-
-### 🎨 User Experience
-- **Luxury UI:** Desain modern dengan sentuhan Glassmorphism dan Micro-interactions.
-- **PWA Ready:** Install sebagai aplikasi native di Android/iOS.
-- **Bookmark System:** Simpan cafe/roastery favorit ke *Saved List* (Local Storage, Privacy Friendly).
-
-### 🛠️ Untuk Pemilik Bisnis
-- **Filament Admin Panel:** Dashboard super intuitif untuk kelola data cafe, menu, dan jam buka.
-- **Digital Menu:** Upload foto menu resolusi tinggi dengan *Lazy Loading* otomatis.
+<p align="center">
+  <a href="https://laravel.com"><img src="https://img.shields.io/badge/Laravel-12-FF2D20?style=flat-square&logo=laravel&logoColor=white" alt="Laravel 12"></a>
+  <a href="https://livewire.laravel.com"><img src="https://img.shields.io/badge/Livewire-3-FB70A9?style=flat-square&logo=livewire&logoColor=white" alt="Livewire 3"></a>
+  <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind-v4-06B6D4?style=flat-square&logo=tailwind-css&logoColor=white" alt="Tailwind v4"></a>
+  <a href="https://filamentphp.com"><img src="https://img.shields.io/badge/Filament-v3-EEBB0B?style=flat-square&logo=data:image/svg+xml;base64,&logoColor=white" alt="Filament v3"></a>
+</p>
 
 ---
 
-## ⚡ Tech Stack (The Engine)
+## ✨ Apa Itu WadahNgopi?
 
-Kami menggunakan teknologi terkini untuk menjamin kecepatan dan stabilitas:
+**WadahNgopi** adalah platform yang bantu kamu nemuin cafe dan roastery paling cocok buat kamu. Gak perlu ribet scroll review satu-satu — cukup buka, cari, dan langsung gas ke tempat yang lo mau.
 
-| Layer | Teknologi | Highlights |
-| :--- | :--- | :--- |
-| **Framework** | Laravel 12 | PHP 8.4 Strict Types |
-| **Frontend** | Livewire 3 + Alpine.js | SPA-like experience tanpa kompleksitas API |
-| **Styling** | Tailwind CSS v4 | Next-gen CSS engine (JIT) |
-| **Admin** | Filament v3 | TALL Stack Admin Panel |
-| **Database** | MySQL 8 | Optimized Indexing & Spatial Data |
-| **Performance** | Redis / File Cache | Aggressive Caching Strategy |
+Semua data real-time. Buka tutupnya akurat. Lokasinya bisa diurutin dari yang paling deket. Simpel, cepat, dan tampilannya gak murahan.
 
 ---
 
-## 🛠️ Instalasi (Local Development)
+## � Fitur Unggulan
 
-### Prasyarat
-- PHP 8.3+
-- Composer
-- Node.js 20+
-- MySQL 8.0+
+### 🏪 Jelajahi Cafe
+- **Pencarian Cerdas** — Filter berdasarkan fasilitas, kategori, kota, atau langsung ketik nama
+- **Urutkan dari Terdekat** — Aktifin lokasi, langsung muncul cafe paling deket dari lo
+- **Status Buka / Tutup** — Real-time, akurat, termasuk jam weekend vs weekday
 
-### Setup Project
+### 🏭 Roastery Hub
+- **Halaman Khusus Roastery** — Nyari penyangrai kopi? Ada tempatnya sendiri
+- **Info Biji Kopi** — Liat biji kopi andalan tiap roastery
+- **Filter Jam Buka** — Cuma tampilin roastery yang lagi buka sekarang
+
+### 🎯 Bingung? Putar Aja!
+- **Cafe Roulette** — Gak tau mau ke mana? Klik tombol "Bingung?", spin, dan dapetin rekomendasi random
+- **Animasi Seru** — Setiap spin hasilnya beda dan gak bisa ketebak
+- **Langsung Gas** — Dapet hasilnya, klik, dan langsung liat detail cafe-nya
+
+### 💾 Simpan Favorit
+- **Bookmark** — Simpan cafe atau roastery favorit kamu tanpa perlu login
+- **Privasi Aman** — Data tersimpan di perangkat kamu sendiri, bukan di server
+
+### 📱 Pengalaman Premium
+- **Desain Modern** — Tampilan glassmorphism yang clean dan elegan
+- **Responsif Total** — Nyaman di HP, tablet, maupun desktop
+- **PWA Ready** — Bisa dipasang kayak aplikasi native di Android & iOS
+- **Splash Screen** — Animasi branding keren pas pertama buka web
+- **Pull-to-Refresh** — Tarik ke bawah buat refresh, lengkap sama animasi kopi
+
+### 🛠 Buat Pemilik Bisnis
+- **Dashboard Admin** — Kelola data cafe, menu, jam buka, dan fasilitas dengan mudah
+- **Upload Menu** — Foto menu resolusi tinggi, otomatis di-optimize
+
+---
+
+## 🧰 Teknologi di Balik Layar
+
+| Komponen | Teknologi |
+| :--- | :--- |
+| Framework | Laravel 12 (PHP 8.4) |
+| Frontend | Livewire 3 + Alpine.js |
+| Styling | Tailwind CSS v4 |
+| Admin Panel | Filament v3 |
+| Database | MySQL 8 |
+| Cache | Redis / File Cache |
+
+---
+
+## � Cara Jalanin di Lokal
+
+> Pastikan lo udah punya **PHP 8.3+**, **Composer**, **Node.js 20+**, dan **MySQL 8.0+**.
+
 ```bash
-# 1. Clone Repo
+# Clone repo
 git clone https://github.com/2343087/wadahngopi.git
 cd wadahngopi
 
-# 2. Install Dependencies
+# Install semua dependensi
 composer install
 npm install
 
-# 3. Environment Setup
+# Setup environment
 cp .env.example .env
 php artisan key:generate
 
-# 4. Database Setup (Pastikan DB 'wadahngopi' sudah dibuat)
+# Bikin database 'wadahngopi', lalu jalanin migrasi
 php artisan migrate --seed
 
-# 5. Build Assets
+# Build & jalanin
 npm run dev
-
-# 6. Run Server
 php artisan serve
 ```
 
-### � Penting: Data Sync (Roastery)
-Jika kamu melakukan import database manual atau seeding ulang, jalankan command ini untuk sinkronisasi jam operasional roastery:
+### ⚠️ Catatan Penting
+Kalau lo import database manual atau seeding ulang, jalanin ini buat sinkronisasi data roastery:
 ```bash
 php artisan app:backfill-roastery-hours
 ```
 
 ---
 
-## �️ Security & Performance Standards
+## 🔒 Standar Keamanan
 
-Proyek ini mematuhi **Antigravity Protocol V2.0**:
-1.  **Security First:** Proteksi berlapis terhadap XSS, SQLi, dan IDOR.
-2.  **N+1 Prevention:** Semua query di-optimize dengan Eager Loading (`with()`).
-3.  **Data Integrity:** Auto-sync antara JSON data dan Column database via Model Events.
-4.  **Asset Optimization:** Gambar menggunakan `loading="lazy"` dan format WebP/Optimized.
-
----
-
-## 🤝 Kontribusi
-
-Ingin berkontribusi? Pastikan kode kamu mematuhi `SKILL.md` protocol kami.
-1.  Fork repository.
-2.  Buat branch fitur (`git checkout -b fitur-keren`).
-3.  Commit perubahan (`git commit -m 'feat: nambah fitur keren'`).
-4.  Push (`git push origin fitur-keren`).
-5.  Buka Pull Request.
+- Semua input divalidasi ketat sebelum masuk database
+- Proteksi dari serangan umum (XSS, SQL Injection, IDOR)
+- Data pengguna tidak disimpan di server tanpa consent
+- Semua query database di-optimize biar gak lemot
+- Gambar di-load secara lazy biar hemat bandwidth
 
 ---
 
-**© 2026 WadahNgopi Team**. *Diseduh dengan ❤️ dan baris kode.*
+## 🤝 Mau Kontribusi?
+
+1. Fork repo ini
+2. Bikin branch fitur (`git checkout -b fitur-keren`)
+3. Commit perubahan (`git commit -m 'feat: nambah fitur keren'`)
+4. Push (`git push origin fitur-keren`)
+5. Buka Pull Request
+
+---
+
+<p align="center">
+  <strong>© 2026 WadahNgopi</strong><br>
+  <em>Diseduh dengan ❤️ dan baris kode dari Kalimantan.</em>
+</p>
