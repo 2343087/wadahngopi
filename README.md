@@ -20,7 +20,7 @@
 
 ## ✨ Apa Itu WadahNgopi?
 
-**WadahNgopi** adalah platform yang bantu kamu nemuin cafe dan roastery paling cocok buat kamu. Gak perlu ribet scroll review satu-satu — cukup buka, cari, dan langsung gas ke tempat yang lo mau.
+**WadahNgopi** adalah platform yang bantu kamu nemuin cafe dan roastery paling cocok buat kamu. Gak perlu ribet scroll review satu-satu — cukup buka, cari, dan langsung gas ke tempat yang kalian mau.
 
 Semua data real-time. Buka tutupnya akurat. Lokasinya bisa diurutin dari yang paling deket. Simpel, cepat, dan tampilannya gak murahan.
 
