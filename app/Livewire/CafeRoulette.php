@@ -37,10 +37,11 @@ class CafeRoulette extends Component
         // Apply openNow scope
         $query = $searchService->scopeOpenNow($query);
 
-        // Get random 5 candidates
+        // Get random batch of open cafes and shuffle for maximum randomness
         $cafes = $query->inRandomOrder()
-            ->take(5)
-            ->get();
+            ->take(8)
+            ->get()
+            ->shuffle();
 
         if ($cafes->isEmpty()) {
             $this->candidates = [];
@@ -66,8 +67,9 @@ class CafeRoulette extends Component
             ];
         })->values()->toArray();
 
-        // Winner = last item (will be revealed after animation)
-        $this->winner = end($this->candidates);
+        // Winner = truly random pick from candidates
+        $winnerIdx = random_int(0, count($this->candidates) - 1);
+        $this->winner = $this->candidates[$winnerIdx];
     }
 
     public function openModal(): void

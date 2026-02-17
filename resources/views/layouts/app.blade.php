@@ -67,6 +67,37 @@
     }
 }" @toast.window="showToast($event.detail.message, $event.detail.type)">
 
+    {{-- Splash Screen — First Load Only (per session) --}}
+    <div id="splash-screen" class="splash-screen" style="display:none;">
+        <div class="splash-logo">
+            <div class="splash-icon">
+                <img src="{{ asset('wadahicon.png') }}" alt="WadahNgopi">
+            </div>
+            <div class="splash-brand">
+                <div class="splash-brand-name">Wadah<span>Ngopi</span></div>
+                <div class="splash-brand-tagline">Jelajahi Kopi Favoritmu</div>
+            </div>
+        </div>
+        <div class="splash-loader">
+            <div class="splash-loader-bar"></div>
+        </div>
+    </div>
+    <script>
+        (function () {
+            var s = document.getElementById('splash-screen');
+            if (!sessionStorage.getItem('wadah-splash')) {
+                s.style.display = '';
+                sessionStorage.setItem('wadah-splash', '1');
+                setTimeout(function () {
+                    s.classList.add('splash-hide');
+                    setTimeout(function () { s.remove(); }, 500);
+                }, 1400);
+            } else {
+                s.remove();
+            }
+        })();
+    </script>
+
     {{-- Global Toast Notification --}}
     <div x-show="toast.show" x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"

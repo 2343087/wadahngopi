@@ -32,7 +32,9 @@
 
                 {{-- Header --}}
                 <div class="roulette-header">
-                    <span class="roulette-emoji">🎰</span>
+                    <div class="roulette-emoji" style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                        <i class="ph-fill ph-coffee text-2xl text-white"></i>
+                    </div>
                     <h2 class="roulette-title">Bingung Mau Ngopi Dimana?</h2>
                     <p class="roulette-subtitle">Putar dan temukan cafe yang pas buat kamu!</p>
                 </div>
@@ -78,7 +80,7 @@
                 {{-- Spin Button --}}
                 <template x-if="!winnerData">
                     <button class="roulette-spin-btn" @click="doSpin()" :disabled="spinning || cooldown"
-                        x-text="spinning ? '🎰  Memutar...' : (cooldown ? '⏳ Tunggu...' : '🎲  PUTAR SEKARANG!')">
+                        x-text="spinning ? '☕  Memutar...' : (cooldown ? '⏳ Tunggu...' : '⏳  PUTAR SEKARANG!')">
                     </button>
                 </template>
 
@@ -287,10 +289,14 @@
         },
 
         resetAndSpin() {
+            // Cancel any active cooldown so doSpin() won't be blocked
+            this.cooldown = false;
+            this.spinning = false;
             this.winnerData = null;
             this.showWinner = false;
             this.showConfetti = false;
             this.displayCards = [];
+            this.noOpenCafe = false;
             this.$nextTick(() => this.doSpin());
         },
 
@@ -301,20 +307,44 @@
                 return;
             }
 
-            // Build display sequence: cycle through all, ending on winner
+            // Shuffle helper (Fisher-Yates)
+            const shuffle = (arr) => {
+                const a = [...arr];
+                for (let i = a.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [a[i], a[j]] = [a[j], a[i]];
+                }
+                return a;
+            };
+
+            // Build unpredictable sequence:
+            // - Random number of cycles (3-5)
+            // - Candidates shuffled differently each cycle
+            // - Random fake-out pauses injected
             let sequence = [];
-            const cycles = 3;
+            const cycles = 3 + Math.floor(Math.random() * 3); // 3-5 cycles
+
             for (let c = 0; c < cycles; c++) {
-                for (let i = 0; i < total; i++) {
-                    sequence.push({ ...this.candidates[i], isWinner: false });
+                const shuffled = shuffle(this.candidates);
+                for (let i = 0; i < shuffled.length; i++) {
+                    sequence.push({ ...shuffled[i], isWinner: false });
                 }
             }
-            // Final winner
+
+            // Add 2-4 extra random cards near the end for suspense
+            const extraCards = 2 + Math.floor(Math.random() * 3);
+            const nonWinners = this.candidates.filter(c => c.id !== this.winnerData.id);
+            for (let i = 0; i < extraCards && nonWinners.length > 0; i++) {
+                const pick = nonWinners[Math.floor(Math.random() * nonWinners.length)];
+                sequence.push({ ...pick, isWinner: false });
+            }
+
+            // Final winner at the end
             sequence.push({ ...this.winnerData, isWinner: true });
 
             let step = 0;
             const totalSteps = sequence.length;
-            const baseDelay = 80;
+            const baseDelay = 60 + Math.floor(Math.random() * 40); // 60-100ms base
 
             const showNext = () => {
                 if (step >= totalSteps) {
@@ -324,7 +354,27 @@
 
                 const card = sequence[step];
                 const progress = step / totalSteps;
-                const delay = baseDelay + (progress * progress * 400);
+
+                // Unpredictable delay curve:
+                // - Fast in the beginning
+                // - Random jitter throughout (+/- 30ms)
+                // - Fake slow-down at ~60-70%, then speed up again
+                // - Real deceleration in last 20%
+                let delay = baseDelay;
+                const jitter = (Math.random() - 0.5) * 60;
+
+                if (progress > 0.85) {
+                    // Final deceleration — slow and suspenseful
+                    const endProgress = (progress - 0.85) / 0.15;
+                    delay = baseDelay + (endProgress * endProgress * 500) + jitter;
+                } else if (progress > 0.55 && progress < 0.7) {
+                    // Fake-out: briefly slow down then speed back up
+                    delay = baseDelay + 150 + jitter;
+                } else {
+                    delay = baseDelay + (progress * 80) + jitter;
+                }
+
+                delay = Math.max(40, delay); // Floor at 40ms
 
                 this.displayCards = [{
                     ...card,
