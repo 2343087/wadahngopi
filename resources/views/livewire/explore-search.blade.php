@@ -332,6 +332,9 @@
     @endif
 
     {{-- Styles moved to resources/css/app.css --}}
+
+    {{-- Cafe Roulette — "Bingung? Putar Aja!" --}}
+    <livewire:cafe-roulette />
 </div>
 
 @script

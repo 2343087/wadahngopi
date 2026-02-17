@@ -83,7 +83,46 @@
     {{-- Onboarding Flow (first visit only) --}}
     <x-onboarding />
 
-    <div class="main-container">
+    {{-- Pull-to-Refresh Coffee Drip Indicator --}}
+    <div class="ptr-container" id="ptr-indicator-wrap">
+        <div class="ptr-indicator" id="ptr-indicator">
+            {{-- Steam particles --}}
+            <span class="ptr-steam"></span>
+            <span class="ptr-steam"></span>
+            <span class="ptr-steam"></span>
+
+            {{-- Drip droplet --}}
+            <div class="ptr-drip"></div>
+
+            {{-- Coffee Cup SVG --}}
+            <svg class="ptr-cup" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {{-- Cup body --}}
+                <path
+                    d="M12 18 C12 16, 14 14, 16 14 L44 14 C46 14, 48 16, 48 18 L46 48 C46 52, 42 54, 38 54 L22 54 C18 54, 14 52, 14 48 Z"
+                    fill="#3E2723" stroke="#2C1810" stroke-width="1.5" />
+                {{-- Cup handle --}}
+                <path d="M48 24 C54 24, 58 30, 58 36 C58 42, 54 46, 48 44" stroke="#3E2723" stroke-width="3" fill="none"
+                    stroke-linecap="round" />
+                {{-- Cup rim highlight --}}
+                <rect x="14" y="14" width="32" height="3" rx="1.5" fill="#5D4037" opacity="0.5" />
+                {{-- Coffee fill (controlled by JS via clipPath) --}}
+                <defs>
+                    <clipPath id="coffee-clip">
+                        <rect id="coffee-level" x="14" y="54" width="32" height="0" />
+                    </clipPath>
+                </defs>
+                <path d="M14 18 L12.5 48 C13 52, 17 54, 22 54 L38 54 C42 54, 45 52, 46 48 L48 18 Z" fill="#6F4E37"
+                    clip-path="url(#coffee-clip)" />
+                {{-- Coffee surface shine --}}
+                <ellipse cx="30" cy="20" rx="12" ry="2" fill="#8D6E63" opacity="0.2" />
+            </svg>
+
+            {{-- Text --}}
+            <span class="ptr-text" id="ptr-text">Tarik untuk refresh</span>
+        </div>
+    </div>
+
+    <div class="main-container" id="main-container">
         @yield('content')
 
         <nav class="bottom-nav">
@@ -141,6 +180,98 @@
                 })
             })
         });
+    </script>
+
+    {{-- Pull-to-Refresh Coffee Drip Logic --}}
+    <script>
+        (function () {
+            const MAX_PULL = 120;
+            const TRIGGER_THRESHOLD = 80;
+            let startY = 0;
+            let pulling = false;
+            let refreshing = false;
+
+            const indicator = document.getElementById('ptr-indicator');
+            const coffeeLevel = document.getElementById('coffee-level');
+            const ptrText = document.getElementById('ptr-text');
+            const mainContainer = document.getElementById('main-container');
+
+            if (!indicator || !coffeeLevel || !mainContainer) return;
+
+            // Only listen on the main container
+            mainContainer.addEventListener('touchstart', function (e) {
+                if (refreshing) return;
+                if (window.scrollY > 5) return; // Not at top
+                startY = e.touches[0].clientY;
+                pulling = true;
+            }, { passive: true });
+
+            mainContainer.addEventListener('touchmove', function (e) {
+                if (!pulling || refreshing) return;
+                const currentY = e.touches[0].clientY;
+                const delta = Math.max(0, currentY - startY);
+
+                if (delta <= 0) return;
+
+                const progress = Math.min(delta / MAX_PULL, 1);
+                const translateY = -70 + (progress * 86); // -70 → 16
+
+                indicator.style.transform = 'translateY(' + translateY + 'px) scale(' + (0.6 + progress * 0.4) + ')';
+                indicator.classList.toggle('visible', progress > 0.05);
+
+                // Fill coffee cup via clipPath
+                const fillHeight = progress * 36; // Max 36px fill
+                const fillY = 54 - fillHeight;
+                coffeeLevel.setAttribute('y', fillY);
+                coffeeLevel.setAttribute('height', fillHeight);
+
+                // Update text
+                if (progress >= 1) {
+                    ptrText.textContent = 'Lepaskan ☕';
+                } else {
+                    ptrText.textContent = 'Tarik untuk refresh';
+                }
+            }, { passive: true });
+
+            mainContainer.addEventListener('touchend', function () {
+                if (!pulling || refreshing) return;
+                pulling = false;
+
+                const currentFill = parseFloat(coffeeLevel.getAttribute('height') || 0);
+                const progress = currentFill / 36;
+
+                if (progress >= (TRIGGER_THRESHOLD / MAX_PULL)) {
+                    // Trigger refresh!
+                    refreshing = true;
+                    indicator.classList.add('refreshing');
+                    ptrText.textContent = 'Menyeduh...';
+
+                    // Keep cup full
+                    coffeeLevel.setAttribute('y', '18');
+                    coffeeLevel.setAttribute('height', '36');
+
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 1200);
+                } else {
+                    // Snap back
+                    indicator.classList.remove('visible');
+                    indicator.style.transform = 'translateY(-70px) scale(0.6)';
+                    coffeeLevel.setAttribute('y', '54');
+                    coffeeLevel.setAttribute('height', '0');
+                }
+            }, { passive: true });
+
+            // Re-init after Livewire navigation
+            document.addEventListener('livewire:navigated', function () {
+                refreshing = false;
+                pulling = false;
+                indicator.classList.remove('visible', 'refreshing');
+                indicator.style.transform = 'translateY(-70px) scale(0.6)';
+                coffeeLevel.setAttribute('y', '54');
+                coffeeLevel.setAttribute('height', '0');
+            });
+        })();
     </script>
     @stack('scripts')
 </body>
