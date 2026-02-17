@@ -48,37 +48,37 @@
         }
     </style>
 
-    <div class="detail-wrapper" x-data="cafeDetailComponent({
-                                                                                                                    id: {{ $cafe->id }},
-                                                                                                                    images: {{ json_encode($galleryImages) }},
-                                                                                                                    allCategories: {{ json_encode($allCats) }},
-                                                                                                                    defaultTab: {{ json_encode($defaultTab) }},
-                                                                                                                    menuImages: {{ json_encode($activeGalleryImages->map(fn($img) => ['url' => str_starts_with($img['image'], 'http') ? $img['image'] : '/storage/' . $img['image'], 'tag' => $img['tag']])->values()) }}
-                                                                                                                })">
+    <div class="detail-wrapper"
+        x-data="cafeDetailComponent({
+                                                                                                                            id: {{ $cafe->id }},
+                                                                                                                            images: {{ json_encode($galleryImages) }},
+                                                                                                                            allCategories: {{ json_encode($allCats) }},
+                                                                                                                            defaultTab: {{ json_encode($defaultTab) }},
+                                                                                                                            menuImages: {{ json_encode($activeGalleryImages->map(fn($img) => ['url' => str_starts_with($img['image'], 'http') ? $img['image'] : '/storage/' . $img['image'], 'tag' => $img['tag']])->values()) }}
+                                                                                                                        })">
 
         {{-- Hero Slider Section --}}
         <div class="detail-hero-luxury relative w-full h-[55vh] min-h-[450px] overflow-hidden bg-slate-900"
             @touchstart="touchStart($event)" @touchend="touchEnd($event)" @click="openLightbox('hero', currentSlide)">
 
             {{-- Nav Overlay --}}
-            <nav class="detail-nav-overlay group w-full absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-[60]"
-                @click.stop>
+            <nav class="detail-nav-overlay group" @click.stop>
                 <a href="javascript:history.back()"
-                    class="w-12 h-12 rounded-full bg-black/20 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white shadow-2xl transition-all active:scale-90 no-underline hover:bg-black/40">
-                    <i class="ph ph-arrow-left text-2xl"></i>
+                    class="w-11 h-11 rounded-full bg-black/20 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white shadow-2xl transition-all active:scale-90 no-underline hover:bg-black/40 shrink-0">
+                    <i class="ph ph-arrow-left text-xl"></i>
                 </a>
 
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2.5">
                     <button
-                        class="w-12 h-12 rounded-full bg-black/20 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white shadow-2xl transition-all active:scale-90 hover:bg-black/40"
+                        class="w-11 h-11 rounded-full bg-black/20 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white shadow-2xl transition-all active:scale-90 hover:bg-black/40 shrink-0"
                         @click="toggleBookmark">
                         <i :class="isBookmarked ? 'ph-fill ph-bookmark-simple' : 'ph ph-bookmark-simple'"
-                            :style="isBookmarked ? 'color: #F59E0B' : ''" class="text-2xl"></i>
+                            :style="isBookmarked ? 'color: #F59E0B' : ''" class="text-xl"></i>
                     </button>
                     <button
-                        class="w-12 h-12 rounded-full bg-black/20 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white shadow-2xl transition-all active:scale-90 hover:bg-black/40"
+                        class="w-11 h-11 rounded-full bg-black/20 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white shadow-2xl transition-all active:scale-90 hover:bg-black/40 shrink-0"
                         @click="shareCafe">
-                        <i class="ph ph-share-network text-2xl"></i>
+                        <i class="ph ph-share-network text-xl"></i>
                     </button>
                 </div>
             </nav>

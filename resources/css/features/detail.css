@@ -18,11 +18,14 @@
 
 .detail-nav-overlay {
     position: absolute;
-    top: 20px;
-    left: 24px;
-    right: 24px;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 20px 16px 12px;
+    padding-top: max(20px, env(safe-area-inset-top, 20px));
     display: flex;
     justify-content: space-between;
+    align-items: center;
     z-index: var(--z-actions);
 }
 
