@@ -321,12 +321,11 @@
                 return a;
             };
 
-            // Build unpredictable sequence:
-            // - Random number of cycles (3-5)
+            // - Random number of cycles (2-4) to keep it responsive
             // - Candidates shuffled differently each cycle
-            // - Random fake-out pauses injected
             let sequence = [];
-            const cycles = 3 + Math.floor(Math.random() * 3); // 3-5 cycles
+            // Reduced cycles: 2-3 times through the list is enough for a "quick" feel
+            const cycles = 2 + Math.floor(Math.random() * 2);
 
             for (let c = 0; c < cycles; c++) {
                 const shuffled = shuffle(this.candidates);
@@ -348,7 +347,6 @@
 
             let step = 0;
             const totalSteps = sequence.length;
-            const baseDelay = 60 + Math.floor(Math.random() * 40); // 60-100ms base
 
             const showNext = () => {
                 if (step >= totalSteps) {
@@ -357,28 +355,35 @@
                 }
 
                 const card = sequence[step];
+                
+                // Calculate progress (0.0 to 1.0)
                 const progress = step / totalSteps;
+                const remaining = totalSteps - step;
 
-                // Unpredictable delay curve:
-                // - Fast in the beginning
-                // - Random jitter throughout (+/- 30ms)
-                // - Fake slow-down at ~60-70%, then speed up again
-                // - Real deceleration in last 20%
-                let delay = baseDelay;
-                const jitter = (Math.random() - 0.5) * 60;
+                // --- NEW LOGIC: Physics-based "Friction" ---
+                // 1. Base speed is fast (40-50ms)
+                // 2. Friction kicks in only at the end (last ~25% or last 8 cards)
+                // 3. Random "hiccups" to make it unpredictable
 
-                if (progress > 0.85) {
-                    // Final deceleration — slow and suspenseful
-                    const endProgress = (progress - 0.85) / 0.15;
-                    delay = baseDelay + (endProgress * endProgress * 500) + jitter;
-                } else if (progress > 0.55 && progress < 0.7) {
-                    // Fake-out: briefly slow down then speed back up
-                    delay = baseDelay + 150 + jitter;
+                let delay = 40; // Base fast speed
+
+                if (remaining <= 8) {
+                    // Final deceleration: Exponential slowdown
+                    // The closer to 0 remaining, the higher the delay.
+                    // f(x) = base + (factor / x)
+                    const decelerationFactor = 300 + Math.random() * 200; 
+                    delay = 40 + (decelerationFactor / Math.max(0.5, remaining * 0.5));
+                } else if (Math.random() < 0.05 && progress > 0.3 && progress < 0.7) {
+                    // Random "Hiccup" (5% chance in the middle): Unexpected brief pause
+                    // Makes it feel like the wheel is "slipping" or "thinking"
+                    delay = 150 + Math.random() * 100;
                 } else {
-                    delay = baseDelay + (progress * 80) + jitter;
+                    // Normal cruising speed with slight jitter
+                    delay = 40 + Math.random() * 10;
                 }
 
-                delay = Math.max(40, delay); // Floor at 40ms
+                // Hard cap to prevent it from being too slow/boring
+                delay = Math.min(delay, 700);
 
                 this.displayCards = [{
                     ...card,
@@ -386,14 +391,19 @@
                 }];
 
                 step++;
+                
+                // Transition out logic
                 setTimeout(() => {
                     if (step < totalSteps) {
+                        // Move current card up and fade out
                         this.displayCards = [{
                             ...card,
-                            style: 'opacity: 0; transform: translateY(-40px) scale(0.85); transition: all 0.15s ease-in;',
+                            style: 'opacity: 0; transform: translateY(-40px) scale(0.9); transition: all 0.1s ease-in;',
                         }];
                     }
-                    setTimeout(showNext, step < totalSteps ? 100 : 0);
+                    // Schedule next frame
+                    // Subtracting a bit from delay for the timeout to make the loop tighter
+                    setTimeout(showNext, delay * 0.8); 
                 }, delay);
             };
 
