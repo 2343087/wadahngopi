@@ -126,19 +126,9 @@
     <div class="header-spacer-2026"></div>
 
     {{-- Premium Skeleton Shimmer (Shown while loading) --}}
-    <div class="explore-cafe-grid" wire:loading.delay.shorter>
+    <div class="explore-cafe-grid" wire:loading>
         <template x-for="i in 6" :key="'skel-'+i">
-            <div class="cafe-card-2026 skeleton-card">
-                <div class="skeleton-image skeleton-shimmer"></div>
-                <div class="cafe-card-content">
-                    <div class="skeleton-title skeleton-shimmer"></div>
-                    <div class="skeleton-text skeleton-shimmer" style="width: 65%"></div>
-                    <div class="flex gap-2 mt-auto">
-                        <div class="skeleton-pill skeleton-shimmer"></div>
-                        <div class="skeleton-pill skeleton-shimmer"></div>
-                    </div>
-                </div>
-            </div>
+            <x-skeleton.cafe-card />
         </template>
     </div>
 

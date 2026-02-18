@@ -7,13 +7,18 @@ use Illuminate\Support\Facades\DB;
 
 class CafeSearchService
 {
+    public function isWeekend(): bool
+    {
+        return in_array(now()->dayOfWeek, [0, 6]);
+    }
+
     /**
      * Scope query to find cafes that are currently open.
      */
     public function scopeOpenNow(Builder $query): Builder
     {
         $now = now()->format('H:i:s');
-        $isWeekend = in_array(now()->dayOfWeek, [0, 6]);
+        $isWeekend = $this->isWeekend();
 
         // Use the new virtual indexed columns:
         // weekday_open, weekday_close OR weekend_open, weekend_close
@@ -112,6 +117,9 @@ class CafeSearchService
         $close = strlen($close) === 5 ? $close . ':00' : $close;
 
         if ($close < $open) {
+            // Cross-day logic: Open 22:00, Close 02:00
+            // Current time 01:00 is VALID (<= 02:00)
+            // Current time 23:00 is VALID (>= 22:00)
             return $now >= $open || $now <= $close;
         }
 

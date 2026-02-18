@@ -50,12 +50,17 @@
 
     <div class="detail-wrapper"
         x-data="cafeDetailComponent({
-                                                                                                                            id: {{ $cafe->id }},
-                                                                                                                            images: {{ json_encode($galleryImages) }},
-                                                                                                                            allCategories: {{ json_encode($allCats) }},
-                                                                                                                            defaultTab: {{ json_encode($defaultTab) }},
-                                                                                                                            menuImages: {{ json_encode($activeGalleryImages->map(fn($img) => ['url' => str_starts_with($img['image'], 'http') ? $img['image'] : '/storage/' . $img['image'], 'tag' => $img['tag']])->values()) }}
-                                                                                                                        })">
+                                                                                                                                    id: {{ $cafe->id }},
+                                                                                                                                    images: {{ json_encode($galleryImages) }},
+                                                                                                                                    allCategories: {{ json_encode($allCats) }},
+                                                                                                                                    defaultTab: {{ json_encode($defaultTab) }},
+                                                                                                                                    menuImages: {{ json_encode($activeGalleryImages->map(fn($img) => ['url' => str_starts_with($img['image'], 'http') ? $img['image'] : '/storage/' . $img['image'], 'tag' => $img['tag']])->values()) }}
+                                                                                                                                })">
+
+        {{-- Hero Skeleton (Shown while image loading) --}}
+        <div x-show="!imagesLoaded" class="absolute inset-0 z-50 bg-white">
+            <x-skeleton.detail-header />
+        </div>
 
         {{-- Hero Slider Section --}}
         <div class="detail-hero-luxury relative w-full h-[55vh] min-h-[450px] overflow-hidden bg-slate-900"
@@ -479,6 +484,8 @@
                 activeLightbox: null, // 'hero' or 'menu'
                 lightboxIdx: 0,
 
+                imagesLoaded: false,
+
                 // ZOOM & PAN STATE
                 zoomLevel: 1,
                 panX: 0,
@@ -509,6 +516,7 @@
                         this.isBookmarked = saved.includes(props.id);
                     } catch (e) { console.error('[Cafe Detail] LocalStorage error:', e); }
 
+
                     // Auto Slide Hero
                     setInterval(() => {
                         if (!this.activeLightbox) this.nextSlide();
@@ -516,6 +524,8 @@
 
                     // Reset zoom when slide changes
                     this.$watch('lightboxIdx', () => this.resetZoom());
+
+                    setTimeout(() => { this.imagesLoaded = true; }, 500);
                 },
 
                 // ------------------ HERO SLIDER (Inline) ------------------

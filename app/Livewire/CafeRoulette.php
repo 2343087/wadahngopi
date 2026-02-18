@@ -23,7 +23,7 @@ class CafeRoulette extends Component
         // Server-side rate limit: 2 second cooldown
         $now = now()->timestamp;
         if ($now - $this->lastSpinAt < 2) {
-            return;
+            throw new \Exception('Sabar ya, tunggu sebentar sebelum spin lagi!');
         }
         $this->lastSpinAt = $now;
 

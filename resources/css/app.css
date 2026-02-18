@@ -35,6 +35,7 @@
 @import "./components/badges.css";
 @import "./components/chips.css";
 @import "./components/cards.css";
+@import "./components/skeleton.css";
 @import "./components/empty-state.css";
 
 /* --- 7. Features (page-specific) --- */

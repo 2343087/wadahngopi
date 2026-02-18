@@ -51,6 +51,16 @@
         </div>
     </header>
 
+    {{-- Premium Skeleton --}}
+    <div wire:loading class="info-list-container">
+        <template x-for="i in 3" :key="'skel-'+i">
+            <x-skeleton.info-card />
+        </template>
+    </div>
+
+    {{-- Content List --}}
+    <div wire:loading.remove class="info-list-container"></div>
+
     {{-- Content Spacer --}}
     <div class="header-spacer-info"></div>
 
@@ -237,11 +247,11 @@
             {{-- Infinite Scroll Sentinel --}}
             @if($informations->hasMorePages())
                 <div class="scroll-sentinel" x-data="{ observer: null }" x-init="
-                            observer = new IntersectionObserver((entries) => {
-                                entries.forEach(e => { if (e.isIntersecting) $wire.loadMore(); });
-                            }, { rootMargin: '200px' });
-                            observer.observe($el);
-                        " x-destroy="observer?.disconnect()">
+                                        observer = new IntersectionObserver((entries) => {
+                                            entries.forEach(e => { if (e.isIntersecting) $wire.loadMore(); });
+                                        }, { rootMargin: '200px' });
+                                        observer.observe($el);
+                                    " x-destroy="observer?.disconnect()">
                     <div class="loading-more-spinner" wire:loading.delay wire:target="loadMore"></div>
                     <span class="text-xs font-bold text-[#8B7355]/60 uppercase tracking-widest" wire:loading.delay
                         wire:target="loadMore">Memuat...</span>

@@ -1,0 +1,58 @@
+/* Skeleton Loading - Premium Shimmer Effect */
+
+@media (prefers-reduced-motion: no-preference) {
+
+    .skeleton,
+    .skeleton-text,
+    .skeleton-circle,
+    .skeleton-rect {
+        position: relative;
+        overflow: hidden;
+        background-color: #e5e7eb;
+        /* gray-200 */
+    }
+
+    /* Dark mode support logic should be handled via parent class or specific media query if needed, 
+       but Tailwind's 'dark:' classes on elements are preferred. 
+       Here we define the animation keyframes. */
+
+    .skeleton::after,
+    .skeleton-text::after,
+    .skeleton-circle::after,
+    .skeleton-rect::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        transform: translateX(-100%);
+        background-image: linear-gradient(90deg,
+                rgba(255, 255, 255, 0) 0,
+                rgba(255, 255, 255, 0.4) 20%,
+                rgba(255, 255, 255, 0.7) 60%,
+                rgba(255, 255, 255, 0));
+        animation: shimmer 2s infinite;
+    }
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Utility classes for specific shapes if not using Tailwind directly */
+.skeleton-text {
+    height: 0.75rem;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.skeleton-circle {
+    border-radius: 50%;
+}
+
+.skeleton-rect {
+    border-radius: 0.5rem;
+}

@@ -122,6 +122,33 @@ class Cafe extends Model
             // Virtual columns handle the sync automatically in DB for Cafe model.
             // Do NOT manually set weekday_open/close etc here or it will 
             // trigger "SQLSTATE[HY000]: General error: 3105"
+
+            // Validate Operating Hours JSON Structure to prevent "Invalid JSON" or logic errors
+            if ($cafe->isDirty('operating_hours') && !empty($cafe->operating_hours)) {
+                $hours = $cafe->operating_hours;
+                $days = ['weekday', 'weekend'];
+
+                foreach ($days as $day) {
+                    if (isset($hours[$day])) {
+                        // Ensure open/close are present if one is set
+                        $open = $hours[$day]['open'] ?? null;
+                        $close = $hours[$day]['close'] ?? null;
+
+                        if (($open && !$close) || (!$open && $close)) {
+                            // Recover: If incomplete, unset the day to avoid broken state
+                            unset($hours[$day]);
+                        }
+
+                        // Normalize "24:00" to "00:00" if user inputs it manually (though frontend should handle it)
+                        if ($open === '24:00')
+                            $hours[$day]['open'] = '00:00';
+                        if ($close === '24:00')
+                            $hours[$day]['close'] = '00:00';
+                    }
+                }
+
+                $cafe->operating_hours = $hours;
+            }
         });
 
         static::saved(function ($cafe) {

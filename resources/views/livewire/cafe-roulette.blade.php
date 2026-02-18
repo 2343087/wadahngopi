@@ -1,5 +1,5 @@
 {{-- Cafe Roulette — "Bingung? Putar Aja!" --}}
-<div x-data="cafeRoulette()" x-init="init()">
+<div x-data="cafeRoulette(@this)" x-init="init()">
 
     {{-- Draggable Floating Action Button --}}
     <button class="roulette-fab" id="roulette-fab-btn" x-ref="fab" x-show="!$wire.isOpen"
@@ -32,7 +32,8 @@
 
                 {{-- Header --}}
                 <div class="roulette-header">
-                    <div class="roulette-emoji" style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                    <div class="roulette-emoji"
+                        style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;margin:0 auto;">
                         <i class="ph-fill ph-coffee text-2xl text-white"></i>
                     </div>
                     <h2 class="roulette-title">Bingung Mau Ngopi Dimana?</h2>
@@ -72,8 +73,8 @@
                 <template x-if="noOpenCafe">
                     <div class="roulette-empty" style="margin-top:-10px">
                         <span class="roulette-empty-icon">😴</span>
-                        <p class="roulette-empty-text">Sayang banget, nggak ada cafe yang buka sekarang. Coba lagi nanti
-                            ya!</p>
+                        <p class="roulette-empty-text">Sayang banget, nggak ada cafe yang buka sekarang.</p>
+                        <p class="text-xs text-red-400 mt-2" x-show="errorMessage" x-text="errorMessage"></p>
                     </div>
                 </template>
 
@@ -104,7 +105,7 @@
 
 @script
 <script>
-    Alpine.data('cafeRoulette', () => ({
+    Alpine.data('cafeRoulette', (wire) => ({
         spinning: false,
         candidates: [],
         displayCards: [],
@@ -113,6 +114,7 @@
         showConfetti: false,
         cooldown: false,
         noOpenCafe: false,
+        errorMessage: '',
         audioCtx: null,
         spinTimeout: null,
 
@@ -210,7 +212,7 @@
             if (!this.fabMoved) {
                 // It was a tap, not a drag — open modal
                 this.fabDragging = false;
-                this.$wire.openModal();
+                wire.openModal();
                 return;
             }
 
@@ -263,13 +265,14 @@
 
             try {
                 // Call Livewire method and wait for response
-                await this.$wire.spin();
+                await wire.spin();
 
                 clearTimeout(this.spinTimeout);
 
                 // Read data directly from Livewire properties
-                const candidates = this.$wire.candidates;
-                const winner = this.$wire.winner;
+                // NOTE: Use wire.get if accessing public properties directly to ensure latest state
+                const candidates = await wire.get('candidates');
+                const winner = await wire.get('winner');
 
                 if (!candidates || candidates.length === 0) {
                     this.spinning = false;
@@ -284,6 +287,7 @@
                 clearTimeout(this.spinTimeout);
                 this.spinning = false;
                 this.noOpenCafe = true;
+                this.errorMessage = e.message || 'Terjadi kesalahan teknis (' + e + ')';
                 console.error('Roulette spin error:', e);
             }
         },
@@ -490,7 +494,7 @@
             clearTimeout(this.spinTimeout);
             this.spinning = false;
             this.cooldown = false;
-            this.$wire.closeModal();
+            wire.closeModal();
             this.displayCards = [];
             this.winnerData = null;
             this.showWinner = false;

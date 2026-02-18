@@ -2,8 +2,17 @@
 <div wire:poll.30s="loadItems" x-data="savedItemsLogic()" x-init="initFromStorage()" class="min-h-screen">
     <div x-effect="$wire.updateIds(savedCafeIds, savedRoasteryIds)"></div>
 
+    {{-- Premium Skeleton --}}
+    {{-- Premium Skeleton --}}
+    {{-- Premium Skeleton --}}
+    <div wire:loading class="space-y-4 pb-32">
+        <template x-for="i in 3" :key="'skel-'+i">
+            <x-skeleton.saved-card />
+        </template>
+    </div>
+
     {{-- Saved Items List --}}
-    <div class="space-y-4 pb-32" x-show="$wire.items.length > 0">
+    <div class="space-y-4 pb-32" x-show="$wire.items.length > 0" wire:loading.remove>
         <template x-for="item in $wire.items" :key="item.type + '-' + item.id">
             <a :href="item.url"
                 class="group block bg-white hover:bg-[#F5EFED] transition-colors border border-[#1a0f0a]/5 rounded-[24px] shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] overflow-hidden relative">
@@ -62,7 +71,7 @@
     </div>
 
     {{-- Premium Empty State --}}
-    <div x-show="$wire.items.length === 0" x-cloak
+    <div x-show="$wire.items.length === 0" x-cloak wire:loading.remove
         class="fixed inset-x-0 top-[180px] bottom-[80px] flex items-center justify-center z-0">
         <div class="empty-state-premium">
             <div class="empty-state-illustration">
