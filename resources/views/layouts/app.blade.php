@@ -68,12 +68,15 @@
 }" @toast.window="showToast($event.detail.message, $event.detail.type)">
 
     {{-- Splash Screen — First Load Only (per session) --}}
-    <div id="splash-screen" class="splash-screen" style="display:none;">
-        <div class="splash-logo">
-            <div class="splash-icon">
-                <img src="{{ asset('wadahicon.png') }}" alt="WadahNgopi">
+    <div id="splash-screen" class="splash-screen"
+        style="display:none; position:fixed; inset:0; z-index:99999; background:#1A0F0A; display:flex; align-items:center; justify-content:center;">
+        <div class="splash-logo" style="display:flex; flex-direction:column; align-items:center;">
+            <div class="splash-icon"
+                style="width:56px; height:56px; border-radius:16px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#F59E0B;">
+                <img src="{{ asset('wadahicon.png') }}" alt="WadahNgopi"
+                    style="width:36px; height:36px; object-fit:contain;">
             </div>
-            <div class="splash-brand">
+            <div class="splash-brand" style="margin-top:16px;">
                 <div class="splash-brand-name">Wadah<span>Ngopi</span></div>
                 <div class="splash-brand-tagline">Jelajahi Kopi Favoritmu</div>
             </div>
