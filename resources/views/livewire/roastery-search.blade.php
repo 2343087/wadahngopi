@@ -1,7 +1,11 @@
 {{-- Livewire Roastery Search Component --}}
-{{-- Premium Redesign 2026 - Ultra Modern & Responsive (Matched to Explore) --}}
+{{-- Premium Redesign 2026 - Ultra Modern & Responsive (Identical to Explore) --}}
 <div x-data="roasteryLogic()" x-init="initComponent()" class="block min-h-screen">
     {{-- Livewire data is handled in Alpine x-data script --}}
+
+    @if(config('app.debug'))
+        <div class="hidden" id="roastery-debug-count">{{ $roasteries->count() }}</div>
+    @endif
 
     {{-- Ultra Premium Hero Section --}}
     <header class="explore-hero-2026" :class="{ 'is-compact': isScrolled }"
@@ -22,7 +26,8 @@
         {{-- Premium Search Box --}}
         <div class="explore-search-2026" @click.away="showSortMenu = false">
             <div class="search-icon-pulse">
-                <i class="ph-bold ph-magnifying-glass"></i>
+                <i class="ph-bold ph-magnifying-glass" wire:loading.remove wire:target="search"></i>
+                <i class="ph-bold ph-spinner animate-spin text-amber-500" wire:loading wire:target="search"></i>
             </div>
             <input type="text" id="roastery-search" name="search" wire:model.live.debounce.500ms="search" placeholder="Cari roastery atau beans..." 
                 class="explore-search-input">
@@ -42,11 +47,12 @@
                 <div class="sort-dropdown-header">
                     <i class="ph-fill ph-funnel text-amber"></i>
                     <span>Urutkan</span>
+                    <i class="ph-bold ph-spinner animate-spin ml-auto text-amber-500" wire:loading wire:target="setSort, setLetter, resetAllFilters"></i>
                 </div>
                 <div class="sort-dropdown-body custom-scrollbar relative">
                     <button class="sort-dropdown-item"
                         wire:click="setSort('name_az')"
-                        :class="$wire.sort === 'name_az' ? 'active' : ''"
+                        :class="$wire.sort === 'name_az' && !$wire.activeLetter ? 'active' : ''"
                         @click="showSortMenu = false">
                         <i class="ph-fill ph-sort-ascending"></i>
                         <span> (A-Z)</span>
@@ -69,12 +75,14 @@
                             <span> ({{ $char }})</span>
                         </button>
                     @endforeach
-                    
+
                     @if($activeLetter || $search || $filter !== 'semua' || $cityId || $sort !== 'relevance')
                         <div class="sticky bottom-0 left-0 right-0 p-2 bg-white/95 backdrop-blur-sm border-t border-[#F5EFED]">
                             <button wire:click="resetAllFilters" @click="showSortMenu = false"
-                                class="w-full py-2 flex items-center justify-center gap-2 text-xs font-bold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
-                                <i class="ph-bold ph-x"></i>
+                                wire:loading.attr="disabled"
+                                class="w-full py-2 flex items-center justify-center gap-2 text-xs font-bold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors disabled:opacity-50">
+                                <i class="ph-bold ph-x" wire:loading.remove wire:target="resetAllFilters"></i>
+                                <i class="ph-bold ph-spinner animate-spin" wire:loading wire:target="resetAllFilters"></i>
                                 Reset Filter
                             </button>
                         </div>
@@ -86,20 +94,22 @@
         {{-- Category Filter Pills --}}
         <div class="filter-scroll-wrapper">
             <div class="explore-category-pills">
-                <button class="category-pill" :class="$wire.filter === 'semua' ? 'active' : ''"
-                    wire:click="$set('filter', 'semua')">
-                    <i class="ph-fill ph-coffee-bean"></i>
+                <button class="category-pill disabled:opacity-50" :class="$wire.filter === 'semua' ? 'active' : ''"
+                    wire:click="$set('filter', 'semua')" wire:loading.attr="disabled">
+                    <i class="ph-fill ph-coffee-bean" wire:loading.remove wire:target="$set('filter', 'semua')"></i>
+                    <i class="ph-bold ph-spinner animate-spin" wire:loading wire:target="$set('filter', 'semua')"></i>
                     <span>Semua</span>
                 </button>
                 <button class="category-pill" :class="$wire.filter === 'terdekat' ? 'active' : ''"
                     @click="getLocation()">
-                    <i class="ph-fill ph-map-pin" x-show="!isLocating"></i>
-                    <i class="ph ph-circle-notch animate-spin" x-show="isLocating"></i>
+                    <i class="ph-fill ph-map-pin" x-show="!isLocating" wire:loading.remove wire:target="setUserLocation"></i>
+                    <i class="ph ph-circle-notch animate-spin" x-show="isLocating" wire:loading wire:target="setUserLocation"></i>
                     <span>Terdekat</span>
                 </button>
-                <button class="category-pill pill-open" :class="$wire.filter === 'buka' ? 'active' : ''"
-                    wire:click="$set('filter', 'buka')">
-                    <span class="pulse-dot"></span>
+                <button class="category-pill pill-open disabled:opacity-50" :class="$wire.filter === 'buka' ? 'active' : ''"
+                    wire:click="$set('filter', 'buka')" wire:loading.attr="disabled">
+                    <span class="pulse-dot" wire:loading.remove wire:target="$set('filter', 'buka')"></span>
+                    <i class="ph-bold ph-spinner animate-spin" wire:loading wire:target="$set('filter', 'buka')"></i>
                     <span>Sedang Buka</span>
                 </button>
             </div>
@@ -108,14 +118,16 @@
         {{-- City Filter Pills --}}
         <div class="filter-scroll-wrapper">
             <div class="explore-city-pills">
-                <button wire:click="$set('cityId', '')"
-                    class="city-pill {{ $cityId === '' || $cityId === null ? 'active' : '' }}">
-                    Semua Kota
+                <button wire:click="$set('cityId', '')" wire:loading.attr="disabled"
+                    class="city-pill {{ $cityId === '' || $cityId === null ? 'active' : '' }} disabled:opacity-50">
+                    <span wire:loading.remove wire:target="$set('cityId', '')">Semua Kota</span>
+                    <span wire:loading wire:target="$set('cityId', '')"><i class="ph-bold ph-spinner animate-spin"></i></span>
                 </button>
                 @foreach($cities as $city)
-                    <button wire:click="$set('cityId', '{{ $city['id'] }}')"
-                        class="city-pill {{ $cityId == $city['id'] ? 'active' : '' }}">
-                        {{ $city['name'] }}
+                    <button wire:click="$set('cityId', '{{ $city['id'] }}')" wire:loading.attr="disabled"
+                        class="city-pill {{ $cityId == $city['id'] ? 'active' : '' }} disabled:opacity-50">
+                        <span wire:loading.remove wire:target="$set('cityId', '{{ $city['id'] }}')">{{ $city['name'] }}</span>
+                        <span wire:loading wire:target="$set('cityId', '{{ $city['id'] }}')"><i class="ph-bold ph-spinner animate-spin"></i></span>
                     </button>
                 @endforeach
             </div>
@@ -138,28 +150,17 @@
             <a href="{{ route('roastery.show', $roastery) }}" class="cafe-card-2026 group card-stagger" wire:key="roastery-{{ $roastery->id }}">
                     {{-- Fixed Height Image Container --}}
                     @php
-                        $featuredImage = $roastery->processed_images[0] ?? 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=800';
+                        $image = $roastery->image_path ? (str_starts_with($roastery->image_path, 'http') ? $roastery->image_path : Storage::url($roastery->image_path)) : 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=800';
                     @endphp
                     <div class="cafe-card-image">
-                         <img src="{{ $featuredImage }}"
+                        @php
+                            $images = $roastery->processed_images;
+                            $firstImage = count($images) > 0 ? $images[0] : 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=800';
+                        @endphp
+                         <img src="{{ $firstImage }}"
                               alt="{{ $roastery->name }}" loading="lazy" 
                               class="cafe-card-img object-cover">
                               
-                        {{-- Hover Quick Actions --}}
-                        <div class="cafe-card-actions">
-                            @php
-                                $socials = collect($roastery->social_links ?? [])
-                                    ->filter(fn($s) => filter_var($s['show'] ?? false, FILTER_VALIDATE_BOOLEAN) && !empty($s['url']));
-                                $visibleSocials = $socials->take(3);
-                            @endphp
-                            
-                            @foreach ($visibleSocials as $social)
-                                <button onclick="event.preventDefault(); window.open('{{ $social['url'] }}', '_blank')" class="quick-action-btn" title="{{ ucfirst($social['platform']) }}">
-                                    <i class="ph-bold ph-@if($social['platform'] === 'twitter')x-logo @else{{ $social['platform'] }}-logo @endif"></i>
-                                </button>
-                            @endforeach
-                        </div>
-
                         {{-- Gradient Overlay --}}
                         <div class="cafe-card-overlay"></div>
 
@@ -201,6 +202,26 @@
                                 <span>{{ number_format($roastery->distance, 1) }} km</span>
                             </div>
                         @endif
+
+                        {{-- Hover Quick Actions --}}
+                        <div class="cafe-card-actions">
+                            @php
+                                $socials = collect($roastery->social_links ?? [])
+                                    ->filter(fn($s) => filter_var($s['show'] ?? false, FILTER_VALIDATE_BOOLEAN) && !empty($s['url']));
+                                $visibleSocials = $socials->take(3);
+                                $moreSocialsCount = $socials->count() - 3;
+                            @endphp
+                            
+                            @foreach ($visibleSocials as $social)
+                                <button onclick="event.preventDefault(); window.open('{{ $social['url'] }}', '_blank')" class="quick-action-btn" title="{{ ucfirst($social['platform']) }}">
+                                    <i class="ph-bold ph-@if($social['platform'] === 'twitter')x-logo @else{{ $social['platform'] }}-logo @endif"></i>
+                                </button>
+                            @endforeach
+                            
+                            @if($moreSocialsCount > 0)
+                                <div class="quick-action-more">+{{ $moreSocialsCount }}</div>
+                            @endif
+                        </div>
                      </div>
 
                 {{-- Card Content --}}
@@ -208,10 +229,10 @@
                     <h3 class="cafe-card-title">{{ $roastery->name }}</h3>
                     <p class="cafe-card-address">
                         <i class="ph-fill ph-map-pin"></i>
-                        <span class="drop-shadow-sm">{{ $roastery->city?->name ?? 'Kalimantan' }}</span>    
+                        <span class="drop-shadow-sm">{{ $roastery->address ?: ($roastery->city?->name ?? 'Kalimantan') }}</span>    
                     </p>
-                    
-                    {{-- Spacer --}}
+
+                    {{-- Spacer (No Facilities for Roastery) --}}
                     <div class="mt-auto"></div> 
                 </div>
 
@@ -274,6 +295,8 @@
             </div>
         @endif
     @endif
+
+    {{-- Styles moved to resources/css/app.css --}}
 </div>
 
 @script
