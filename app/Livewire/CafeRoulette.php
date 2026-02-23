@@ -44,11 +44,12 @@ class CafeRoulette extends Component
         // Apply openNow scope
         $query = $searchService->scopeOpenNow($query);
 
-        // Get random batch of open cafes and shuffle for maximum randomness
+        // Get random batch of open cafes via DB for scalability
         $cafes = $query->inRandomOrder()
-            ->take(8)
+            ->limit(12) // Fetch a bit more for shuffle variety
             ->get()
-            ->shuffle();
+            ->shuffle()
+            ->take(8);
 
         if ($cafes->isEmpty()) {
             $this->candidates = [];
