@@ -25,6 +25,8 @@ class RoasterySearch extends Component
 
     public ?float $userLng = null;
 
+    public ?int $randomSeed = null;
+
     public ?string $activeLetter = null;
 
     protected $queryString = [
@@ -39,6 +41,11 @@ class RoasterySearch extends Component
         'search' => 'max:100',
         'cityId' => 'nullable|exists:cities,id',
     ];
+
+    public function mount(): void
+    {
+        $this->randomSeed = rand(1, 999999);
+    }
 
     public function updatedSearch(): void
     {
@@ -117,7 +124,7 @@ class RoasterySearch extends Component
         return \Illuminate\Support\Facades\Cache::remember(
             'cities_list',
             now()->addMinutes(10),
-            fn () => City::select(['id', 'name'])->orderBy('name')->get()
+            fn() => City::select(['id', 'name'])->orderBy('name')->get()
         );
     }
 
@@ -153,7 +160,7 @@ class RoasterySearch extends Component
         }
 
         if ($this->activeLetter) {
-            $query->where('name', 'like', $this->activeLetter.'%');
+            $query->where('name', 'like', $this->activeLetter . '%');
         }
 
         if ($this->filter === 'buka') {
@@ -167,6 +174,9 @@ class RoasterySearch extends Component
                 $query->orderBy('name', 'asc');
             } elseif ($this->sort === 'name_za') {
                 $query->orderBy('name', 'desc');
+            } elseif (!$this->search && !$this->activeLetter && $this->sort === 'relevance') {
+                // Fair Play: Randomized order on every refresh
+                $query->inRandomOrder($this->randomSeed);
             } else {
                 $query->latest();
             }
