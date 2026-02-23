@@ -84,6 +84,7 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
                 \Illuminate\Routing\Middleware\ThrottleRequests::class . ':60,1',
+                \App\Http\Middleware\SecurityHeaders::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

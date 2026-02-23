@@ -1,875 +1,219 @@
-/*
-   =============================================
-   WadahNgopi — Premium Admin Theme v2.0
-   "Doesn't look like Filament anymore" Edition
-   =============================================
+/* =================================================
+   🚨 FILAMENT OVERRIDE - NUKLIR LAYOUT BAWAAN 🚨
+   ================================================= */
+
+/* 1. Sembunyikan Logo Bawaan Filament di halaman Auth */
+.fi-simple-header {
+    display: none !important;
+}
+
+/* 2. Hancurkan batasan background & padding bawaan */
+.fi-simple-page {
+    background: #060606 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: 100vh !important;
+}
+
+/* 3. Bikin card bawaan jadi transparan & full width */
+.fi-simple-main {
+    max-width: 100vw !important;
+    width: 100vw !important;
+    margin: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* 4. Hapus shadow & ring pada inner section Filament */
+.fi-simple-main > section,
+.fi-simple-main-inner {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    --tw-ring-shadow: 0 0 transparent !important;
+}
+
+/* =================================================
+   WadahNgopi — Apex Tier Admin UI v3.0
+   "The God Tier Standard" (Premium Glassmorphism)
+   =================================================
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
-
 /* =============================================
-   1. DESIGN TOKENS
+   1. APEX LOGIN PAGE (Force Override Filament)
    ============================================= */
-:root {
-    --wn-amber: #f59e0b;
-    --wn-amber-light: #fbbf24;
-    --wn-amber-glow: rgba(245, 158, 11, 0.15);
-    --wn-espresso: #1A0F0A;
-    --wn-espresso-light: #2C1810;
-    --wn-cream: #FAF7F5;
-    --wn-stone: #F5EFED;
-    --wn-bg-light: #FDFCFB;
-    --wn-bg-dark: #0C0806;
-    --wn-card-light: #FFFFFF;
-    --wn-card-dark: #131010;
-    --wn-border-light: rgba(26, 15, 10, 0.06);
-    --wn-border-dark: rgba(255, 255, 255, 0.06);
-    --wn-text-primary-light: #1A0F0A;
-    --wn-text-primary-dark: #F5EFED;
-    --wn-text-muted-light: #8B7355;
-    --wn-text-muted-dark: rgba(255, 255, 255, 0.45);
-    --wn-radius-sm: 12px;
-    --wn-radius-md: 16px;
-    --wn-radius-lg: 24px;
-    --wn-radius-xl: 32px;
-    --wn-shadow-sm: 0 2px 8px rgba(26, 15, 10, 0.04);
-    --wn-shadow-md: 0 8px 24px rgba(26, 15, 10, 0.06);
-    --wn-shadow-lg: 0 16px 48px rgba(26, 15, 10, 0.08);
-    --wn-shadow-glow: 0 0 40px rgba(245, 158, 11, 0.08);
-    --wn-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* =============================================
-   2. GLOBAL BASE
-   ============================================= */
-body {
-    background-color: var(--wn-bg-light) !important;
+.fi-wn-login-page {
+    position: relative !important; /* Ganti dari fixed */
+    min-height: 100vh !important;
+    width: 100vw !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #060606 !important;
+    z-index: 10 !important;
+    overflow: hidden !important;
     font-family: 'Outfit', system-ui, sans-serif !important;
-    letter-spacing: -0.01em;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
-.dark body {
-    background-color: var(--wn-bg-dark) !important;
-    background-image:
-        radial-gradient(ellipse at 20% 0%, rgba(245, 158, 11, 0.03) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 100%, rgba(44, 24, 16, 0.15) 0%, transparent 60%) !important;
-}
-
-/* Subtle page-grain texture */
-body::before {
+/* Luxury Mesh Glows - Cahaya Amber & Putih */
+.fi-wn-login-page::before {
     content: '';
     position: fixed;
-    inset: 0;
-    opacity: 0.015;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-    pointer-events: none;
+    top: -30%;
+    right: -20%;
+    width: 70vw;
+    height: 70vw;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, transparent 60%);
+    filter: blur(100px);
     z-index: 0;
+    pointer-events: none;
+    animation: apexFloat 20s ease-in-out infinite alternate;
 }
 
-.dark body::before {
-    opacity: 0.03;
+.fi-wn-login-page::after {
+    content: '';
+    position: fixed;
+    bottom: -20%;
+    left: -10%;
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 60%);
+    filter: blur(80px);
+    z-index: 0;
+    pointer-events: none;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+@keyframes apexFloat {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(-5%, 5%) scale(1.1); }
 }
 
-::-webkit-scrollbar-track {
-    background: transparent;
+/* The Matrix - Crystal UI */
+.fi-wn-login-container {
+    width: 100% !important;
+    max-width: 440px !important;
+    padding: 2rem !important;
+    position: relative !important;
+    z-index: 10 !important;
+    animation: apexSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-::-webkit-scrollbar-thumb {
-    background: rgba(26, 15, 10, 0.12);
-    border-radius: 10px;
+@keyframes apexSlideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(26, 15, 10, 0.2);
+/* PRECISE LOGO CONTROL - Glass Morphism */
+.fi-wn-login-logo-box {
+    width: 88px !important;
+    height: 88px !important;
+    margin: 0 auto 2rem !important;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 24px !important;
+    padding: 16px !important;
+    backdrop-filter: blur(20px) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5) !important;
 }
 
-.dark ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.08);
+.fi-wn-login-logo-box:hover {
+    border-color: rgba(245, 158, 11, 0.4) !important;
+    transform: translateY(-5px) scale(1.05) !important;
+    box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.15) !important;
 }
 
-.dark ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.15);
+/* Glass Card - True Premium Feel */
+.fi-wn-login-card {
+    background: linear-gradient(180deg, rgba(25, 25, 25, 0.6) 0%, rgba(10, 10, 10, 0.8) 100%) !important;
+    backdrop-filter: blur(48px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(48px) saturate(180%) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.04) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.01) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.01) !important;
+    border-radius: 32px !important;
+    padding: 2.5rem !important;
+    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
 }
 
-/* =============================================
-   3. SIDEBAR — Premium Floating Panel
-   ============================================= */
-.fi-sidebar {
-    background-color: transparent !important;
-    border-right: none !important;
-    padding: 1rem 0 1rem 1rem !important;
-}
-
-.fi-sidebar-nav {
-    background: rgba(255, 255, 255, 0.85) !important;
-    backdrop-filter: blur(24px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
-    border: 1px solid rgba(26, 15, 10, 0.06) !important;
-    border-radius: var(--wn-radius-xl) !important;
-    box-shadow: var(--wn-shadow-md) !important;
-    padding: 0.75rem !important;
-    transition: var(--wn-transition) !important;
-}
-
-.dark .fi-sidebar-nav {
-    background: rgba(19, 16, 16, 0.85) !important;
-    border-color: var(--wn-border-dark) !important;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
-}
-
-/* Sidebar Brand Logo */
-.fi-sidebar-header {
-    margin-bottom: 1.25rem !important;
-    padding: 0.75rem 1rem 0 !important;
-}
-
-.fi-sidebar-header .fi-logo {
-    font-size: 1.3rem !important;
-    font-weight: 900 !important;
-    color: var(--wn-espresso) !important;
-    letter-spacing: -0.03em !important;
-}
-
-.dark .fi-sidebar-header .fi-logo {
-    color: var(--wn-text-primary-dark) !important;
-}
-
-/* Sidebar Group Headers */
-.fi-sidebar-group-label {
-    font-size: 0.6rem !important;
+/* Typography */
+.fi-wn-login-title {
+    font-size: 1.6rem !important;
     font-weight: 800 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.15em !important;
-    color: var(--wn-text-muted-light) !important;
-    padding: 0.75rem 1rem 0.4rem !important;
-    opacity: 0.7;
-}
-
-.dark .fi-sidebar-group-label {
-    color: var(--wn-text-muted-dark) !important;
-}
-
-/* Sidebar Nav Items — Pill Style */
-.fi-sidebar-item {
-    margin: 2px 0 !important;
-}
-
-.fi-sidebar-item-button {
-    border-radius: var(--wn-radius-sm) !important;
-    padding: 0.55rem 0.85rem !important;
-    transition: var(--wn-transition) !important;
-    gap: 0.65rem !important;
-    font-weight: 600 !important;
-    font-size: 0.82rem !important;
-    color: var(--wn-text-muted-light) !important;
-}
-
-.dark .fi-sidebar-item-button {
-    color: var(--wn-text-muted-dark) !important;
-}
-
-.fi-sidebar-item-button:hover {
-    background: var(--wn-stone) !important;
-    color: var(--wn-espresso) !important;
-}
-
-.dark .fi-sidebar-item-button:hover {
-    background: rgba(255, 255, 255, 0.05) !important;
-    color: var(--wn-text-primary-dark) !important;
-}
-
-/* Active Nav Item */
-.fi-sidebar-item-active .fi-sidebar-item-button {
-    background: linear-gradient(135deg, var(--wn-amber), var(--wn-amber-light)) !important;
-    color: var(--wn-espresso) !important;
-    font-weight: 800 !important;
-    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.25) !important;
-}
-
-.dark .fi-sidebar-item-active .fi-sidebar-item-button {
-    background: linear-gradient(135deg, var(--wn-amber), var(--wn-amber-light)) !important;
-    color: var(--wn-espresso) !important;
-    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3) !important;
-}
-
-/* Nav Item Icons */
-.fi-sidebar-item-icon {
-    width: 1.15rem !important;
-    height: 1.15rem !important;
-    opacity: 0.7 !important;
-    transition: var(--wn-transition) !important;
-}
-
-.fi-sidebar-item-active .fi-sidebar-item-icon {
-    opacity: 1 !important;
-}
-
-/* Sidebar Collapse Button */
-.fi-sidebar-close-btn,
-.fi-sidebar-open-btn {
-    border-radius: var(--wn-radius-sm) !important;
-    transition: var(--wn-transition) !important;
-}
-
-/* =============================================
-   4. TOPBAR — Clean & Minimal
-   ============================================= */
-.fi-topbar {
-    background: transparent !important;
-}
-
-.fi-topbar nav {
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(20px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-    border: 1px solid var(--wn-border-light) !important;
-    border-bottom: none !important;
-    margin: 0.75rem 1rem 0 !important;
-    border-radius: var(--wn-radius-lg) !important;
-    box-shadow: var(--wn-shadow-sm) !important;
-    padding: 0 0.5rem !important;
-}
-
-.dark .fi-topbar nav {
-    background: rgba(19, 16, 16, 0.8) !important;
-    border-color: var(--wn-border-dark) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
-}
-
-/* Topbar Search */
-.fi-global-search-field input {
-    border-radius: var(--wn-radius-md) !important;
-    font-size: 0.85rem !important;
-    font-weight: 500 !important;
-}
-
-/* User Menu */
-.fi-dropdown-trigger {
-    transition: var(--wn-transition) !important;
-}
-
-.fi-dropdown-trigger:hover {
-    opacity: 0.8;
-}
-
-/* =============================================
-   5. MAIN CONTENT AREA
-   ============================================= */
-.fi-main {
-    animation: wnFadeIn 0.4s ease-out;
-}
-
-@keyframes wnFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(6px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Breadcrumbs */
-.fi-breadcrumbs {
+    color: #ffffff !important;
+    text-align: center !important;
+    letter-spacing: -0.02em !important;
     margin-bottom: 0.25rem !important;
 }
 
-.fi-breadcrumbs-item-label {
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.1em !important;
-    font-size: 0.6rem !important;
-    color: var(--wn-amber) !important;
+.fi-wn-login-subtitle {
+    font-size: 0.8rem !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    text-align: center !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 2rem !important;
 }
 
-/* Page Header */
-.fi-header-heading {
-    font-weight: 900 !important;
-    letter-spacing: -0.03em !important;
-    color: var(--wn-espresso) !important;
-}
-
-.dark .fi-header-heading {
-    color: var(--wn-text-primary-dark) !important;
-}
-
-/* =============================================
-   6. CARDS & SECTIONS — Premium Glass
-   ============================================= */
-.fi-section,
-.fi-ta {
-    background: var(--wn-card-light) !important;
-    border-radius: var(--wn-radius-lg) !important;
-    border: 1px solid var(--wn-border-light) !important;
-    box-shadow: var(--wn-shadow-sm) !important;
-    overflow: hidden !important;
-    transition: var(--wn-transition) !important;
-}
-
-.dark .fi-section,
-.dark .fi-ta {
-    background: var(--wn-card-dark) !important;
-    border-color: var(--wn-border-dark) !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.02) !important;
-}
-
-/* Section Header */
-.fi-section-header {
-    border-bottom: 1px solid var(--wn-border-light) !important;
-    padding: 1.25rem 1.5rem !important;
-}
-
-.dark .fi-section-header {
-    border-bottom-color: var(--wn-border-dark) !important;
-}
-
-.fi-section-header-heading {
-    font-weight: 800 !important;
-    font-size: 0.95rem !important;
-    letter-spacing: -0.02em !important;
-}
-
-.fi-section-header-description {
-    font-size: 0.78rem !important;
-    opacity: 0.6 !important;
-}
-
-/* Section Content */
-.fi-section-content-ctn {
-    padding: 1.25rem 1.5rem !important;
-}
-
-/* =============================================
-   7. STAT WIDGETS — Premium Cards
-   ============================================= */
-.fi-wi-stats-overview-stat {
-    background: var(--wn-card-light) !important;
-    border-radius: var(--wn-radius-lg) !important;
-    border: 1px solid var(--wn-border-light) !important;
-    box-shadow: var(--wn-shadow-sm) !important;
-    transition: var(--wn-transition) !important;
-    overflow: hidden !important;
-    position: relative;
-}
-
-.dark .fi-wi-stats-overview-stat {
-    background: var(--wn-card-dark) !important;
-    border-color: var(--wn-border-dark) !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
-}
-
-.fi-wi-stats-overview-stat:hover {
-    transform: translateY(-4px) !important;
-    box-shadow: var(--wn-shadow-lg), var(--wn-shadow-glow) !important;
-    border-color: rgba(245, 158, 11, 0.2) !important;
-}
-
-.dark .fi-wi-stats-overview-stat:hover {
-    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5), 0 0 40px rgba(245, 158, 11, 0.1) !important;
-    border-color: rgba(245, 158, 11, 0.15) !important;
-}
-
-/* Stat Value */
-.fi-wi-stats-overview-stat-value {
-    font-weight: 900 !important;
-    font-size: 1.75rem !important;
-    letter-spacing: -0.03em !important;
-}
-
-/* Stat Description */
-.fi-wi-stats-overview-stat-description {
+/* === OVERRIDE FILAMENT DEFAULT INPUTS === */
+.fi-wn-login-page .fi-fo-field-wrp-label {
     font-size: 0.75rem !important;
     font-weight: 600 !important;
-    opacity: 0.65 !important;
+    color: #a3a3a3 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
 }
 
-/* Stat Chart */
-.fi-wi-stats-overview-stat-chart {
-    opacity: 0.5 !important;
+.fi-wn-login-page .fi-input-wrapper {
+    background: rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 14px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3) !important;
+    overflow: hidden !important;
 }
 
-/* =============================================
-   8. TABLES — Modern Data Grid
-   ============================================= */
-
-/* Table Container */
-.fi-ta-header-ctn {
-    padding: 1rem 1.25rem !important;
-    border-bottom: 1px solid var(--wn-border-light) !important;
+.fi-wn-login-page .fi-input-wrapper:focus-within {
+    border-color: rgba(245, 158, 11, 0.6) !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15), inset 0 2px 4px rgba(0,0,0,0.4) !important;
 }
 
-.dark .fi-ta-header-ctn {
-    border-bottom-color: var(--wn-border-dark) !important;
+.fi-wn-login-page .fi-input {
+    color: #ffffff !important;
+    background: transparent !important;
+    padding: 0.75rem 1rem !important;
 }
 
-/* Table Search */
-.fi-ta-search-field {
-    max-width: 280px !important;
-}
-
-.fi-ta-search-field input {
-    border-radius: var(--wn-radius-sm) !important;
-    font-size: 0.8rem !important;
-    font-weight: 500 !important;
-}
-
-/* Table Header */
-.fi-ta-header-cell {
-    font-size: 0.65rem !important;
+/* === OVERRIDE FILAMENT BUTTON === */
+.fi-wn-login-page button[type="submit"], 
+.fi-wn-login-page .fi-btn {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border-radius: 14px !important;
     font-weight: 800 !important;
+    font-size: 0.85rem !important;
     text-transform: uppercase !important;
     letter-spacing: 0.1em !important;
-    color: var(--wn-text-muted-light) !important;
-    padding: 0.75rem 1rem !important;
-    white-space: nowrap !important;
+    padding: 0.75rem 1.5rem !important;
+    width: 100% !important;
+    border: 1px solid rgba(255,255,255,0.8) !important;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1) !important;
 }
 
-.dark .fi-ta-header-cell {
-    color: var(--wn-text-muted-dark) !important;
-}
-
-/* Table Rows */
-.fi-ta-row {
-    transition: var(--wn-transition) !important;
-    border-bottom: 1px solid rgba(26, 15, 10, 0.03) !important;
-}
-
-.dark .fi-ta-row {
-    border-bottom-color: rgba(255, 255, 255, 0.03) !important;
-}
-
-.fi-ta-row:hover {
-    background: rgba(245, 158, 11, 0.03) !important;
-}
-
-.dark .fi-ta-row:hover {
-    background: rgba(245, 158, 11, 0.04) !important;
-}
-
-/* Table Cells */
-.fi-ta-cell {
-    padding: 0.7rem 1rem !important;
-    font-size: 0.85rem !important;
-    font-weight: 500 !important;
-}
-
-/* Table Image Columns */
-.fi-ta-image img {
-    border-radius: var(--wn-radius-sm) !important;
-    object-fit: cover !important;
-    box-shadow: var(--wn-shadow-sm) !important;
-}
-
-/* Table Badge Column */
-.fi-badge {
-    font-size: 0.65rem !important;
-    font-weight: 800 !important;
-    letter-spacing: 0.04em !important;
-    padding: 0.25rem 0.65rem !important;
-    border-radius: 999px !important;
-    text-transform: uppercase !important;
-}
-
-/* Table Actions */
-.fi-ta-actions {
-    gap: 0.25rem !important;
-}
-
-.fi-ta-row-action {
-    border-radius: var(--wn-radius-sm) !important;
-    font-weight: 700 !important;
-    font-size: 0.78rem !important;
-    transition: var(--wn-transition) !important;
-}
-
-/* Pagination */
-.fi-ta-pagination {
-    padding: 1rem 1.25rem !important;
-    border-top: 1px solid var(--wn-border-light) !important;
-}
-
-.dark .fi-ta-pagination {
-    border-top-color: var(--wn-border-dark) !important;
-}
-
-.fi-ta-pagination-records {
-    font-size: 0.78rem !important;
-    font-weight: 600 !important;
-    opacity: 0.6 !important;
-}
-
-/* =============================================
-   9. FORMS — Premium Input Design
-   ============================================= */
-
-/* Input Wrapper */
-.fi-input-wrp {
-    border-radius: var(--wn-radius-sm) !important;
-    border: 1.5px solid var(--wn-border-light) !important;
-    transition: var(--wn-transition) !important;
-    overflow: hidden !important;
-}
-
-.dark .fi-input-wrp {
-    border-color: var(--wn-border-dark) !important;
-    background: rgba(255, 255, 255, 0.02) !important;
-}
-
-.fi-input-wrp:focus-within {
-    border-color: var(--wn-amber) !important;
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1) !important;
-}
-
-.dark .fi-input-wrp:focus-within {
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12) !important;
-}
-
-/* Input Fields */
-.fi-input {
-    font-size: 0.88rem !important;
-    font-weight: 500 !important;
-}
-
-/* Form Labels */
-.fi-fo-field-wrp-label label {
-    font-size: 0.72rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.03em !important;
-    color: var(--wn-text-muted-light) !important;
-}
-
-.dark .fi-fo-field-wrp-label label {
-    color: var(--wn-text-muted-dark) !important;
-}
-
-/* Helper Text */
-.fi-fo-field-wrp-hint,
-.fi-fo-field-wrp-helper-text {
-    font-size: 0.7rem !important;
-    opacity: 0.55 !important;
-}
-
-/* Toggle / Switch */
-.fi-toggle-input {
-    border-radius: 999px !important;
-}
-
-/* File Upload */
-.fi-fo-file-upload {
-    border-radius: var(--wn-radius-md) !important;
-    border: 2px dashed var(--wn-border-light) !important;
-    transition: var(--wn-transition) !important;
-}
-
-.dark .fi-fo-file-upload {
-    border-color: var(--wn-border-dark) !important;
-}
-
-.fi-fo-file-upload:hover {
-    border-color: var(--wn-amber) !important;
-    background: rgba(245, 158, 11, 0.02) !important;
-}
-
-/* Repeater Items */
-.fi-fo-repeater-item {
-    border-radius: var(--wn-radius-md) !important;
-    border: 1px solid var(--wn-border-light) !important;
-    transition: var(--wn-transition) !important;
-    overflow: hidden !important;
-}
-
-.dark .fi-fo-repeater-item {
-    border-color: var(--wn-border-dark) !important;
-    background: rgba(255, 255, 255, 0.01) !important;
-}
-
-/* Select Dropdown */
-.fi-select-option {
-    border-radius: var(--wn-radius-sm) !important;
-    font-size: 0.85rem !important;
-    font-weight: 500 !important;
-}
-
-/* Rich Editor */
-.fi-fo-rich-editor .trix-content {
-    font-size: 0.88rem !important;
-    line-height: 1.65 !important;
-}
-
-/* =============================================
-   10. BUTTONS — Premium Actions
-   ============================================= */
-.fi-btn {
-    border-radius: var(--wn-radius-sm) !important;
-    font-weight: 700 !important;
-    font-size: 0.82rem !important;
-    transition: var(--wn-transition) !important;
-    letter-spacing: 0.01em !important;
-}
-
-.fi-btn:hover {
-    transform: translateY(-1px);
-}
-
-.fi-btn:active {
-    transform: translateY(0);
-}
-
-/* Primary Button */
-button[type="submit"].fi-btn,
-.fi-btn-color-primary {
-    background: linear-gradient(135deg, var(--wn-amber), var(--wn-amber-light)) !important;
-    color: var(--wn-espresso) !important;
-    font-weight: 800 !important;
-    border: none !important;
-    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.25) !important;
-}
-
-button[type="submit"].fi-btn:hover,
-.fi-btn-color-primary:hover {
-    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.35) !important;
-    transform: translateY(-2px);
-}
-
-/* =============================================
-   11. MODALS & NOTIFICATIONS
-   ============================================= */
-.fi-modal-window {
-    border-radius: var(--wn-radius-lg) !important;
-    box-shadow: 0 32px 64px rgba(0, 0, 0, 0.25) !important;
-}
-
-.fi-modal-close-btn {
-    border-radius: var(--wn-radius-sm) !important;
-}
-
-/* Notifications */
-.fi-no {
-    border-radius: var(--wn-radius-md) !important;
-    box-shadow: var(--wn-shadow-lg) !important;
-    font-weight: 600 !important;
-}
-
-/* =============================================
-   12. WELCOME BANNER
-   ============================================= */
-.welcome-banner {
-    background: linear-gradient(135deg, var(--wn-espresso), var(--wn-espresso-light)) !important;
-    border-radius: var(--wn-radius-xl) !important;
-    padding: 2.5rem !important;
-    color: white !important;
-    position: relative;
-    overflow: hidden;
-}
-
-.welcome-banner::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 300px;
-    height: 300px;
-    background: var(--wn-amber);
-    opacity: 0.12;
-    filter: blur(80px);
-    border-radius: 100%;
-    pointer-events: none;
-}
-
-/* =============================================
-   13. LOADING STATES
-   ============================================= */
-.fi-ta-empty-state {
-    padding: 3rem !important;
-}
-
-.fi-ta-empty-state-icon {
-    opacity: 0.3 !important;
-}
-
-.fi-ta-empty-state-heading {
-    font-weight: 800 !important;
-    font-size: 1rem !important;
-}
-
-.fi-ta-empty-state-description {
-    font-size: 0.82rem !important;
-    opacity: 0.5 !important;
-}
-
-/* =============================================
-   14. RESPONSIVE — Mobile First
-   ============================================= */
-@media (max-width: 1023px) {
-
-    /* Mobile Sidebar Overlay */
-    .fi-sidebar-nav {
-        border-radius: 0 var(--wn-radius-xl) var(--wn-radius-xl) 0 !important;
-        margin: 0 !important;
-    }
-
-    /* Mobile Topbar */
-    .fi-topbar nav {
-        margin: 0.5rem !important;
-        border-radius: var(--wn-radius-md) !important;
-    }
-
-    /* Cards on mobile */
-    .fi-section,
-    .fi-ta,
-    .fi-wi-stats-overview-stat {
-        border-radius: var(--wn-radius-md) !important;
-    }
-
-    /* Form sections on mobile */
-    .fi-section-content-ctn {
-        padding: 1rem !important;
-    }
-
-    .fi-section-header {
-        padding: 1rem !important;
-    }
-
-    /* Table cells on mobile */
-    .fi-ta-cell {
-        padding: 0.5rem 0.75rem !important;
-        font-size: 0.8rem !important;
-    }
-
-    .fi-ta-header-cell {
-        padding: 0.5rem 0.75rem !important;
-        font-size: 0.6rem !important;
-    }
-
-    /* Welcome banner mobile */
-    .welcome-banner {
-        padding: 1.75rem !important;
-        border-radius: var(--wn-radius-lg) !important;
-    }
-
-    /* Stat widgets stacking */
-    .fi-wi-stats-overview-stat:hover {
-        transform: none !important;
-    }
-}
-
-@media (max-width: 639px) {
-    .fi-topbar nav {
-        margin: 0.25rem !important;
-        border-radius: var(--wn-radius-sm) !important;
-        padding: 0 0.25rem !important;
-    }
-
-    .fi-section,
-    .fi-ta {
-        border-radius: var(--wn-radius-sm) !important;
-    }
-
-    .fi-ta-header-ctn {
-        padding: 0.75rem !important;
-    }
-
-    .welcome-banner {
-        padding: 1.25rem !important;
-        border-radius: var(--wn-radius-md) !important;
-    }
-
-    .fi-header-heading {
-        font-size: 1.25rem !important;
-    }
-}
-
-/* =============================================
-   15. DARK MODE OVERRIDES
-   ============================================= */
-.dark .fi-input {
-    color: var(--wn-text-primary-dark) !important;
-}
-
-.dark .fi-input::placeholder {
-    color: var(--wn-text-muted-dark) !important;
-}
-
-.dark .fi-header-heading {
-    color: var(--wn-text-primary-dark) !important;
-}
-
-.dark .fi-section-header-heading {
-    color: var(--wn-text-primary-dark) !important;
-}
-
-.dark .fi-ta-header-cell {
-    color: var(--wn-text-muted-dark) !important;
-}
-
-/* Dark mode dropdown */
-.dark .fi-dropdown-list {
-    background: var(--wn-card-dark) !important;
-    border: 1px solid var(--wn-border-dark) !important;
-    border-radius: var(--wn-radius-md) !important;
-}
-
-/* Dark mode empty state */
-.dark .fi-ta-empty-state-icon {
-    opacity: 0.15 !important;
-}
-
-/* =============================================
-   16. CHECKBOX STYLING
-   ============================================= */
-.fi-ta-record-checkbox {
-    border-radius: 6px !important;
-}
-
-/* =============================================
-   17. TABS REFINEMENT
-   ============================================= */
-.fi-tabs-item-button {
-    border-radius: var(--wn-radius-sm) !important;
-    font-weight: 700 !important;
-    font-size: 0.82rem !important;
-    transition: var(--wn-transition) !important;
-}
-
-.fi-tabs-item-active .fi-tabs-item-button {
-    font-weight: 800 !important;
-}
-
-/* =============================================
-   18. SELECTION HIGHLIGHT
-   ============================================= */
-::selection {
-    background: rgba(245, 158, 11, 0.2);
-    color: inherit;
-}
-
-/* =============================================
-   19. PRINT MEDIA
-   ============================================= */
-@media print {
-
-    .fi-sidebar,
-    .fi-topbar,
-    .fi-breadcrumbs {
-        display: none !important;
-    }
-
-    .fi-main {
-        padding: 0 !important;
-    }
-
-    .fi-section {
-        box-shadow: none !important;
-        border: 1px solid #eee !important;
-    }
+.fi-wn-login-page button[type="submit"]:hover,
+.fi-wn-login-page .fi-btn:hover {
+    background: #f59e0b !important;
+    color: #ffffff !important;
+    border-color: #f59e0b !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 24px -8px rgba(245, 158, 11, 0.6) !important;
 }

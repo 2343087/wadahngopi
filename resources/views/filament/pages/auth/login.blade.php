@@ -1,168 +1,257 @@
-<div
-    class="fi-login-wrapper relative min-h-screen grid place-items-center bg-[#0B0B0B] font-['Outfit'] overflow-hidden selection:bg-amber-500/30">
+<div class="fi-wn-login-page">
 
-    {{-- Ambient Background --}}
-    <div class="fixed inset-0 z-0">
-        <div class="absolute inset-0 bg-gradient-to-br from-[#0A0A0A] via-[#111111] to-[#0A0A0A]"></div>
+    {{-- 🚨 NUCLEAR CSS INJECTION (God Tier Priority) 🚨 --}}
+    <style>
+        /* Force Reset Filament Layout */
+        .fi-simple-header,
+        .fi-simple-main-inner::before {
+            display: none !important;
+        }
 
-        {{-- Dynamic Glow --}}
-        <div class="absolute -top-32 -left-32 w-[520px] h-[520px] bg-amber-500/10 rounded-full blur-[160px]"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[420px] h-[420px] bg-orange-900/20 rounded-full blur-[180px]">
-        </div>
-    </div>
+        .fi-simple-page {
+            background: #060606 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            min-height: 100vh !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
 
-    <div class="relative z-10 w-full max-w-[420px] px-6 py-12 animate-in fade-in duration-1000">
+        .fi-simple-main {
+            max-width: 100% !important;
+            width: auto !important;
+            margin: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
 
-        {{-- Brand --}}
-        <div class="flex flex-col items-center mb-14">
-            <div
-                class="mb-5 p-3 rounded-2xl bg-white/[0.03] border border-white/[0.05] shadow-lg transition-transform duration-500 hover:scale-105">
-                <img src="{{ asset('wadahngopi.png') }}" class="w-10 h-10 brightness-125" alt="WadahNgopi Logo">
+        .fi-simple-main-inner {
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+            padding: 0 !important;
+        }
+
+        /* Apex Container */
+        .fi-wn-login-page {
+            position: fixed !important;
+            inset: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: #060606 !important;
+            z-index: 9999 !important;
+            overflow: hidden !important;
+            font-family: 'Outfit', sans-serif !important;
+        }
+
+        .fi-wn-login-page::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -20%;
+            width: 70vw;
+            height: 70vw;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, transparent 70%);
+            filter: blur(120px);
+            z-index: -1;
+            pointer-events: none;
+            animation: apexFloat 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes apexFloat {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+
+            to {
+                transform: translate(-5%, 5%) scale(1.1);
+            }
+        }
+
+        .fi-wn-login-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 2.5rem;
+            position: relative;
+            z-index: 10;
+            animation: apexFadeUp 0.8s ease-out;
+        }
+
+        @keyframes apexFadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* THE LOGO FIX (Hard Bound) */
+        .fi-wn-login-logo-box {
+            width: 80px !important;
+            height: 80px !important;
+            margin: 0 auto 2.5rem !important;
+            background: rgba(255, 255, 255, 0.03) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 22px !important;
+            padding: 18px !important;
+            backdrop-filter: blur(12px) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5) !important;
+            overflow: hidden !important;
+        }
+
+        .fi-wn-login-logo-box img {
+            max-width: 100% !important;
+            max-height: 100% !important;
+            object-fit: contain !important;
+            filter: brightness(1.2) drop-shadow(0 0 10px rgba(245, 158, 11, 0.2)) !important;
+        }
+
+        /* Premium Card */
+        .fi-wn-login-card {
+            background: rgba(20, 20, 20, 0.6) !important;
+            backdrop-filter: blur(40px) saturate(200%) !important;
+            -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            border-radius: 32px !important;
+            padding: 2.5rem !important;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+        }
+
+        /* Input Overrides (Nuklir) */
+        .fi-wn-login-page .fi-fo-field-wrp-label {
+            font-size: 0.7rem !important;
+            font-weight: 800 !important;
+            color: rgba(255, 255, 255, 0.4) !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.12em !important;
+            margin-bottom: 0.6rem !important;
+        }
+
+        .fi-wn-login-page .fi-input-wrapper {
+            background: rgba(0, 0, 0, 0.4) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 14px !important;
+            box-shadow: none !important;
+        }
+
+        .fi-wn-login-page .fi-input-wrapper:focus-within {
+            border-color: #f59e0b !important;
+            background: #000 !important;
+            box-shadow: 0 0 0 1px #f59e0b !important;
+        }
+
+        .fi-wn-login-page input {
+            color: #fff !important;
+            font-size: 0.95rem !important;
+            font-weight: 500 !important;
+        }
+
+        /* Button Overrides (High Priority) */
+        .fi-wn-login-page button[type="submit"] {
+            background: #ffffff !important;
+            color: #000000 !important;
+            border-radius: 14px !important;
+            font-weight: 950 !important;
+            font-size: 0.85rem !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.15em !important;
+            padding: 1.1rem !important;
+            width: 100% !important;
+            border: none !important;
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+            margin-top: 1.5rem !important;
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .fi-wn-login-page button[type="submit"]:hover {
+            background: #f59e0b !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 12px 24px -5px rgba(245, 158, 11, 0.4) !important;
+        }
+
+        .fi-wn-login-title {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #fff;
+            text-align: center;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.25rem;
+        }
+
+        .fi-wn-login-subtitle {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.3);
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            margin-bottom: 2.5rem;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 480px) {
+            .fi-wn-login-container {
+                padding: 1.25rem;
+            }
+
+            .fi-wn-login-card {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+
+    <div class="fi-wn-login-container">
+        {{-- Branding --}}
+        <header>
+            <div class="fi-wn-login-logo-box">
+                <img src="{{ asset('wadahngopi.png') }}" alt="WadahNgopi Logo">
             </div>
 
-            <h1 class="text-[2.1rem] font-black text-white tracking-[-0.04em] leading-none">
-                Wadah<span class="text-amber-500 italic">Ngopi</span>
+            <h1 class="fi-wn-login-title">
+                Wadah<span class="text-amber-500 italic">Ngopi</span> Hub
             </h1>
-            <p class="mt-2 text-white/25 text-[10px] font-bold uppercase tracking-[0.45em]">
-                Admin Management Hub
+            <p class="fi-wn-login-subtitle">
+                AUTHENTICATION GATEWAY
             </p>
-        </div>
+        </header>
 
-        {{-- Login Card --}}
-        <div class="relative bg-[#141414]/80 backdrop-blur-2xl border border-white/[0.06]
-                   rounded-[2.2rem] p-8 sm:p-10
-                   shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)]">
-
-            {{-- Subtle Inner Highlight --}}
-            <div class="absolute inset-0 rounded-[2.2rem] ring-1 ring-white/[0.03] pointer-events-none"></div>
-
-            <div class="relative mb-10">
-                <h2 class="text-xl font-bold text-white mb-1 tracking-tight">
-                    Authentikasi
-                </h2>
-            </div>
-
-            <x-filament-panels::form wire:submit="authenticate" class="space-y-6 relative">
+        {{-- The Interface --}}
+        <main class="fi-wn-login-card">
+            <x-filament-panels::form wire:submit="authenticate">
                 {{ $this->form }}
 
-                <div class="pt-4">
+                <div class="pt-2">
                     <x-filament-panels::form.actions :actions="$this->getCachedFormActions()"
                         :full-width="$this->hasFullWidthFormActions()" />
                 </div>
             </x-filament-panels::form>
-        </div>
+        </main>
 
-        {{-- Footer --}}
-        <div class="mt-16 text-center">
-            <a href="/" class="inline-flex items-center gap-2 text-white/30 hover:text-amber-500
-                      transition-all text-[10px] font-bold uppercase tracking-[0.2em] no-underline">
-                <span class="text-lg leading-none">‹</span> Kembali ke Website
+        {{-- Secondary Actions --}}
+        <footer class="mt-10 text-center">
+            <a href="/" class="group inline-flex items-center gap-2 text-white/30 hover:text-white
+                       transition-all text-[10px] font-bold uppercase tracking-[0.2em] no-underline">
+                <i class="ph ph-arrow-left text-xs group-hover:-translate-x-1 transition-transform"></i>
+                Kembali Ke WebSite
             </a>
 
             <div class="mt-8 pt-8 border-t border-white/[0.04]">
-                <p class="text-white/10 text-[9px] font-semibold tracking-[0.15em] uppercase">
-                    © 2026 WadahNgopi Professional Admin
+                <p class="text-white/[0.1] text-[8px] font-black tracking-[0.4em] uppercase">
+                    &copy; WadahNgopi / ADMIN-SISTEM
                 </p>
             </div>
-        </div>
+        </footer>
     </div>
 
-    <style>
-        /* ===== Filament Cleanup ===== */
-        .fi-simple-main {
-            display: none !important;
-        }
-
-        /* ===== Input Wrapper ===== */
-        .fi-input-wrp {
-            background: linear-gradient(180deg, #0A0A0A, #0E0E0E) !important;
-            border: 1px solid #262626 !important;
-            border-radius: 1.1rem !important;
-            padding: 2px !important;
-            transition: all .25s ease !important;
-        }
-
-        .fi-input-wrp:focus-within {
-            border-color: #f59e0b !important;
-            box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.12) !important;
-        }
-
-        input {
-            background: transparent !important;
-            color: #e5e5e5 !important;
-            font-size: .95rem !important;
-            padding: .8rem .9rem !important;
-        }
-
-        input::placeholder {
-            color: #555 !important;
-        }
-
-        /* ===== Labels ===== */
-        label {
-            color: #737373 !important;
-            font-size: .65rem !important;
-            font-weight: 800 !important;
-            text-transform: uppercase !important;
-            letter-spacing: .14em !important;
-            margin-bottom: .6rem !important;
-        }
-
-        /* ===== Submit Button ===== */
-        button[type="submit"] {
-            background: linear-gradient(135deg, #f59e0b, #fbbf24) !important;
-            color: #0B0B0B !important;
-            font-weight: 900 !important;
-            border-radius: 1.1rem !important;
-            padding: .95rem !important;
-            width: 100% !important;
-            border: none !important;
-            text-transform: uppercase !important;
-            letter-spacing: .18em !important;
-            font-size: .75rem !important;
-            box-shadow: 0 15px 35px rgba(245, 158, 11, .35) !important;
-            transition: all .25s ease !important;
-        }
-
-        button[type="submit"]:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 25px 45px rgba(245, 158, 11, .45) !important;
-        }
-
-        button[type="submit"]:active {
-            transform: translateY(0);
-        }
-
-        /* ===== Checkbox ===== */
-        .fi-fo-checkbox input {
-            background-color: #0B0B0B !important;
-            border: 1px solid #333 !important;
-            border-radius: 5px !important;
-            color: #f59e0b !important;
-        }
-
-        .fi-fo-checkbox span {
-            color: #666 !important;
-            font-size: .8rem !important;
-        }
-
-        /* ===== Error Message ===== */
-        .fi-fo-field-wrp-error-message {
-            color: #ef4444 !important;
-            font-weight: 700 !important;
-            font-size: .7rem !important;
-            margin-top: .5rem !important;
-        }
-
-        /* ===== Scroll Control ===== */
-        body {
-            overflow: hidden !important;
-        }
-
-        @media (max-height: 720px) {
-            body {
-                overflow-y: auto !important;
-            }
-        }
-    </style>
+    {{-- Icon Assets --}}
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
 </div>
