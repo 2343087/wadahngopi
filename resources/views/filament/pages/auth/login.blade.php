@@ -7,7 +7,8 @@
 
         {{-- Dynamic Glow --}}
         <div class="absolute -top-32 -left-32 w-[520px] h-[520px] bg-amber-500/10 rounded-full blur-[160px]"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[420px] h-[420px] bg-orange-900/20 rounded-full blur-[180px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[420px] h-[420px] bg-orange-900/20 rounded-full blur-[180px]">
+        </div>
     </div>
 
     <div class="relative z-10 w-full max-w-[420px] px-6 py-12 animate-in fade-in duration-1000">
@@ -16,7 +17,7 @@
         <div class="flex flex-col items-center mb-14">
             <div
                 class="mb-5 p-3 rounded-2xl bg-white/[0.03] border border-white/[0.05] shadow-lg transition-transform duration-500 hover:scale-105">
-                <img src="{{ asset('wadahicon.png') }}" class="w-10 h-10 brightness-125" alt="WadahNgopi Logo">
+                <img src="{{ asset('wadahngopi.png') }}" class="w-10 h-10 brightness-125" alt="WadahNgopi Logo">
             </div>
 
             <h1 class="text-[2.1rem] font-black text-white tracking-[-0.04em] leading-none">
@@ -28,8 +29,7 @@
         </div>
 
         {{-- Login Card --}}
-        <div
-            class="relative bg-[#141414]/80 backdrop-blur-2xl border border-white/[0.06]
+        <div class="relative bg-[#141414]/80 backdrop-blur-2xl border border-white/[0.06]
                    rounded-[2.2rem] p-8 sm:p-10
                    shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)]">
 
@@ -46,8 +46,7 @@
                 {{ $this->form }}
 
                 <div class="pt-4">
-                    <x-filament-panels::form.actions
-                        :actions="$this->getCachedFormActions()"
+                    <x-filament-panels::form.actions :actions="$this->getCachedFormActions()"
                         :full-width="$this->hasFullWidthFormActions()" />
                 </div>
             </x-filament-panels::form>
@@ -55,8 +54,7 @@
 
         {{-- Footer --}}
         <div class="mt-16 text-center">
-            <a href="/"
-               class="inline-flex items-center gap-2 text-white/30 hover:text-amber-500
+            <a href="/" class="inline-flex items-center gap-2 text-white/30 hover:text-amber-500
                       transition-all text-[10px] font-bold uppercase tracking-[0.2em] no-underline">
                 <span class="text-lg leading-none">‹</span> Kembali ke Website
             </a>

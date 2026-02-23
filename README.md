@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/wadahicon.png" width="80" alt="WadahNgopi Logo">
+  <img src="public/wadahngopi.png" width="80" alt="WadahNgopi Logo">
 </p>
 
 <h1 align="center">WadahNgopi</h1>
@@ -70,12 +70,13 @@ Semua data real-time. Buka tutupnya akurat. Lokasinya bisa diurutin dari yang pa
 | Admin Panel | Filament v3 |
 | Database | MySQL 8 |
 | Cache | Redis / File Cache |
+| Testing | Pest 4 / PHPUnit 12 |
 
 ---
 
-## � Cara Jalanin di Lokal
+## 🚀 Cara Jalanin di Lokal
 
-> Pastikan lo udah punya **PHP 8.3+**, **Composer**, **Node.js 20+**, dan **MySQL 8.0+**.
+> Pastikan lo udah punya **PHP 8.4**, **Composer**, **Node.js 20+**, dan **MySQL 8.0+**.
 
 ```bash
 # Clone repo
@@ -98,10 +99,14 @@ npm run dev
 php artisan serve
 ```
 
-### ⚠️ Catatan Penting
-Kalau lo import database manual atau seeding ulang, jalanin ini buat sinkronisasi data roastery:
 ```bash
 php artisan app:backfill-roastery-hours
+```
+
+### 🧪 Testing
+Proyek ini udah dilengkapi sama **139+ automated tests** buat mastiin semuanya jalan lancar.
+```bash
+php artisan test --compact
 ```
 
 ---

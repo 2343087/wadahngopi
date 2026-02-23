@@ -15,7 +15,7 @@
             <div class="explore-branding-wrapper">
                 <div class="explore-topbar">
                     <div class="explore-logo-box">
-                        <img src="{{ asset('wadahicon.png') }}" alt="Logo">
+                        <img src="{{ asset('wadahngopi.png') }}" alt="Logo">
 
                     </div>
                     <div class="flex flex-col">

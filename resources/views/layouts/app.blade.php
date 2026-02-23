@@ -21,7 +21,7 @@
     <meta property="og:title" content="@yield('og_title', 'WadahNgopi - Portal Cafe Terbaik di Kalimantan')">
     <meta property="og:description"
         content="@yield('og_description', 'Temukan cafe dan tempat nongkrong terbaik di Kalimantan. WiFi kencang, suasana nyaman, menu lengkap.')">
-    <meta property="og:image" content="@yield('og_image', asset('wadahicon.png'))">
+    <meta property="og:image" content="@yield('og_image', asset('wadahngopi.png'))">
     <meta property="og:site_name" content="WadahNgopi">
     <meta property="og:locale" content="id_ID">
 
@@ -30,13 +30,13 @@
     <meta name="twitter:title" content="@yield('twitter_title', 'WadahNgopi - Portal Cafe Kalimantan')">
     <meta name="twitter:description"
         content="@yield('twitter_description', 'Temukan cafe dan tempat nongkrong terbaik di Kalimantan.')">
-    <meta name="twitter:image" content="@yield('twitter_image', asset('wadahicon.png'))">
+    <meta name="twitter:image" content="@yield('twitter_image', asset('wadahngopi.png'))">
 
     {{-- Canonical URL --}}
     <link rel="canonical" href="{{ url()->current() }}">
 
     <link rel="manifest" href="/manifest.json?v=2">
-    <link rel="icon" type="image/png" href="{{ asset('wadahicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('wadahngopi.png') }}">
     <link rel="apple-touch-icon" sizes="192x192" href="{{ asset('icons/icon-192x192.png') }}">
 
     <!-- Fonts - Modern & Premium -->
@@ -73,7 +73,7 @@
         <div class="splash-logo" style="display:flex; flex-direction:column; align-items:center;">
             <div class="splash-icon"
                 style="width:56px; height:56px; border-radius:16px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#F59E0B;">
-                <img src="{{ asset('wadahicon.png') }}" alt="WadahNgopi"
+                <img src="{{ asset('wadahngopi.png') }}" alt="WadahNgopi"
                     style="width:36px; height:36px; object-fit:contain;">
             </div>
             <div class="splash-brand" style="margin-top:16px;">

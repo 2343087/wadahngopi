@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Models\Cafe;
 use App\Models\City;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -25,6 +24,7 @@ class ExploreSearch extends Component
     public ?int $cityId = null;
 
     public ?float $userLat = null;
+
     public ?float $userLng = null;
 
     protected $queryString = [
@@ -64,8 +64,8 @@ class ExploreSearch extends Component
 
     public function updatedSort(): void
     {
-        // If sorting A-Z or Z-A, activeLetter might be relevant, 
-        // but if switching back to relevance, maybe clear it? 
+        // If sorting A-Z or Z-A, activeLetter might be relevant,
+        // but if switching back to relevance, maybe clear it?
         // For now, keep them independent or just reset page.
         $this->resetPage();
     }
@@ -107,6 +107,9 @@ class ExploreSearch extends Component
      */
     public function loadMore(): void
     {
+        if ($this->perPage >= 120) {
+            return;
+        }
         $this->perPage += 12;
     }
 
@@ -138,8 +141,7 @@ class ExploreSearch extends Component
         return \Illuminate\Support\Facades\Cache::remember(
             'cities_list',
             now()->addMinutes(10),
-            fn() =>
-            City::select(['id', 'name'])->orderBy('name')->get()
+            fn () => City::select(['id', 'name'])->orderBy('name')->get()
         );
     }
 
@@ -157,10 +159,12 @@ class ExploreSearch extends Component
                 'longitude',
                 'image_path',
                 'social_links',
-                'opening_time',
-                'closing_time',
                 'is_24_hours',
-                'operating_hours'
+                'operating_hours',
+                'weekday_open',
+                'weekday_close',
+                'weekend_open',
+                'weekend_close',
             ])
             ->with(['facilities:id,cafe_id,name', 'city:id,name']);
 
@@ -174,7 +178,7 @@ class ExploreSearch extends Component
 
         // Letter Filter
         if ($this->activeLetter) {
-            $query->where('name', 'like', $this->activeLetter . '%');
+            $query->where('name', 'like', $this->activeLetter.'%');
         }
 
         // Filter Logic for "buka" - uses centralized service logic
@@ -198,7 +202,7 @@ class ExploreSearch extends Component
         $cafesPaginator = $query->paginate($this->perPage);
 
         // Dispatch events for map update if needed
-        $this->dispatch('cafes-updated', cafes: collect($cafesPaginator->items())->map(fn($c) => [
+        $this->dispatch('cafes-updated', cafes: collect($cafesPaginator->items())->map(fn ($c) => [
             'id' => $c->id,
             'name' => $c->name,
             'lat' => $c->latitude,

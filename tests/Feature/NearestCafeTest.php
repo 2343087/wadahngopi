@@ -31,10 +31,10 @@ class NearestCafeTest extends TestCase
         // 1. Create Cafes at known locations
         // User Location: 0, 0 for simplicity
 
-        // Cafe A: 1 degree latitude away (~111km)
+        // Cafe A: 0.15 degree latitude away (~16.6km)
         $cafeFar = Cafe::factory()->create([
             'name' => 'Far Cafe',
-            'latitude' => 1.0,
+            'latitude' => 0.15,
             'longitude' => 0.0,
             'status' => 'published',
         ]);

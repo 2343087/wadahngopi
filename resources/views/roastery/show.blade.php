@@ -4,7 +4,7 @@
 @section('meta_description', Str::limit(strip_tags($roastery->description), 155) ?: 'Temukan ' . $roastery->name . ' di ' . ($roastery->city?->name ?? 'Kalimantan') . '. Roastery terbaik pilihan WadahNgopi.')
 @section('og_title', $roastery->name . ' - WadahNgopi')
 @section('og_description', Str::limit(strip_tags($roastery->description), 100) ?: 'Roastery terbaik di ' . ($roastery->city?->name ?? 'Kalimantan'))
-@section('og_image', $roastery->image_path ? (str_starts_with($roastery->image_path, 'http') ? $roastery->image_path : Storage::url($roastery->image_path)) : asset('wadahicon.png'))
+@section('og_image', $roastery->image_path ? (str_starts_with($roastery->image_path, 'http') ? $roastery->image_path : Storage::url($roastery->image_path)) : asset('wadahngopi.png'))
 
 @section('content')
     @php
@@ -49,10 +49,10 @@
 
     <div class="detail-wrapper"
         x-data="roasteryDetailComponent({
-                                                                                                                                        id: {{ $roastery->id }},
-                                                                                                                                        images: {{ json_encode($galleryImages) }},
-                                                                                                                                        menuImages: {{ json_encode($menuImages) }}
-                                                                                                                                    })">
+                                                                                                                                                id: {{ $roastery->id }},
+                                                                                                                                                images: {{ json_encode($galleryImages) }},
+                                                                                                                                                menuImages: {{ json_encode($menuImages) }}
+                                                                                                                                            })">
 
         {{-- Hero Skeleton (Shown while image loading) --}}
         <div x-show="!imagesLoaded" class="absolute inset-0 z-50 bg-white">

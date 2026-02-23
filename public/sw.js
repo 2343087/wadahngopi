@@ -1,8 +1,8 @@
-const CACHE_NAME = 'wadahngopi-v2';
+const CACHE_NAME = 'wadahngopi-v3';
 const STATIC_ASSETS = [
     '/icons/icon-192x192.png',
     '/icons/icon-512x512.png',
-    '/wadahicon.png',
+    '/wadahngopi.png',
     '/offline.html',
     // Add other critical static assets here
 ];

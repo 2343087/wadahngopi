@@ -39,6 +39,16 @@ class InformationFeed extends Component
         );
     }
 
+    public int $perPage = 10;
+
+    public function loadMore(): void
+    {
+        if ($this->perPage >= 100) {
+            return;
+        }
+        $this->perPage += 10;
+    }
+
     public function render()
     {
         $query = Information::where('is_published', true)
@@ -49,7 +59,7 @@ class InformationFeed extends Component
         }
 
         $informations = $query->latest('published_at')
-            ->paginate(10);
+            ->paginate($this->perPage);
 
         return view('livewire.information-feed', [
             'informations' => $informations,

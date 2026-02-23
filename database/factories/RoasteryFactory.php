@@ -7,9 +7,9 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Cafe>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Roastery>
  */
-class CafeFactory extends Factory
+class RoasteryFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -19,12 +19,11 @@ class CafeFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->company() . ' Coffee',
+            'name' => fake()->company() . ' Roastery',
             'description' => fake()->paragraph(),
             'address' => fake()->address(),
             'google_maps_url' => 'https://maps.google.com/?q=' . urlencode(fake()->address()),
             'whatsapp_number' => fake()->phoneNumber(),
-            'has_wifi' => fake()->boolean(),
             'image_path' => 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=800',
             'status' => 'published',
             'latitude' => fake()->latitude(-1.5, -1.4),

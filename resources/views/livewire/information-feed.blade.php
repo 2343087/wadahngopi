@@ -11,7 +11,7 @@
         <div class="explore-branding-wrapper">
             <div class="explore-topbar">
                 <div class="explore-logo-box">
-                    <img src="{{ asset('wadahicon.png') }}" alt="Logo">
+                    <img src="{{ asset('wadahngopi.png') }}" alt="Logo">
                 </div>
                 <div class="flex flex-col">
                     <h1 class="explore-brand">Wadah<span>Ngopi</span></h1>
@@ -247,11 +247,11 @@
             {{-- Infinite Scroll Sentinel --}}
             @if($informations->hasMorePages())
                 <div class="scroll-sentinel" x-data="{ observer: null }" x-init="
-                                        observer = new IntersectionObserver((entries) => {
-                                            entries.forEach(e => { if (e.isIntersecting) $wire.loadMore(); });
-                                        }, { rootMargin: '200px' });
-                                        observer.observe($el);
-                                    " x-destroy="observer?.disconnect()">
+                                                observer = new IntersectionObserver((entries) => {
+                                                    entries.forEach(e => { if (e.isIntersecting) $wire.loadMore(); });
+                                                }, { rootMargin: '200px' });
+                                                observer.observe($el);
+                                            " x-destroy="observer?.disconnect()">
                     <div class="loading-more-spinner" wire:loading.delay wire:target="loadMore"></div>
                     <span class="text-xs font-bold text-[#8B7355]/60 uppercase tracking-widest" wire:loading.delay
                         wire:target="loadMore">Memuat...</span>

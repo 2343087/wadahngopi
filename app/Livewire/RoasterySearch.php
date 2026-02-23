@@ -2,8 +2,8 @@
 
 namespace App\Livewire;
 
-use App\Models\Roastery;
 use App\Models\City;
+use App\Models\Roastery;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -14,11 +14,17 @@ class RoasterySearch extends Component
     public int $perPage = 12;
 
     public string $search = '';
+
     public string $filter = 'semua';
+
     public string $sort = 'relevance';
+
     public ?int $cityId = null;
+
     public ?float $userLat = null;
+
     public ?float $userLng = null;
+
     public ?string $activeLetter = null;
 
     protected $queryString = [
@@ -78,6 +84,9 @@ class RoasterySearch extends Component
 
     public function loadMore(): void
     {
+        if ($this->perPage >= 120) {
+            return;
+        }
         $this->perPage += 12;
     }
 
@@ -108,8 +117,7 @@ class RoasterySearch extends Component
         return \Illuminate\Support\Facades\Cache::remember(
             'cities_list',
             now()->addMinutes(10),
-            fn() =>
-            City::select(['id', 'name'])->orderBy('name')->get()
+            fn () => City::select(['id', 'name'])->orderBy('name')->get()
         );
     }
 
@@ -132,7 +140,7 @@ class RoasterySearch extends Component
                 'weekday_open',
                 'weekday_close',
                 'weekend_open',
-                'weekend_close'
+                'weekend_close',
             ])
             ->with(['city:id,name']);
 
@@ -145,7 +153,7 @@ class RoasterySearch extends Component
         }
 
         if ($this->activeLetter) {
-            $query->where('name', 'like', $this->activeLetter . '%');
+            $query->where('name', 'like', $this->activeLetter.'%');
         }
 
         if ($this->filter === 'buka') {

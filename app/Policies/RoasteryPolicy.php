@@ -12,7 +12,7 @@ class RoasteryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return in_array($user->role, ['developer', 'roastery']);
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 
 class CafeSearchService
 {
@@ -57,25 +56,13 @@ class CafeSearchService
      */
     public function scopeNearest(Builder $query, float $lat, float $lng, int $radiusKm = 20): Builder
     {
-        // 1. Bounding Box Optimization (Earth Radius ~6371km)
-        // 1 deg lat ~= 111km
-        // 1 deg lng ~= 111km * cos(lat)
-        $latDelta = $radiusKm / 111;
-        $lngDelta = $radiusKm / (111 * cos(deg2rad($lat)));
-
-        $minLat = $lat - $latDelta;
-        $maxLat = $lat + $latDelta;
-        $minLng = $lng - $lngDelta;
-        $maxLng = $lng + $lngDelta;
+        // Use MySQL Spatial Function ST_Distance_Sphere for ultra-fast calculation
+        // Default SRID 4326 in MySQL 8.0+ is (Latitude, Longitude)
+        $point = "POINT($lat $lng)";
 
         return $query
-            ->whereBetween('latitude', [$minLat, $maxLat])
-            ->whereBetween('longitude', [$minLng, $maxLng])
-            ->addSelect(DB::raw(sprintf(
-                '(6371 * acos(cos(radians(%1$.8f)) * cos(radians(latitude)) * cos(radians(longitude) - radians(%2$.8f)) + sin(radians(%1$.8f)) * sin(radians(latitude)))) AS distance',
-                $lat,
-                $lng
-            )))
+            ->whereRaw('ST_Distance_Sphere(location, ST_GeomFromText(?, 4326)) <= ?', [$point, $radiusKm * 1000])
+            ->selectRaw('(ST_Distance_Sphere(location, ST_GeomFromText(?, 4326)) / 1000) AS distance', [$point])
             ->orderBy('distance');
     }
 
@@ -88,15 +75,17 @@ class CafeSearchService
         // For short terms, Fulltext might not trigger well, use LIKE
         if (strlen($term) <= 3) {
             $query->where('name', 'like', "%{$term}%");
+
             return;
         }
 
         // Fulltext Search in Boolean Mode
-        // +term* means "must contain term, and * is wildcard"
-        // $searchString = '+' . implode('* +', explode(' ', $term)) . '*';
+        // Sanitize term to prevent SQL syntax errors from boolean operators (<, >, (, ), etc)
+        $sanitizedTerm = preg_replace('/[+\-><()~*\"@]/', ' ', $term);
+        $sanitizedTerm = trim(preg_replace('/\s+/', ' ', $sanitizedTerm));
 
-        $query->where(function ($q) use ($term) {
-            $q->whereFullText(['name', 'address', 'description'], $term, ['mode' => 'boolean'])
+        $query->where(function ($q) use ($term, $sanitizedTerm) {
+            $q->whereFullText(['name', 'address', 'description'], $sanitizedTerm, ['mode' => 'boolean'])
                 ->orWhere('name', 'like', "%{$term}%"); // Hybrid approach: Prefer FT, fallback/combine LIKE for partial matches not covered by FT
         });
 

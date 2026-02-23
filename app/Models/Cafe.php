@@ -37,6 +37,21 @@ class Cafe extends Model
     ];
 
     /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'location',
+    ];
+
+    /**
+     * Exclude binary location from serialized output to prevent
+     * issues with database cache drivers (e.g. MySQL utf8mb4 constraints).
+     */
+
+
+    /**
      * Get the city that the cafe belongs to.
      */
     public function city(): BelongsTo
@@ -120,7 +135,7 @@ class Cafe extends Model
 
         static::saving(function ($cafe) {
             // Virtual columns handle the sync automatically in DB for Cafe model.
-            // Do NOT manually set weekday_open/close etc here or it will 
+            // Do NOT manually set weekday_open/close etc here or it will
             // trigger "SQLSTATE[HY000]: General error: 3105"
 
             // Validate Operating Hours JSON Structure to prevent "Invalid JSON" or logic errors
@@ -140,14 +155,24 @@ class Cafe extends Model
                         }
 
                         // Normalize "24:00" to "00:00" if user inputs it manually (though frontend should handle it)
-                        if ($open === '24:00')
+                        if ($open === '24:00') {
                             $hours[$day]['open'] = '00:00';
-                        if ($close === '24:00')
+                        }
+                        if ($close === '24:00') {
                             $hours[$day]['close'] = '00:00';
+                        }
                     }
                 }
 
                 $cafe->operating_hours = $hours;
+            }
+
+            // Sync Spatial Location (POINT) for optimized proximity search
+            if ($cafe->isDirty(['latitude', 'longitude']) && $cafe->latitude && $cafe->longitude) {
+                $lat = (float) $cafe->latitude;
+                $lng = (float) $cafe->longitude;
+                // Default SRID 4326 order is (Latitude, Longitude) in MySQL 8.0+
+                $cafe->location = \Illuminate\Support\Facades\DB::raw("ST_GeomFromText('POINT($lat $lng)', 4326)");
             }
         });
 
@@ -171,6 +196,7 @@ class Cafe extends Model
     {
         if (empty($value)) {
             $this->attributes['whatsapp_number'] = null;
+
             return;
         }
 
@@ -219,11 +245,14 @@ class Cafe extends Model
         return collect($list)
             ->filter()
             ->map(function ($img) {
-                if (empty($img))
+                if (empty($img)) {
                     return null;
+                }
                 $cleanImg = preg_replace('/[\x00-\x1F\x7F\xA0\s]+/', '', $img);
-                if (str_starts_with($cleanImg, 'http'))
+                if (str_starts_with($cleanImg, 'http')) {
                     return $cleanImg;
+                }
+
                 return '/storage/' . $cleanImg;
             })
             ->filter()

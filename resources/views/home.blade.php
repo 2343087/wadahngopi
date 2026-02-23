@@ -8,7 +8,7 @@
         <header class="text-center shrink-0 pb-[20px] relative z-20">
             <div
                 class="w-[60px] h-[60px] mx-auto mb-3 bg-white rounded-[22px] flex items-center justify-center shadow-[0_10px_30px_rgba(42,28,21,0.08)] ring-1 ring-black/5 animate-fade-up">
-                <img src="{{ asset('wadahicon.png') }}" alt="WadahNgopi"
+                <img src="{{ asset('wadahngopi.png') }}" alt="WadahNgopi"
                     class="w-[42px] h-[42px] object-contain drop-shadow-sm">
             </div>
             <span

@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Traits\HasOperatingHours;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Roastery extends Model
 {
-    use HasOperatingHours;
+    /** @use HasFactory<\Database\Factories\RoasteryFactory> */
+    use HasFactory, HasOperatingHours;
 
     protected $fillable = [
         'name',
@@ -33,6 +35,21 @@ class Roastery extends Model
         'weekend_open',
         'weekend_close',
     ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'location',
+    ];
+
+    /**
+     * Exclude binary location from serialized output to prevent
+     * issues with database cache drivers (e.g. MySQL utf8mb4 constraints).
+     */
+
 
     /**
      * Get the city that the roastery belongs to.
@@ -81,6 +98,7 @@ class Roastery extends Model
     {
         if (empty($value)) {
             $this->attributes['whatsapp_number'] = null;
+
             return;
         }
 
@@ -137,6 +155,14 @@ class Roastery extends Model
                 $roastery->weekend_open = data_get($hours, 'weekend.open');
                 $roastery->weekend_close = data_get($hours, 'weekend.close');
             }
+
+            // Sync Spatial Location (POINT) for optimized proximity search
+            if ($roastery->isDirty(['latitude', 'longitude']) && $roastery->latitude && $roastery->longitude) {
+                $lat = (float) $roastery->latitude;
+                $lng = (float) $roastery->longitude;
+                // Default SRID 4326 order is (Latitude, Longitude) in MySQL 8.0+
+                $roastery->location = \Illuminate\Support\Facades\DB::raw("ST_GeomFromText('POINT($lat $lng)', 4326)");
+            }
         });
 
         static::saved(function ($roastery) {
@@ -183,11 +209,14 @@ class Roastery extends Model
         return collect($list)
             ->filter()
             ->map(function ($img) {
-                if (empty($img))
+                if (empty($img)) {
                     return null;
+                }
                 $cleanImg = preg_replace('/[\x00-\x1F\x7F\xA0\s]+/', '', $img);
-                if (str_starts_with($cleanImg, 'http'))
+                if (str_starts_with($cleanImg, 'http')) {
                     return $cleanImg;
+                }
+
                 return '/storage/' . $cleanImg;
             })
             ->filter()

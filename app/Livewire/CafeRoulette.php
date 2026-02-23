@@ -9,9 +9,13 @@ use Livewire\Component;
 class CafeRoulette extends Component
 {
     public bool $isOpen = false;
+
     public array $candidates = [];
+
     public ?array $winner = null;
+
     public bool $isSpinning = false;
+
     public int $lastSpinAt = 0;
 
     /**
@@ -23,16 +27,19 @@ class CafeRoulette extends Component
         // Server-side rate limit: 2 second cooldown
         $now = now()->timestamp;
         if ($now - $this->lastSpinAt < 2) {
-            throw new \Exception('Sabar ya, tunggu sebentar sebelum spin lagi!');
+            $this->addError('spin', 'Sabar ya, tunggu sebentar sebelum spin lagi!');
+
+            return;
         }
         $this->lastSpinAt = $now;
 
         $searchService = app(CafeSearchService::class);
 
-        // Fetch published cafes that are currently open
+        // Fetch published cafes that are currently open (slim select for performance)
         $query = Cafe::query()
             ->where('status', 'published')
-            ->with(['city', 'facilities']);
+            ->select(['id', 'name', 'slug', 'address', 'city_id', 'image_path', 'images', 'is_24_hours', 'operating_hours', 'weekday_open', 'weekday_close', 'weekend_open', 'weekend_close'])
+            ->with(['city:id,name']);
 
         // Apply openNow scope
         $query = $searchService->scopeOpenNow($query);
@@ -46,6 +53,7 @@ class CafeRoulette extends Component
         if ($cafes->isEmpty()) {
             $this->candidates = [];
             $this->winner = null;
+
             return;
         }
 
@@ -53,7 +61,7 @@ class CafeRoulette extends Component
             $images = $cafe->processed_images;
             $firstImage = count($images) > 0
                 ? $images[0]
-                : asset('wadahicon.png');
+                : asset('wadahngopi.png');
 
             return [
                 'id' => $cafe->id,

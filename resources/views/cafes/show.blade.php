@@ -4,7 +4,7 @@
 @section('meta_description', Str::limit(strip_tags($cafe->description), 155) ?: 'Temukan ' . $cafe->name . ' di ' . ($cafe->address ?? 'Kalimantan') . '. Cafe dengan fasilitas lengkap.')
 @section('og_title', $cafe->name . ' - WadahNgopi')
 @section('og_description', Str::limit(strip_tags($cafe->description), 100) ?: 'Cafe nyaman di ' . ($cafe->address ?? 'Kalimantan'))
-@section('og_image', $cafe->image_path ? Storage::url($cafe->image_path) : asset('wadahicon.png'))
+@section('og_image', $cafe->image_path ? Storage::url($cafe->image_path) : asset('wadahngopi.png'))
 
 @section('content')
     @php
@@ -50,12 +50,12 @@
 
     <div class="detail-wrapper"
         x-data="cafeDetailComponent({
-                                                                                                                                    id: {{ $cafe->id }},
-                                                                                                                                    images: {{ json_encode($galleryImages) }},
-                                                                                                                                    allCategories: {{ json_encode($allCats) }},
-                                                                                                                                    defaultTab: {{ json_encode($defaultTab) }},
-                                                                                                                                    menuImages: {{ json_encode($activeGalleryImages->map(fn($img) => ['url' => str_starts_with($img['image'], 'http') ? $img['image'] : '/storage/' . $img['image'], 'tag' => $img['tag']])->values()) }}
-                                                                                                                                })">
+                                                                                                                                            id: {{ $cafe->id }},
+                                                                                                                                            images: {{ json_encode($galleryImages) }},
+                                                                                                                                            allCategories: {{ json_encode($allCats) }},
+                                                                                                                                            defaultTab: {{ json_encode($defaultTab) }},
+                                                                                                                                            menuImages: {{ json_encode($activeGalleryImages->map(fn($img) => ['url' => str_starts_with($img['image'], 'http') ? $img['image'] : '/storage/' . $img['image'], 'tag' => $img['tag']])->values()) }}
+                                                                                                                                        })">
 
         {{-- Hero Skeleton (Shown while image loading) --}}
         <div x-show="!imagesLoaded" class="absolute inset-0 z-50 bg-white">
