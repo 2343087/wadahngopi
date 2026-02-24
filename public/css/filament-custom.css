@@ -198,30 +198,65 @@ html.dark ::-webkit-scrollbar-thumb:hover {
     color: #ffffff !important;
 }
 
-/* --- LIGHT MODE FALLBACKS (Dashboard) --- */
+/* --- LIGHT MODE FALLBACKS (Massive Contrast Fix) --- */
 html:not(.dark) .fi-body {
     background-color: #f8fafc !important;
 }
 
 html:not(.dark) .fi-sidebar {
-    background: rgba(255, 255, 255, 0.8) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
     backdrop-filter: blur(12px) !important;
-    border-right: 1px solid rgba(0, 0, 0, 0.05) !important;
+    border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+html:not(.dark) .fi-sidebar-item-label {
+    color: #334155 !important;
+}
+
+html:not(.dark) .fi-sidebar-item-button:hover .fi-sidebar-item-label {
+    color: #0f172a !important;
+}
+
+html:not(.dark) .fi-sidebar-item-button:hover {
+    background: rgba(0, 0, 0, 0.05) !important;
+}
+
+html:not(.dark) .fi-sidebar-item-active .fi-sidebar-item-button {
+    background: rgba(245, 158, 11, 0.08) !important;
+    border: 1px solid rgba(245, 158, 11, 0.2) !important;
 }
 
 html:not(.dark) .fi-wi-stats-overview-stat-wrp,
 html:not(.dark) .fi-section,
-html:not(.dark) .fi-ta-ctn {
-    background: rgba(255, 255, 255, 0.9) !important;
-    border: 1px solid rgba(0, 0, 0, 0.05) !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-    color: #1e293b !important;
+html:not(.dark) .fi-ta-ctn,
+html:not(.dark) .fi-wi-widget-wrp>div {
+    background: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05) !important;
 }
 
-html:not(.dark) .fi-wi-stats-overview-stat-value {
+/* Force dark text in light mode for all stats and sections */
+html:not(.dark) .fi-wi-stats-overview-stat-value,
+html:not(.dark) .fi-section-header-heading,
+html:not(.dark) .fi-ta-header-cell,
+html:not(.dark) .fi-ta-text-column,
+html:not(.dark) .fi-breadcrumbs-item-label {
     color: #0f172a !important;
 }
 
-html:not(.dark) .fi-wi-stats-overview-stat-label {
+html:not(.dark) .fi-wi-stats-overview-stat-label,
+html:not(.dark) .fi-section-header-description,
+html:not(.dark) .fi-ta-text-column-description {
     color: #64748b !important;
+}
+
+/* Buttons in Light Mode */
+html:not(.dark) .fi-btn-color-primary {
+    background: #0f172a !important;
+    color: #ffffff !important;
+}
+
+html:not(.dark) .fi-btn-color-primary:hover {
+    background: #f59e0b !important;
+    color: #ffffff !important;
 }
