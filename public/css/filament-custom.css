@@ -71,6 +71,11 @@ html.dark .fi-wi-widget-wrp>div {
     transition: all 0.4s ease !important;
 }
 
+html.dark .fi-section:focus-within {
+    z-index: 99 !important;
+    position: relative !important;
+}
+
 html.dark .fi-wi-stats-overview-stat-wrp:hover {
     border-color: rgba(245, 158, 11, 0.3) !important;
     transform: translateY(-4px) !important;
@@ -144,6 +149,17 @@ html.dark .fi-input-wrp {
 html.dark .fi-input-wrp:focus-within {
     border-color: #f59e0b !important;
     background: #000 !important;
+    z-index: 50 !important;
+    position: relative !important;
+}
+
+/* Fix Dropdowns being buried under glass sections */
+html.dark .choices__list--dropdown {
+    z-index: 1000 !important;
+    background: #121212 !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
+    backdrop-filter: blur(20px) !important;
 }
 
 /* Breadcrumbs */

@@ -39,8 +39,8 @@ class StatsOverview extends BaseWidget
                         ->toArray()
                 ),
 
-            Stat::make('Kafe Perlu Review', Cafe::where('status', 'review')->count())
-                ->description('Butuh sentuhan admin 🔍')
+            Stat::make('Kafe Perlu Review', Cafe::where('status', 'review')->when(! $isDeveloper, fn ($q) => $q->where('owner_id', $user->id))->count())
+                ->description($isDeveloper ? 'Butuh sentuhan admin 🔍' : 'Sedang diverifikasi developer ⏳')
                 ->descriptionIcon('heroicon-m-magnifying-glass-circle')
                 ->color('warning'),
 
@@ -49,5 +49,19 @@ class StatsOverview extends BaseWidget
                 ->descriptionIcon('heroicon-m-bolt')
                 ->color('success'),
         ];
+
+        if ($user->role === 'roastery' || $isDeveloper) {
+            $roasteryQuery = \App\Models\Roastery::query();
+            if (! $isDeveloper) {
+                $roasteryQuery->where('owner_id', $user->id);
+            }
+
+            $stats[] = Stat::make('Total Roastery', $roasteryQuery->count())
+                ->description($isDeveloper ? 'Katalog biji kopi kita ☕' : 'Roastery kamu yang terdaftar')
+                ->descriptionIcon('heroicon-m-sparkles')
+                ->color('info');
+        }
+
+        return $stats;
     }
 }

@@ -28,25 +28,37 @@ class CafeResource extends Resource
 
     public static function canCreate(): bool
     {
-        return auth()->user()?->role === 'developer';
+        return in_array(auth()->user()?->role, ['developer', 'admin']);
     }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                // SECTION: ADMIN CONTROL (Structural) - Hidden from Owner
-                Forms\Components\Section::make('Kendali Admin 🛠️')
-                    ->description('Hanya tim internal yang bisa otir-atik bagian ini.')
+                // SECTION 1: SHARED CORE INFO
+                Forms\Components\Section::make('Informasi Utama ☕')
+                    ->description('Data dasar cafe kamu.')
                     ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->placeholder('Contoh: Kopi Malem Jumat')
+                            ->label('Nama Cafe'),
+
                         Forms\Components\Select::make('city_id')
                             ->relationship('city', 'name')
                             ->searchable()
                             ->preload()
-                            ->label('Kota')
+                            ->label('Kota Lokasi')
                             ->placeholder('Pilih kota...')
                             ->required(),
+                    ])
+                    ->columns(2),
 
+                // SECTION 2: ADMIN ONLY CONTROLS
+                Forms\Components\Section::make('Kendali Admin 🛠️')
+                    ->description('Hanya tim internal yang bisa otir-atik bagian ini.')
+                    ->schema([
                         Forms\Components\Select::make('owner_id')
                             ->relationship('owner', 'name')
                             ->searchable()
@@ -64,13 +76,6 @@ class CafeResource extends Resource
                             ->label('Status Sekarang')
                             ->default('draft')
                             ->required(),
-
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->maxLength(255)
-                            ->placeholder('Contoh: Kopi Malem Jumat')
-                            ->label('Nama Cafe-nya Apa?'),
-
                     ])
                     ->columns(2)
                     ->visible(fn () => auth()->user()?->role === 'developer'),
@@ -123,7 +128,8 @@ class CafeResource extends Resource
                                 'review' => 'Minta Approval Admin',
                                 'published' => 'Langsung Tayangin!',
                             ])
-                            ->label('Mau Diapain?'),
+                            ->label('Mau Diapain?')
+                            ->visible(fn () => auth()->user()?->role === 'developer'),
 
                         Forms\Components\RichEditor::make('description')
                             ->label('Tentang Cafe Kamu')
@@ -194,14 +200,6 @@ class CafeResource extends Resource
                                     ->placeholder('0812xxxxxxxx')
                                     ->label('Nomor WhatsApp (Aktif)')
                                     ->helperText('Format bebas (08xx atau 628xx). Sistem otomatis konversi ke link WA.'),
-
-                                Forms\Components\Select::make('city_id')
-                                    ->relationship('city', 'name')
-                                    ->searchable()
-                                    ->preload()
-                                    ->label('Kota Lokasi')
-                                    ->placeholder('Pilih kota cafe kamu...')
-                                    ->required(),
                             ])->columns(2),
 
                         Forms\Components\Section::make('Nongkrong Jam Berapa? 🕒')
@@ -318,7 +316,7 @@ class CafeResource extends Resource
                                     ->columnSpanFull(),
                             ]),
                     ])
-                    ->visible(fn () => auth()->user()?->role === 'admin'),
+                    ->visible(fn () => in_array(auth()->user()?->role, ['developer', 'admin'])),
             ]);
     }
 
@@ -348,16 +346,30 @@ class CafeResource extends Resource
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\BadgeColumn::make('status')
-                    ->colors([
-                        'gray' => 'draft',
-                        'warning' => 'review',
-                        'success' => 'published',
-                    ])
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'review' => 'warning',
+                        'published' => 'success',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'draft' => 'Draft',
+                        'review' => 'Pending Review',
+                        'published' => 'Published',
+                        default => $state,
+                    })
                     ->sortable(),
 
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'draft' => 'Draft',
+                        'review' => 'Pending Review',
+                        'published' => 'Published',
+                    ]),
                 Tables\Filters\SelectFilter::make('city_id')
                     ->label('Berdasarkan Kota')
                     ->relationship('city', 'name'),

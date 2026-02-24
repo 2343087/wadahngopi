@@ -26,6 +26,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(\App\Filament\Pages\Auth\CustomLogin::class)
+            ->registration(\App\Filament\Pages\Auth\Register::class)
             ->brandName('WadahNgopi')
             ->brandLogo(asset('wadahngopi.png'))
             ->brandLogoHeight('3.5rem')

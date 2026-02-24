@@ -22,7 +22,7 @@ class CafePolicy
 
     public function create(User $user): bool
     {
-        return $user->role === 'developer';
+        return in_array($user->role, ['developer', 'admin']);
     }
 
     public function update(User $user, Cafe $cafe): bool

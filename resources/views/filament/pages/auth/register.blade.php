@@ -73,8 +73,9 @@
 
         .fi-wn-login-container {
             width: 100%;
-            max-width: 420px;
-            padding: 2.5rem;
+            max-width: 480px;
+            /* Slightly wider for register form */
+            padding: 2rem;
             position: relative;
             z-index: 10;
             animation: apexFadeUp 0.8s ease-out;
@@ -92,21 +93,20 @@
             }
         }
 
-        /* THE LOGO FIX (Hard Bound) */
+        /* THE LOGO FIX */
         .fi-wn-login-logo-box {
-            width: 80px !important;
-            height: 80px !important;
-            margin: 0 auto 2.5rem !important;
+            width: 60px !important;
+            height: 60px !important;
+            margin: 0 auto 1.5rem !important;
             background: rgba(255, 255, 255, 0.03) !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            border-radius: 22px !important;
-            padding: 18px !important;
+            border-radius: 18px !important;
+            padding: 12px !important;
             backdrop-filter: blur(12px) !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5) !important;
-            overflow: hidden !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
         }
 
         .fi-wn-login-logo-box img {
@@ -123,25 +123,40 @@
             -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
             border: 1px solid rgba(255, 255, 255, 0.05) !important;
             border-radius: 32px !important;
-            padding: 2.5rem !important;
+            padding: 2rem !important;
             box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+            max-height: 85vh;
+            overflow-y: auto;
         }
 
-        /* Input Overrides (Nuklir) */
+        /* Custom Scrollbar */
+        .fi-wn-login-card::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .fi-wn-login-card::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .fi-wn-login-card::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        /* Input Overrides */
         .fi-wn-login-page .fi-fo-field-wrp-label {
-            font-size: 0.7rem !important;
+            font-size: 0.65rem !important;
             font-weight: 800 !important;
             color: rgba(255, 255, 255, 0.4) !important;
             text-transform: uppercase !important;
             letter-spacing: 0.12em !important;
-            margin-bottom: 0.6rem !important;
+            margin-bottom: 0.4rem !important;
         }
 
         .fi-wn-login-page .fi-input-wrapper {
             background: rgba(0, 0, 0, 0.4) !important;
             border: 1px solid rgba(255, 255, 255, 0.08) !important;
-            border-radius: 14px !important;
-            box-shadow: none !important;
+            border-radius: 12px !important;
         }
 
         .fi-wn-login-page .fi-input-wrapper:focus-within {
@@ -150,27 +165,27 @@
             box-shadow: 0 0 0 1px #f59e0b !important;
         }
 
-        .fi-wn-login-page input {
+        .fi-wn-login-page input,
+        .fi-wn-login-page select {
             color: #fff !important;
-            font-size: 0.95rem !important;
+            font-size: 0.9rem !important;
             font-weight: 500 !important;
         }
 
-        /* Button Overrides (High Priority) */
+        /* Button Overrides */
         .fi-wn-login-page button[type="submit"] {
             background: #ffffff !important;
             color: #000000 !important;
-            border-radius: 14px !important;
+            border-radius: 12px !important;
             font-weight: 950 !important;
-            font-size: 0.85rem !important;
+            font-size: 0.8rem !important;
             text-transform: uppercase !important;
             letter-spacing: 0.15em !important;
-            padding: 1.1rem !important;
+            padding: 1rem !important;
             width: 100% !important;
             border: none !important;
             transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
-            margin-top: 1.5rem !important;
-            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.1) !important;
+            margin-top: 1rem !important;
         }
 
         .fi-wn-login-page button[type="submit"]:hover {
@@ -180,53 +195,41 @@
         }
 
         .fi-wn-login-title {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: 900;
             color: #fff;
             text-align: center;
             letter-spacing: -0.02em;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.2rem;
         }
 
         .fi-wn-login-subtitle {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: rgba(255, 255, 255, 0.3);
             text-align: center;
             font-weight: 700;
             letter-spacing: 0.2em;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
             text-transform: uppercase;
-        }
-
-        @media (max-width: 480px) {
-            .fi-wn-login-container {
-                padding: 1.25rem;
-            }
-
-            .fi-wn-login-card {
-                padding: 2rem 1.5rem;
-            }
         }
     </style>
 
     <div class="fi-wn-login-container">
-        {{-- Branding --}}
         <header>
             <div class="fi-wn-login-logo-box">
                 <img src="{{ asset('wadahngopi.png') }}" alt="WadahNgopi Logo">
             </div>
 
             <h1 class="fi-wn-login-title">
-                Wadah<span class="text-amber-500 italic">Ngopi</span> Hub
+                Join <span class="text-amber-500 italic">The Hub</span>
             </h1>
             <p class="fi-wn-login-subtitle">
-                AUTHENTICATION GATEWAY
+                OWNER ONBOARDING
             </p>
         </header>
 
-        {{-- The Interface --}}
         <main class="fi-wn-login-card">
-            <x-filament-panels::form wire:submit="authenticate">
+            <x-filament-panels::form wire:submit="register">
                 {{ $this->form }}
 
                 <div class="pt-2">
@@ -236,27 +239,12 @@
             </x-filament-panels::form>
         </main>
 
-        {{-- Secondary Actions --}}
-        <footer class="mt-10 text-center">
-            <a href="/" class="group inline-flex items-center gap-2 text-white/30 hover:text-white
+        <footer class="mt-8 text-center">
+            <a href="{{ filament()->getLoginUrl() }}" class="group inline-flex items-center gap-2 text-white/30 hover:text-white
                        transition-all text-[10px] font-bold uppercase tracking-[0.2em] no-underline">
                 <i class="ph ph-arrow-left text-xs group-hover:-translate-x-1 transition-transform"></i>
-                Kembali Ke WebSite
+                Sudah Punya Akun? Masuk Di Sini
             </a>
-
-            <span class="mx-3 text-white/[0.1]">|</span>
-
-            <a href="/admin/register" class="group inline-flex items-center gap-2 text-white/30 hover:text-white
-                       transition-all text-[10px] font-bold uppercase tracking-[0.2em] no-underline">
-                <i class="ph ph-user-plus text-xs group-hover:scale-110 transition-transform"></i>
-                Daftar Akun Baru
-            </a>
-
-            <div class="mt-8 pt-8 border-t border-white/[0.04]">
-                <p class="text-white/[0.1] text-[8px] font-black tracking-[0.4em] uppercase">
-                    &copy; WadahNgopi / ADMIN-SISTEM
-                </p>
-            </div>
         </footer>
     </div>
 

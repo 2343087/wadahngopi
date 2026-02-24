@@ -13,6 +13,7 @@ class CreateCafe extends CreateRecord
     {
         if (auth()->user()?->role === 'admin') {
             $data['owner_id'] = auth()->id();
+            $data['status'] = 'review';
         }
 
         return $data;

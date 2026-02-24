@@ -27,24 +27,37 @@ class RoasteryResource extends Resource
 
     public static function canCreate(): bool
     {
-        return auth()->user()?->role === 'developer';
+        return in_array(auth()->user()?->role, ['developer', 'roastery']);
     }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                // SECTION: ADMIN CONTROL
-                Forms\Components\Section::make('Kendali Admin 🛠️')
-                    ->description('Hanya tim internal yang bisa otir-atik bagian ini.')
+                // SECTION 1: SHARED CORE INFO
+                Forms\Components\Section::make('Informasi Utama ♨️')
+                    ->description('Data dasar roastery kamu.')
                     ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->placeholder('Contoh: Wadah Sangrai Smd')
+                            ->label('Nama Roastery'),
+
                         Forms\Components\Select::make('city_id')
                             ->relationship('city', 'name')
                             ->searchable()
                             ->preload()
-                            ->label('Kota')
+                            ->label('Kota Lokasi')
+                            ->placeholder('Pilih kota...')
                             ->required(),
+                    ])
+                    ->columns(2),
 
+                // SECTION 2: ADMIN ONLY CONTROLS
+                Forms\Components\Section::make('Kendali Admin 🛠️')
+                    ->description('Hanya tim internal yang bisa otir-atik bagian ini.')
+                    ->schema([
                         Forms\Components\Select::make('owner_id')
                             ->relationship('owner', 'name')
                             ->searchable()
@@ -61,14 +74,9 @@ class RoasteryResource extends Resource
                             ->label('Status')
                             ->default('draft')
                             ->required(),
-
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->maxLength(255)
-                            ->label('Nama Roastery'),
                     ])
                     ->columns(2)
-                    ->visible(fn () => auth()->user()?->role === 'developer'),
+                    ->visible(fn() => auth()->user()?->role === 'developer'),
 
                 // SECTION: ROASTERY OWNER CONTENT
                 Forms\Components\Section::make('Detail Roastery ✨')
@@ -85,7 +93,8 @@ class RoasteryResource extends Resource
                                 'review' => 'Minta Approval Admin',
                                 'published' => 'Langsung Tayangin!',
                             ])
-                            ->label('Update Status'),
+                            ->label('Update Status')
+                            ->visible(fn() => auth()->user()?->role === 'developer'),
 
                         Forms\Components\Textarea::make('description')
                             ->label('Tentang Roastery')
@@ -155,7 +164,7 @@ class RoasteryResource extends Resource
                                             ->displayFormat('H:i'),
                                     ])
                                     ->columns(2)
-                                    ->hidden(fn (Forms\Get $get): bool => (bool) $get('is_24_hours')),
+                                    ->hidden(fn(Forms\Get $get): bool => (bool) $get('is_24_hours')),
 
                                 // Jam Weekend (Sabtu-Minggu)
                                 Forms\Components\Fieldset::make('Jam Akhir Pekan (Sabtu - Minggu)')
@@ -172,8 +181,47 @@ class RoasteryResource extends Resource
                                             ->displayFormat('H:i'),
                                     ])
                                     ->columns(2)
-                                    ->hidden(fn (Forms\Get $get): bool => (bool) $get('is_24_hours')),
-                            ]),
+                                    ->hidden(fn(Forms\Get $get): bool => (bool) $get('is_24_hours')),
+
+                                Forms\Components\ViewField::make('location_trigger')
+                                    ->view('filament.components.location-button')
+                                    ->hiddenLabel(),
+                                Forms\Components\TextInput::make('latitude')
+                                    ->numeric()
+                                    ->placeholder('Contoh: -6.xxxx')
+                                    ->label('Latitude')
+                                    ->suffixAction(
+                                        Forms\Components\Actions\Action::make('getLocation')
+                                            ->icon('heroicon-m-map-pin')
+                                            ->tooltip('Ambil Lokasi Saya')
+                                            ->action(function () {})
+                                            ->extraAttributes([
+                                                'class' => 'cursor-pointer text-primary-500',
+                                                'title' => 'Ambil Lokasi Saat Ini',
+                                                'x-on:click.prevent' => <<<'JS'
+                                                    if (!navigator.geolocation) {
+                                                        alert('Browser kamu tidak mendukung geolocation.');
+                                                        return;
+                                                    }
+                                                    navigator.geolocation.getCurrentPosition(
+                                                        (position) => {
+                                                            $wire.set('data.latitude', position.coords.latitude);
+                                                            $wire.set('data.longitude', position.coords.longitude);
+                                                            new Notification('Lokasi Berhasil Diambil!');
+                                                        },
+                                                        (error) => {
+                                                            console.error(error);
+                                                            alert('Gagal mengambil lokasi: ' + error.message);
+                                                        }
+                                                    );
+                                                JS,
+                                            ])
+                                    ),
+                                Forms\Components\TextInput::make('longitude')
+                                    ->numeric()
+                                    ->label('Longitude')
+                                    ->placeholder('Contoh: 106.xxxx'),
+                            ])->columns(2),
 
                         Forms\Components\Section::make('Social Media 📱')
                             ->schema([
@@ -200,7 +248,7 @@ class RoasteryResource extends Resource
                                     ->columnSpanFull(),
                             ]),
                     ])
-                    ->visible(fn () => auth()->user()?->role === 'roastery'),
+                    ->visible(fn() => in_array(auth()->user()?->role, ['developer', 'roastery'])),
             ]);
     }
 
@@ -221,15 +269,30 @@ class RoasteryResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('owner.name')
                     ->label('Owner')
-                    ->visible(fn () => auth()->user()?->role === 'developer'),
-                Tables\Columns\BadgeColumn::make('status')
-                    ->colors([
-                        'gray' => 'draft',
-                        'warning' => 'review',
-                        'success' => 'published',
-                    ]),
+                    ->visible(fn() => auth()->user()?->role === 'developer'),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'review' => 'warning',
+                        'published' => 'success',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                        'draft' => 'Draft',
+                        'review' => 'Pending Review',
+                        'published' => 'Published',
+                        default => $state,
+                    })
+                    ->sortable(),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'draft' => 'Draft',
+                        'review' => 'Pending Review',
+                        'published' => 'Published',
+                    ]),
                 Tables\Filters\SelectFilter::make('city_id')
                     ->relationship('city', 'name'),
             ])

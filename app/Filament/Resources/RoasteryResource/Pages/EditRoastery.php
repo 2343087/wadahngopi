@@ -16,4 +16,14 @@ class EditRoastery extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (auth()->user()?->role === 'roastery') {
+            $data['owner_id'] = auth()->id();
+            $data['status'] = 'review';
+        }
+
+        return $data;
+    }
 }

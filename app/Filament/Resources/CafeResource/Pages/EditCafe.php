@@ -21,6 +21,7 @@ class EditCafe extends EditRecord
     {
         if (auth()->user()?->role === 'admin') {
             $data['owner_id'] = auth()->id();
+            $data['status'] = 'review';
         }
 
         return $data;

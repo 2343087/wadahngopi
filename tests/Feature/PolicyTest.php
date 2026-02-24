@@ -37,11 +37,11 @@ describe('CafePolicy', function () {
         expect($policy->create($dev))->toBeTrue();
     });
 
-    it('denies admin from creating cafes', function () {
+    it('allows admin to create cafes', function () {
         $admin = User::factory()->create(['role' => 'admin']);
         $policy = new CafePolicy;
 
-        expect($policy->create($admin))->toBeFalse();
+        expect($policy->create($admin))->toBeTrue();
     });
 
     it('allows admin to view own cafe only', function () {
