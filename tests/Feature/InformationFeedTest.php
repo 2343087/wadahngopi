@@ -81,6 +81,7 @@ it('returns top 5 popular articles by views', function () {
     }
 
     $component = Livewire::test(InformationFeed::class);
+
     $popular = $component->viewData('popularInformations');
 
     expect($popular)->toHaveCount(5);

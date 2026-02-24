@@ -7,5 +7,5 @@
 @section('og_image', asset('wadahngopi.png'))
 
 @section('content')
-    <livewire:explore-search />
+    <livewire:explore-search lazy />
 @endsection

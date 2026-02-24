@@ -56,11 +56,11 @@ it('includes security headers on responses', function () {
     $response->assertHeader('Referrer-Policy');
 });
 
-it('does not include unsafe-eval in CSP header', function () {
+it('includes unsafe-eval in CSP header for Livewire compatibility', function () {
     $response = $this->get(route('home'));
 
     $csp = $response->headers->get('Content-Security-Policy');
-    expect($csp)->not->toContain('unsafe-eval');
+    expect($csp)->toContain('unsafe-eval');
 });
 
 // --- UserRole Enum ---

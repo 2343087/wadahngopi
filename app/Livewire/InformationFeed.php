@@ -9,7 +9,6 @@ use Livewire\Component;
 
 use Livewire\WithPagination;
 
-#[Lazy]
 class InformationFeed extends Component
 {
     use WithPagination;

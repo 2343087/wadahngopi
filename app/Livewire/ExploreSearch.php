@@ -9,7 +9,6 @@ use Livewire\Component;
 
 use Livewire\WithPagination;
 
-#[Lazy]
 class ExploreSearch extends Component
 {
     use WithPagination;

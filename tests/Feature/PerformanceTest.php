@@ -65,8 +65,6 @@ it('caches cafe detail for performance', function () {
     expect(Cache::has($cacheKey))->toBeTrue();
 });
 
-// --- Cities Cache ---
-
 it('caches the cities list', function () {
     Livewire::test(ExploreSearch::class)
         ->assertSuccessful();

@@ -1,8 +1,9 @@
 <?php
 
 use App\Models\Cafe;
+use Livewire\Livewire;
 
-beforeEach(fn () => Cache::flush());
+beforeEach(fn() => Cache::flush());
 
 it('displays the landing page', function () {
     $response = $this->get('/');
@@ -14,10 +15,8 @@ it('displays the landing page', function () {
 it('displays the list of cafes on the explore page', function () {
     $cafe = Cafe::factory()->create(['name' => 'Wadah Kopi Pusat', 'status' => 'published']);
 
-    $response = $this->get('/explore');
-
-    $response->assertStatus(200);
-    $response->assertSeeHtml('Wadah Kopi Pusat');
+    Livewire::test(\App\Livewire\ExploreSearch::class)
+        ->assertSeeHtml('Wadah Kopi Pusat');
 });
 
 it('displays the cafe detail page', function () {

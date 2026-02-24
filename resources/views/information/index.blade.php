@@ -3,5 +3,5 @@
 @section('title', 'Informasi Kopi - WadahNgopi')
 
 @section('content')
-    <livewire:information-feed />
+    <livewire:information-feed lazy />
 @endsection

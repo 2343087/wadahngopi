@@ -3,5 +3,5 @@
 @section('title', 'Jelajahi Roastery - WadahNgopi.Com')
 
 @section('content')
-    <livewire:roastery-search />
+    <livewire:roastery-search lazy />
 @endsection

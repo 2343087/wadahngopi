@@ -9,7 +9,6 @@ use Livewire\Component;
 
 use Livewire\WithPagination;
 
-#[Lazy]
 class RoasterySearch extends Component
 {
     use WithPagination;
