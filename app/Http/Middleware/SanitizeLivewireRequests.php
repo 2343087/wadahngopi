@@ -53,14 +53,14 @@ class SanitizeLivewireRequests
     {
         $data = $request->all();
 
-        if (!isset($data['components']) || !is_array($data['components'])) {
+        if (! isset($data['components']) || ! is_array($data['components'])) {
             return;
         }
 
         $modified = false;
 
         foreach ($data['components'] as $index => &$component) {
-            if (!isset($component['calls']) || !is_array($component['calls'])) {
+            if (! isset($component['calls']) || ! is_array($component['calls'])) {
                 continue;
             }
 
@@ -68,7 +68,7 @@ class SanitizeLivewireRequests
 
             $component['calls'] = array_values(
                 array_filter($component['calls'], function (array $call): bool {
-                    return !in_array($call['method'] ?? '', $this->blockedMethods, true);
+                    return ! in_array($call['method'] ?? '', $this->blockedMethods, true);
                 })
             );
 

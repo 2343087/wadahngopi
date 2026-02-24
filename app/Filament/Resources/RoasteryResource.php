@@ -76,7 +76,7 @@ class RoasteryResource extends Resource
                             ->required(),
                     ])
                     ->columns(2)
-                    ->visible(fn() => auth()->user()?->role === 'developer'),
+                    ->visible(fn () => auth()->user()?->role === 'developer'),
 
                 // SECTION: ROASTERY OWNER CONTENT
                 Forms\Components\Section::make('Detail Roastery ✨')
@@ -94,7 +94,7 @@ class RoasteryResource extends Resource
                                 'published' => 'Langsung Tayangin!',
                             ])
                             ->label('Update Status')
-                            ->visible(fn() => auth()->user()?->role === 'developer'),
+                            ->visible(fn () => auth()->user()?->role === 'developer'),
 
                         Forms\Components\Textarea::make('description')
                             ->label('Tentang Roastery')
@@ -164,7 +164,7 @@ class RoasteryResource extends Resource
                                             ->displayFormat('H:i'),
                                     ])
                                     ->columns(2)
-                                    ->hidden(fn(Forms\Get $get): bool => (bool) $get('is_24_hours')),
+                                    ->hidden(fn (Forms\Get $get): bool => (bool) $get('is_24_hours')),
 
                                 // Jam Weekend (Sabtu-Minggu)
                                 Forms\Components\Fieldset::make('Jam Akhir Pekan (Sabtu - Minggu)')
@@ -181,7 +181,7 @@ class RoasteryResource extends Resource
                                             ->displayFormat('H:i'),
                                     ])
                                     ->columns(2)
-                                    ->hidden(fn(Forms\Get $get): bool => (bool) $get('is_24_hours')),
+                                    ->hidden(fn (Forms\Get $get): bool => (bool) $get('is_24_hours')),
 
                                 Forms\Components\ViewField::make('location_trigger')
                                     ->view('filament.components.location-button')
@@ -248,7 +248,7 @@ class RoasteryResource extends Resource
                                     ->columnSpanFull(),
                             ]),
                     ])
-                    ->visible(fn() => in_array(auth()->user()?->role, ['developer', 'roastery'])),
+                    ->visible(fn () => in_array(auth()->user()?->role, ['developer', 'roastery'])),
             ]);
     }
 
@@ -269,16 +269,16 @@ class RoasteryResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('owner.name')
                     ->label('Owner')
-                    ->visible(fn() => auth()->user()?->role === 'developer'),
+                    ->visible(fn () => auth()->user()?->role === 'developer'),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
                         'review' => 'warning',
                         'published' => 'success',
                         default => 'gray',
                     })
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
                         'draft' => 'Draft',
                         'review' => 'Pending Review',
                         'published' => 'Published',

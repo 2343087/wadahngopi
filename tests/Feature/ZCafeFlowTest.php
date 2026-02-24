@@ -3,7 +3,7 @@
 use App\Models\Cafe;
 use Livewire\Livewire;
 
-beforeEach(fn() => Cache::flush());
+beforeEach(fn () => Cache::flush());
 
 it('displays the landing page', function () {
     $response = $this->get('/');

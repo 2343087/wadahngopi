@@ -30,7 +30,7 @@ class CityFactory extends Factory
             'Ujoh Bilang',
         ];
 
-        $name = fake()->randomElement($kaltimCities) . ' ' . Str::random(5);
+        $name = fake()->randomElement($kaltimCities).' '.Str::random(5);
 
         return [
             'name' => $name,
