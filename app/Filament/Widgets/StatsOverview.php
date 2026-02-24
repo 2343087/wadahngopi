@@ -16,13 +16,13 @@ class StatsOverview extends BaseWidget
     protected function getStats(): array
     {
         $user = Auth::user();
-        if (!$user) {
+        if (! $user) {
             return [];
         }
         $isDeveloper = $user->role === 'developer';
 
         $cafeQuery = Cafe::query();
-        if (!$isDeveloper) {
+        if (! $isDeveloper) {
             $cafeQuery->where('owner_id', $user->id);
         }
 

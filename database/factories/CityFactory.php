@@ -17,11 +17,24 @@ class CityFactory extends Factory
      */
     public function definition(): array
     {
-        $name = fake()->unique()->city() . ' ' . Str::random(5);
+        $kaltimCities = [
+            'Samarinda',
+            'Balikpapan',
+            'Bontang',
+            'Sangatta',
+            'Tenggarong',
+            'Tanjung Redeb',
+            'Sendawar',
+            'Tanah Grogot',
+            'Penajam',
+            'Ujoh Bilang',
+        ];
+
+        $name = fake()->randomElement($kaltimCities) . ' ' . Str::random(5);
 
         return [
             'name' => $name,
-            'slug' => Str::slug($name),
+            'slug' => \Illuminate\Support\Str::slug($name),
         ];
     }
 }

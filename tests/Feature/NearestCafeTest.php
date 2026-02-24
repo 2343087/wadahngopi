@@ -21,7 +21,7 @@ class NearestCafeTest extends TestCase
             $db->sqliteCreateFunction('acos', 'acos', 1);
             $db->sqliteCreateFunction('cos', 'cos', 1);
             $db->sqliteCreateFunction('sin', 'sin', 1);
-            $db->sqliteCreateFunction('radians', fn($deg) => deg2rad($deg), 1);
+            $db->sqliteCreateFunction('radians', fn ($deg) => deg2rad($deg), 1);
         }
     }
 
@@ -76,6 +76,7 @@ class NearestCafeTest extends TestCase
             ->set('filter', 'terdekat')
             ->assertViewHas('cafes', function ($cafes) {
                 $distance = $cafes->first()->distance;
+
                 // 1 degree lat is approx 111km. 0.1 is ~11.1km.
                 // Allow some margin for float math
                 return $distance > 11.0 && $distance < 11.2;

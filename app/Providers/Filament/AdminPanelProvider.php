@@ -40,10 +40,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->font('Outfit')
             ->renderHook(
-                'panels::head.done',
-                fn() => new \Illuminate\Support\HtmlString('
-                    <link rel="stylesheet" href="' . asset('css/filament-custom.css') . '?v=' . filemtime(public_path('css/filament-custom.css')) . '">
-                    <meta name="theme-color" content="#1A0F0A">
+                'panels::styles.after',
+                fn () => new \Illuminate\Support\HtmlString('
+                    <link rel="stylesheet" href="'.asset('css/filament-custom.css').'?v='.filemtime(public_path('css/filament-custom.css')).'">
+                    <meta name="theme-color" content="#060606">
                     <meta name="referrer" content="strict-origin-when-cross-origin">
                     <style>
                         :root {
@@ -54,7 +54,7 @@ class AdminPanelProvider extends PanelProvider
             )
             ->renderHook(
                 'panels::head.start',
-                fn() => new \Illuminate\Support\HtmlString('
+                fn () => new \Illuminate\Support\HtmlString('
                     <meta http-equiv="X-Frame-Options" content="DENY">
                     <meta http-equiv="X-Content-Type-Options" content="nosniff">
                     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(self)">
@@ -83,7 +83,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                \Illuminate\Routing\Middleware\ThrottleRequests::class . ':60,1',
+                \Illuminate\Routing\Middleware\ThrottleRequests::class.':60,1',
                 \App\Http\Middleware\SecurityHeaders::class,
             ])
             ->authMiddleware([

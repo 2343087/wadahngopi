@@ -19,10 +19,10 @@ class RoasteryFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->company() . ' Roastery',
+            'name' => fake()->company().' Roastery',
             'description' => fake()->paragraph(),
             'address' => fake()->address(),
-            'google_maps_url' => 'https://maps.google.com/?q=' . urlencode(fake()->address()),
+            'google_maps_url' => 'https://maps.google.com/?q='.urlencode(fake()->address()),
             'whatsapp_number' => fake()->phoneNumber(),
             'image_path' => 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=800',
             'status' => 'published',

@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Information;
-use Illuminate\Support\Facades\Cache;
-
 class InformationController extends Controller
 {
     public function index(): \Illuminate\View\View
@@ -21,7 +18,7 @@ class InformationController extends Controller
         // Rate-limited view counter: 1 increment per article per session
         // Prevents bot/crawler view inflation abuse
         $sessionKey = "info_viewed_{$information->id}";
-        if (!session()->has($sessionKey)) {
+        if (! session()->has($sessionKey)) {
             $information->increment('views');
             session()->put($sessionKey, true);
         }

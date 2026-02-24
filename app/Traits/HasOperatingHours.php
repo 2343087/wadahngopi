@@ -23,28 +23,29 @@ trait HasOperatingHours
         $isWeekend = in_array(now()->dayOfWeek, [0, 6]);
         $prefix = $isWeekend ? 'weekend' : 'weekday';
 
-        $open = $this->{$prefix . '_open'};
-        $close = $this->{$prefix . '_close'};
+        $open = $this->{$prefix.'_open'};
+        $close = $this->{$prefix.'_close'};
 
         if ($open && $close) {
             return $this->checkTimeInRange($open, $close);
         }
 
-        if (!empty($this->operating_hours)) {
+        if (! empty($this->operating_hours)) {
             $schedule = $isWeekend
                 ? ($this->operating_hours['weekend'] ?? null)
                 : ($this->operating_hours['weekday'] ?? null);
 
-            if ($schedule && !empty($schedule['open']) && !empty($schedule['close'])) {
+            if ($schedule && ! empty($schedule['open']) && ! empty($schedule['close'])) {
                 return $this->checkTimeInRange($schedule['open'], $schedule['close']);
             }
         }
 
         // Legacy fallback for Cafe model
         if (property_exists($this, 'opening_time') || isset($this->attributes['opening_time'])) {
-            if (!$this->opening_time || !$this->closing_time) {
+            if (! $this->opening_time || ! $this->closing_time) {
                 return false;
             }
+
             return $this->checkTimeInRange($this->opening_time, $this->closing_time);
         }
 
@@ -64,19 +65,19 @@ trait HasOperatingHours
 
         $isWeekend = in_array(now()->dayOfWeek, [0, 6]);
 
-        if (!empty($this->operating_hours)) {
+        if (! empty($this->operating_hours)) {
             $schedule = $isWeekend
                 ? ($this->operating_hours['weekend'] ?? null)
                 : ($this->operating_hours['weekday'] ?? null);
 
-            if ($schedule && !empty($schedule['open']) && !empty($schedule['close'])) {
+            if ($schedule && ! empty($schedule['open']) && ! empty($schedule['close'])) {
                 return $schedule;
             }
         }
 
         $prefix = $isWeekend ? 'weekend' : 'weekday';
-        $open = $this->{$prefix . '_open'};
-        $close = $this->{$prefix . '_close'};
+        $open = $this->{$prefix.'_open'};
+        $close = $this->{$prefix.'_close'};
 
         if ($open && $close) {
             return ['open' => $open, 'close' => $close];
@@ -108,7 +109,7 @@ trait HasOperatingHours
         $count = 1;
 
         while (static::where('slug', $slug)->exists()) {
-            $slug = $originalSlug . '-' . $count++;
+            $slug = $originalSlug.'-'.$count++;
         }
 
         return $slug;

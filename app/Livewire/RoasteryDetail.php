@@ -8,7 +8,9 @@ use Livewire\Component;
 class RoasteryDetail extends Component
 {
     public int $roasteryId;
+
     public bool $isOpen = false;
+
     public bool $hasRoastery = false;
 
     public function mount(int $roasteryId): void

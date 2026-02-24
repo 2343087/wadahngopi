@@ -14,7 +14,7 @@ Route::middleware(['throttle:web'])->group(function () {
     Route::get('/saved', [SavedController::class, 'index'])->name('saved');
     Route::get('/information', [InformationController::class, 'index'])->name('information');
     Route::get('/information/{information:slug}', [InformationController::class, 'show'])->name('information.show');
-    Route::get('/profile', fn() => redirect()->route('information'))->name('profile');
+    Route::get('/profile', fn () => redirect()->route('information'))->name('profile');
     Route::get('/roastery', [RoasteryController::class, 'index'])->name('roastery');
     Route::get('/roastery/{roastery}', [RoasteryController::class, 'show'])->name('roastery.show');
     Route::get('/cafes/{cafe}', [CafeController::class, 'show'])->name('cafes.show');

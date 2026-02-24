@@ -1,219 +1,227 @@
 /* =================================================
-   🚨 FILAMENT OVERRIDE - NUKLIR LAYOUT BAWAAN 🚨
+   🚨 FILAMENT OVERRIDE - GOD TIER SPECIFICITY 🚨
    ================================================= */
 
-/* 1. Sembunyikan Logo Bawaan Filament di halaman Auth */
-.fi-simple-header {
-    display: none !important;
+/* Global Background - Onyx Standard */
+html.dark .fi-body {
+    background-color: #060606 !important;
+    background-image:
+        radial-gradient(at 0% 0%, rgba(245, 158, 11, 0.04) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(245, 158, 11, 0.02) 0px, transparent 50%) !important;
+    background-attachment: fixed !important;
 }
 
-/* 2. Hancurkan batasan background & padding bawaan */
-.fi-simple-page {
-    background: #060606 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    min-height: 100vh !important;
-}
-
-/* 3. Bikin card bawaan jadi transparan & full width */
-.fi-simple-main {
-    max-width: 100vw !important;
-    width: 100vw !important;
-    margin: 0 !important;
+html.dark .fi-main {
     background: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
 }
 
-/* 4. Hapus shadow & ring pada inner section Filament */
-.fi-simple-main > section,
-.fi-simple-main-inner {
+/* Sidebar - Premium Glassmorphism */
+html.dark .fi-sidebar {
+    background: rgba(10, 10, 10, 0.7) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+html.dark .fi-sidebar-header {
     background: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
-    padding: 0 !important;
-    --tw-ring-shadow: 0 0 transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
 }
 
-/* =================================================
-   WadahNgopi — Apex Tier Admin UI v3.0
-   "The God Tier Standard" (Premium Glassmorphism)
-   =================================================
-*/
-
-/* =============================================
-   1. APEX LOGIN PAGE (Force Override Filament)
-   ============================================= */
-.fi-wn-login-page {
-    position: relative !important; /* Ganti dari fixed */
-    min-height: 100vh !important;
-    width: 100vw !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: #060606 !important;
-    z-index: 10 !important;
-    overflow: hidden !important;
-    font-family: 'Outfit', system-ui, sans-serif !important;
-}
-
-/* Luxury Mesh Glows - Cahaya Amber & Putih */
-.fi-wn-login-page::before {
-    content: '';
-    position: fixed;
-    top: -30%;
-    right: -20%;
-    width: 70vw;
-    height: 70vw;
-    background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, transparent 60%);
-    filter: blur(100px);
-    z-index: 0;
-    pointer-events: none;
-    animation: apexFloat 20s ease-in-out infinite alternate;
-}
-
-.fi-wn-login-page::after {
-    content: '';
-    position: fixed;
-    bottom: -20%;
-    left: -10%;
-    width: 50vw;
-    height: 50vw;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 60%);
-    filter: blur(80px);
-    z-index: 0;
-    pointer-events: none;
-}
-
-@keyframes apexFloat {
-    from { transform: translate(0, 0) scale(1); }
-    to { transform: translate(-5%, 5%) scale(1.1); }
-}
-
-/* The Matrix - Crystal UI */
-.fi-wn-login-container {
-    width: 100% !important;
-    max-width: 440px !important;
-    padding: 2rem !important;
-    position: relative !important;
-    z-index: 10 !important;
-    animation: apexSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes apexSlideUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* PRECISE LOGO CONTROL - Glass Morphism */
-.fi-wn-login-logo-box {
-    width: 88px !important;
-    height: 88px !important;
-    margin: 0 auto 2rem !important;
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%) !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-left: 1px solid rgba(255, 255, 255, 0.05) !important;
-    border-radius: 24px !important;
-    padding: 16px !important;
-    backdrop-filter: blur(20px) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-    box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5) !important;
-}
-
-.fi-wn-login-logo-box:hover {
-    border-color: rgba(245, 158, 11, 0.4) !important;
-    transform: translateY(-5px) scale(1.05) !important;
-    box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.15) !important;
-}
-
-/* Glass Card - True Premium Feel */
-.fi-wn-login-card {
-    background: linear-gradient(180deg, rgba(25, 25, 25, 0.6) 0%, rgba(10, 10, 10, 0.8) 100%) !important;
-    backdrop-filter: blur(48px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(48px) saturate(180%) !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-left: 1px solid rgba(255, 255, 255, 0.04) !important;
-    border-right: 1px solid rgba(255, 255, 255, 0.01) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.01) !important;
-    border-radius: 32px !important;
-    padding: 2.5rem !important;
-    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
-}
-
-/* Typography */
-.fi-wn-login-title {
-    font-size: 1.6rem !important;
-    font-weight: 800 !important;
-    color: #ffffff !important;
-    text-align: center !important;
-    letter-spacing: -0.02em !important;
-    margin-bottom: 0.25rem !important;
-}
-
-.fi-wn-login-subtitle {
-    font-size: 0.8rem !important;
-    color: rgba(255, 255, 255, 0.4) !important;
-    text-align: center !important;
-    font-weight: 500 !important;
-    letter-spacing: 0.05em !important;
-    margin-bottom: 2rem !important;
-}
-
-/* === OVERRIDE FILAMENT DEFAULT INPUTS === */
-.fi-wn-login-page .fi-fo-field-wrp-label {
-    font-size: 0.75rem !important;
-    font-weight: 600 !important;
-    color: #a3a3a3 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.08em !important;
-}
-
-.fi-wn-login-page .fi-input-wrapper {
-    background: rgba(0, 0, 0, 0.4) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+/* Nav Items */
+html.dark .fi-sidebar-item-button {
     border-radius: 14px !important;
-    transition: all 0.3s ease !important;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3) !important;
-    overflow: hidden !important;
+    margin: 4px 12px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-.fi-wn-login-page .fi-input-wrapper:focus-within {
-    border-color: rgba(245, 158, 11, 0.6) !important;
-    background: rgba(0, 0, 0, 0.7) !important;
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15), inset 0 2px 4px rgba(0,0,0,0.4) !important;
+html.dark .fi-sidebar-item-button:hover {
+    background: rgba(255, 255, 255, 0.04) !important;
 }
 
-.fi-wn-login-page .fi-input {
+html.dark .fi-sidebar-item-active .fi-sidebar-item-button {
+    background: rgba(245, 158, 11, 0.1) !important;
+    border: 1px solid rgba(245, 158, 11, 0.2) !important;
+    color: #f59e0b !important;
+}
+
+html.dark .fi-sidebar-item-active .fi-sidebar-item-icon {
+    color: #f59e0b !important;
+}
+
+/* Topbar - Crystal Clean */
+html.dark .fi-topbar {
+    background: rgba(6, 6, 6, 0.6) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Widgets & Sections - Glass Tier (Absolute Priority) */
+html.dark .fi-wi-stats-overview-stat-wrp,
+html.dark .fi-section,
+html.dark .fi-ta-ctn,
+html.dark .fi-wi-widget-wrp>div {
+    background: rgba(18, 18, 18, 0.5) !important;
+    backdrop-filter: blur(40px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+    transition: all 0.4s ease !important;
+}
+
+html.dark .fi-wi-stats-overview-stat-wrp:hover {
+    border-color: rgba(245, 158, 11, 0.3) !important;
+    transform: translateY(-4px) !important;
+    background: rgba(25, 25, 25, 0.6) !important;
+}
+
+html.dark .fi-wi-stats-overview-stat-value {
     color: #ffffff !important;
-    background: transparent !important;
-    padding: 0.75rem 1rem !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.01em !important;
 }
 
-/* === OVERRIDE FILAMENT BUTTON === */
-.fi-wn-login-page button[type="submit"], 
-.fi-wn-login-page .fi-btn {
+html.dark .fi-wi-stats-overview-stat-label {
+    color: rgba(255, 255, 255, 0.45) !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    font-size: 0.6rem !important;
+    letter-spacing: 0.15em !important;
+}
+
+/* Tables - Professional Minimalist */
+html.dark .fi-ta-header {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
+}
+
+html.dark .fi-ta-header-cell {
+    background: transparent !important;
+    text-transform: uppercase !important;
+    font-size: 0.6rem !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.1em !important;
+    color: rgba(255, 255, 255, 0.35) !important;
+    padding: 1rem !important;
+}
+
+html.dark .fi-ta-row {
+    transition: all 0.2s ease !important;
+}
+
+html.dark .fi-ta-row:hover {
+    background: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Buttons in Dashboard (Aggressive Override) */
+html.dark .fi-btn-color-primary,
+html.dark .fi-btn-color-primary:hover {
     background: #ffffff !important;
     color: #000000 !important;
-    border-radius: 14px !important;
+    border-radius: 12px !important;
     font-weight: 800 !important;
-    font-size: 0.85rem !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.1em !important;
-    padding: 0.75rem 1.5rem !important;
-    width: 100% !important;
-    border: 1px solid rgba(255,255,255,0.8) !important;
-    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
-    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1) !important;
+    letter-spacing: 0.05em !important;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15) !important;
 }
 
-.fi-wn-login-page button[type="submit"]:hover,
-.fi-wn-login-page .fi-btn:hover {
+html.dark .fi-btn-color-primary:hover {
     background: #f59e0b !important;
     color: #ffffff !important;
-    border-color: #f59e0b !important;
     transform: translateY(-2px) !important;
-    box-shadow: 0 12px 24px -8px rgba(245, 158, 11, 0.6) !important;
+    box-shadow: 0 8px 25px -5px rgba(245, 158, 11, 0.5) !important;
+}
+
+/* Input Fields */
+html.dark .fi-input-wrp {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+html.dark .fi-input-wrp:focus-within {
+    border-color: #f59e0b !important;
+    background: #000 !important;
+}
+
+/* Breadcrumbs */
+html.dark .fi-breadcrumbs-item-label {
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-weight: 700 !important;
+}
+
+html.dark .fi-breadcrumbs-item-active .fi-breadcrumbs-item-label {
+    color: #ffffff !important;
+}
+
+/* Custom Scrollbar */
+html.dark ::-webkit-scrollbar {
+    width: 6px;
+}
+
+html.dark ::-webkit-scrollbar-track {
+    background: #060606;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+    background: #222;
+    border-radius: 10px;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+    background: #333;
+}
+
+/* =============================================
+   3. APEX LOGIN PAGE (Responsive Themes)
+   ============================================= */
+.fi-wn-login-page {
+    position: relative !important;
+    min-height: 100vh !important;
+    width: 100vw !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #060606 !important;
+    /* Force dark background even in light mode for auth */
+    z-index: 10 !important;
+    overflow: hidden !important;
+    font-family: 'Outfit', sans-serif !important;
+    color: #ffffff !important;
+}
+
+/* Ensure Auth Card is always readable */
+.fi-wn-login-page .fi-wn-login-card {
+    background: rgba(25, 25, 25, 0.7) !important;
+    color: #ffffff !important;
+}
+
+/* --- LIGHT MODE FALLBACKS (Dashboard) --- */
+html:not(.dark) .fi-body {
+    background-color: #f8fafc !important;
+}
+
+html:not(.dark) .fi-sidebar {
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(12px) !important;
+    border-right: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+html:not(.dark) .fi-wi-stats-overview-stat-wrp,
+html:not(.dark) .fi-section,
+html:not(.dark) .fi-ta-ctn {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+    color: #1e293b !important;
+}
+
+html:not(.dark) .fi-wi-stats-overview-stat-value {
+    color: #0f172a !important;
+}
+
+html:not(.dark) .fi-wi-stats-overview-stat-label {
+    color: #64748b !important;
 }

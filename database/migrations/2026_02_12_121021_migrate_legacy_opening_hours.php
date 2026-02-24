@@ -2,10 +2,9 @@
 
 use App\Models\Cafe;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -32,7 +31,7 @@ return new class extends Migration {
 
                 // Virtual columns will be updated automatically by model events/accessors if set up correctly,
                 // otherwise we might need to manually set them if we are raw querying.
-                // But since we use Eloquent here, and Cafe model has `HasOperatingHours` trait or logic, 
+                // But since we use Eloquent here, and Cafe model has `HasOperatingHours` trait or logic,
                 // it should work. Wait, the `saving` event in Cafe model handles virtual columns?
                 // Let's check Cafe model again. Cafe::saving uses "Virtual columns handle the sync automatically in DB".
                 // This refers to `GENERATED ALWAYS AS` columns in MySQL/Postgres?

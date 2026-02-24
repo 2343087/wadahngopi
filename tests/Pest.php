@@ -13,7 +13,7 @@
 
 pest()->extend(Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
-    ->beforeEach(fn() => Illuminate\Support\Facades\Cache::flush())
+    ->beforeEach(fn () => Illuminate\Support\Facades\Cache::flush())
     ->in('Feature');
 
 /*

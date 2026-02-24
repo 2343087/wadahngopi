@@ -50,7 +50,6 @@ class Cafe extends Model
      * issues with database cache drivers (e.g. MySQL utf8mb4 constraints).
      */
 
-
     /**
      * Get the city that the cafe belongs to.
      */
@@ -139,7 +138,7 @@ class Cafe extends Model
             // trigger "SQLSTATE[HY000]: General error: 3105"
 
             // Validate Operating Hours JSON Structure to prevent "Invalid JSON" or logic errors
-            if ($cafe->isDirty('operating_hours') && !empty($cafe->operating_hours)) {
+            if ($cafe->isDirty('operating_hours') && ! empty($cafe->operating_hours)) {
                 $hours = $cafe->operating_hours;
                 $days = ['weekday', 'weekend'];
 
@@ -149,7 +148,7 @@ class Cafe extends Model
                         $open = $hours[$day]['open'] ?? null;
                         $close = $hours[$day]['close'] ?? null;
 
-                        if (($open && !$close) || (!$open && $close)) {
+                        if (($open && ! $close) || (! $open && $close)) {
                             // Recover: If incomplete, unset the day to avoid broken state
                             unset($hours[$day]);
                         }
@@ -182,7 +181,7 @@ class Cafe extends Model
         });
 
         static::updating(function ($cafe) {
-            if ($cafe->isDirty('name') && !$cafe->isDirty('slug')) {
+            if ($cafe->isDirty('name') && ! $cafe->isDirty('slug')) {
                 $cafe->slug = static::generateUniqueSlug($cafe->name);
             }
         });
@@ -205,9 +204,9 @@ class Cafe extends Model
 
         // Normalize 08xxx -> 628xxx
         if (str_starts_with($clean, '0')) {
-            $clean = '62' . substr($clean, 1);
-        } elseif (!str_starts_with($clean, '62')) {
-            $clean = '62' . $clean;
+            $clean = '62'.substr($clean, 1);
+        } elseif (! str_starts_with($clean, '62')) {
+            $clean = '62'.$clean;
         }
 
         $this->attributes['whatsapp_number'] = $clean;
@@ -253,7 +252,7 @@ class Cafe extends Model
                     return $cleanImg;
                 }
 
-                return '/storage/' . $cleanImg;
+                return '/storage/'.$cleanImg;
             })
             ->filter()
             ->values()

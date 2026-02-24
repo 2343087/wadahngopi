@@ -1,12 +1,13 @@
 <?php
 
+use App\Models\Cafe;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-use App\Models\Cafe;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -24,7 +25,7 @@ return new class extends Migration {
 
             // Ensure uniqueness
             while (Cafe::where('slug', $slug)->exists()) {
-                $slug = $originalSlug . '-' . $count++;
+                $slug = $originalSlug.'-'.$count++;
             }
 
             $cafe->update(['slug' => $slug]);

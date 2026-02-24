@@ -33,6 +33,6 @@ class BackfillRoasteryHours extends Command
             $this->info(" synced: {$roastery->name}");
         }
 
-        $this->info("All done!");
+        $this->info('All done!');
     }
 }

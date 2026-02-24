@@ -2,7 +2,7 @@
 
 use App\Models\Cafe;
 
-beforeEach(fn() => Cache::flush());
+beforeEach(fn () => Cache::flush());
 
 it('displays the landing page', function () {
     $response = $this->get('/');

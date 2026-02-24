@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -34,7 +35,7 @@ return new class extends Migration {
                 'weekday_open',
                 'weekday_close',
                 'weekend_open',
-                'weekend_close'
+                'weekend_close',
             ]);
         });
     }

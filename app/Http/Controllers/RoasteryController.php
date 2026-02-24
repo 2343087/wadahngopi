@@ -20,6 +20,7 @@ class RoasteryController extends Controller
         // Cache per-roastery with slug-based key for 10 minutes
         $roastery = Cache::remember("roastery_{$roastery->slug}", now()->addMinutes(10), function () use ($roastery) {
             $roastery->load('city');
+
             return $roastery;
         });
 

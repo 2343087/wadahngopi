@@ -68,7 +68,7 @@ class RoasteryResource extends Resource
                             ->label('Nama Roastery'),
                     ])
                     ->columns(2)
-                    ->visible(fn() => auth()->user()?->role === 'developer'),
+                    ->visible(fn () => auth()->user()?->role === 'developer'),
 
                 // SECTION: ROASTERY OWNER CONTENT
                 Forms\Components\Section::make('Detail Roastery ✨')
@@ -155,7 +155,7 @@ class RoasteryResource extends Resource
                                             ->displayFormat('H:i'),
                                     ])
                                     ->columns(2)
-                                    ->hidden(fn(Forms\Get $get): bool => (bool) $get('is_24_hours')),
+                                    ->hidden(fn (Forms\Get $get): bool => (bool) $get('is_24_hours')),
 
                                 // Jam Weekend (Sabtu-Minggu)
                                 Forms\Components\Fieldset::make('Jam Akhir Pekan (Sabtu - Minggu)')
@@ -172,7 +172,7 @@ class RoasteryResource extends Resource
                                             ->displayFormat('H:i'),
                                     ])
                                     ->columns(2)
-                                    ->hidden(fn(Forms\Get $get): bool => (bool) $get('is_24_hours')),
+                                    ->hidden(fn (Forms\Get $get): bool => (bool) $get('is_24_hours')),
                             ]),
 
                         Forms\Components\Section::make('Social Media 📱')
@@ -200,7 +200,7 @@ class RoasteryResource extends Resource
                                     ->columnSpanFull(),
                             ]),
                     ])
-                    ->visible(fn() => auth()->user()?->role === 'roastery'),
+                    ->visible(fn () => auth()->user()?->role === 'roastery'),
             ]);
     }
 
@@ -221,7 +221,7 @@ class RoasteryResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('owner.name')
                     ->label('Owner')
-                    ->visible(fn() => auth()->user()?->role === 'developer'),
+                    ->visible(fn () => auth()->user()?->role === 'developer'),
                 Tables\Columns\BadgeColumn::make('status')
                     ->colors([
                         'gray' => 'draft',

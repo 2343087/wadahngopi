@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Models\Information;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -16,7 +15,7 @@ class InformationFeed extends Component
 
     public function setCategory(string $category): void
     {
-        if (!in_array($category, ['Semua', 'Berita', 'Edukasi', 'Lomba', 'Promo'])) {
+        if (! in_array($category, ['Semua', 'Berita', 'Edukasi', 'Lomba', 'Promo'])) {
             return;
         }
 
@@ -30,8 +29,7 @@ class InformationFeed extends Component
         return Cache::remember(
             'info_feed_popular',
             now()->addMinutes(5),
-            fn() =>
-            Information::where('is_published', true)
+            fn () => Information::where('is_published', true)
                 ->select(['id', 'title', 'slug', 'image_path', 'published_at', 'views', 'category', 'created_at'])
                 ->orderBy('views', 'desc')
                 ->take(5)
@@ -67,4 +65,3 @@ class InformationFeed extends Component
         ]);
     }
 }
-

@@ -1,7 +1,6 @@
 <?php
 
 use App\Livewire\ExploreSearch;
-use App\Livewire\SavedCafes;
 use App\Models\Cafe;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Livewire;
@@ -39,7 +38,7 @@ it('limits saved items to 50 items for security', function () {
 it('prevents XSS in cafe names', function () {
     $xss = "<script>alert('xss')</script>";
     $cafe = Cafe::factory()->create([
-        'name' => 'Safe Name ' . $xss,
+        'name' => 'Safe Name '.$xss,
         'status' => 'published',
     ]);
 

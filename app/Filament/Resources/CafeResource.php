@@ -73,7 +73,7 @@ class CafeResource extends Resource
 
                     ])
                     ->columns(2)
-                    ->visible(fn() => auth()->user()?->role === 'developer'),
+                    ->visible(fn () => auth()->user()?->role === 'developer'),
 
                 // SECTION: OWNER CONTENT (Content) - Hidden from Admin
                 Forms\Components\Section::make('Detail Kece Cafe Kamu ✨')
@@ -228,7 +228,7 @@ class CafeResource extends Resource
                                             ->displayFormat('H:i'),
                                     ])
                                     ->columns(2)
-                                    ->hidden(fn(Forms\Get $get): bool => (bool) $get('is_24_hours')),
+                                    ->hidden(fn (Forms\Get $get): bool => (bool) $get('is_24_hours')),
 
                                 // Jam Weekend (Sabtu-Minggu)
                                 Forms\Components\Fieldset::make('Jam Akhir Pekan (Sabtu - Minggu)')
@@ -245,7 +245,7 @@ class CafeResource extends Resource
                                             ->displayFormat('H:i'),
                                     ])
                                     ->columns(2)
-                                    ->hidden(fn(Forms\Get $get): bool => (bool) $get('is_24_hours')),
+                                    ->hidden(fn (Forms\Get $get): bool => (bool) $get('is_24_hours')),
 
                                 Forms\Components\ViewField::make('location_trigger')
                                     ->view('filament.components.location-button')
@@ -318,7 +318,7 @@ class CafeResource extends Resource
                                     ->columnSpanFull(),
                             ]),
                     ])
-                    ->visible(fn() => auth()->user()?->role === 'admin'),
+                    ->visible(fn () => auth()->user()?->role === 'admin'),
             ]);
     }
 
@@ -328,7 +328,7 @@ class CafeResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image_path')
                     ->label('Foto')
-                    ->visible(fn() => auth()->user()?->role === 'admin'),
+                    ->visible(fn () => auth()->user()?->role === 'admin'),
 
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
@@ -339,7 +339,7 @@ class CafeResource extends Resource
                 Tables\Columns\TextColumn::make('owner.name')
                     ->label('Owner')
                     ->toggleable()
-                    ->visible(fn() => auth()->user()?->role === 'developer'),
+                    ->visible(fn () => auth()->user()?->role === 'developer'),
 
                 Tables\Columns\TextColumn::make('city.name')
                     ->label('Kota')
@@ -364,7 +364,7 @@ class CafeResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->url(fn(Cafe $record): string => static::getUrl('edit', ['record' => $record])),
+                    ->url(fn (Cafe $record): string => static::getUrl('edit', ['record' => $record])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

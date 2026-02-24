@@ -3,15 +3,11 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CityResource\Pages;
-use App\Filament\Resources\CityResource\RelationManagers;
-use App\Models\City;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CityResource extends Resource
 {
@@ -32,18 +28,18 @@ class CityResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('Nama Kota')
-                            ->placeholder('Contoh: Jakarta Selatan')
+                            ->placeholder('Contoh: Samarinda / Balikpapan')
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn(Forms\Set $set, ?string $state) => $set('slug', \Illuminate\Support\Str::slug($state))),
+                            ->afterStateUpdated(fn (Forms\Set $set, ?string $state) => $set('slug', \Illuminate\Support\Str::slug($state))),
                         Forms\Components\TextInput::make('slug')
                             ->label('Slug URL')
                             ->required()
                             ->readOnly()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
-                    ])->columns(2)
+                    ])->columns(2),
             ]);
     }
 

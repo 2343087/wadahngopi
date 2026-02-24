@@ -124,7 +124,7 @@ class RoasterySearch extends Component
         return \Illuminate\Support\Facades\Cache::remember(
             'cities_list',
             now()->addMinutes(10),
-            fn() => City::select(['id', 'name'])->orderBy('name')->get()
+            fn () => City::select(['id', 'name'])->orderBy('name')->get()
         );
     }
 
@@ -160,7 +160,7 @@ class RoasterySearch extends Component
         }
 
         if ($this->activeLetter) {
-            $query->where('name', 'like', $this->activeLetter . '%');
+            $query->where('name', 'like', $this->activeLetter.'%');
         }
 
         if ($this->filter === 'buka') {
@@ -174,7 +174,7 @@ class RoasterySearch extends Component
                 $query->orderBy('name', 'asc');
             } elseif ($this->sort === 'name_za') {
                 $query->orderBy('name', 'desc');
-            } elseif (!$this->search && !$this->activeLetter && $this->sort === 'relevance') {
+            } elseif (! $this->search && ! $this->activeLetter && $this->sort === 'relevance') {
                 // Fair Play: Randomized order on every refresh
                 $query->inRandomOrder($this->randomSeed);
             } else {

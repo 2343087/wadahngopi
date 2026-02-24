@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cafe;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
+
 // Note: Cafe + Cache still used in show() method
 
 class CafeController extends Controller
@@ -29,6 +30,7 @@ class CafeController extends Controller
         // Cache individual cafe with relationships
         $cafe = Cache::remember("cafe_{$cafe->slug}", now()->addMinutes(10), function () use ($cafe) {
             $cafe->load(['facilities', 'city']);
+
             return $cafe;
         });
 
