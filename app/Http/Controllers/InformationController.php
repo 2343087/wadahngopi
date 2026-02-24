@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Cache;
+
 class InformationController extends Controller
 {
     public function index(): \Illuminate\View\View
@@ -16,10 +18,10 @@ class InformationController extends Controller
         abort_unless($information->is_published, 404);
 
         // Rate-limited view counter: 1 increment per article per session
-        // Prevents bot/crawler view inflation abuse
+        // Uses cache-based batching to avoid per-request DB writes
         $sessionKey = "info_viewed_{$information->id}";
         if (! session()->has($sessionKey)) {
-            $information->increment('views');
+            Cache::increment("info_views:{$information->id}");
             session()->put($sessionKey, true);
         }
 

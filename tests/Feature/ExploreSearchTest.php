@@ -8,6 +8,10 @@ use Livewire\Livewire;
 
 // --- Rendering & Published Filter ---
 
+beforeEach(function () {
+    Livewire::withoutLazyLoading();
+});
+
 it('only renders published cafes', function () {
     $published = Cafe::factory()->create(['name' => 'Published Cafe', 'status' => 'published']);
     $draft = Cafe::factory()->create(['name' => 'Draft Cafe', 'status' => 'draft']);

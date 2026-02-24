@@ -4,9 +4,12 @@ namespace App\Livewire;
 
 use App\Models\Cafe;
 use App\Models\City;
+use Livewire\Attributes\Lazy;
 use Livewire\Component;
+
 use Livewire\WithPagination;
 
+#[Lazy]
 class ExploreSearch extends Component
 {
     use WithPagination;
@@ -39,7 +42,6 @@ class ExploreSearch extends Component
 
     protected $rules = [
         'search' => 'max:100',
-        'cityId' => 'nullable|exists:cities,id',
     ];
 
     public function mount(): void
@@ -63,6 +65,10 @@ class ExploreSearch extends Component
 
     public function updatedFilter(): void
     {
+        if (!in_array($this->filter, ['semua', 'buka', 'terdekat'])) {
+            $this->filter = 'semua';
+        }
+
         if ($this->filter === 'terdekat') {
             $this->dispatch('request-location');
         }
@@ -71,9 +77,10 @@ class ExploreSearch extends Component
 
     public function updatedSort(): void
     {
-        // If sorting A-Z or Z-A, activeLetter might be relevant,
-        // but if switching back to relevance, maybe clear it?
-        // For now, keep them independent or just reset page.
+        if (!in_array($this->sort, ['relevance', 'name_az', 'name_za', 'distance'])) {
+            $this->sort = 'relevance';
+        }
+
         $this->resetPage();
     }
 
@@ -147,8 +154,8 @@ class ExploreSearch extends Component
     {
         return \Illuminate\Support\Facades\Cache::remember(
             'cities_list',
-            now()->addMinutes(10),
-            fn () => City::select(['id', 'name'])->orderBy('name')->get()
+            now()->addHour(),
+            fn() => City::select(['id', 'name'])->orderBy('name')->get()
         );
     }
 
@@ -185,7 +192,7 @@ class ExploreSearch extends Component
 
         // Letter Filter
         if ($this->activeLetter) {
-            $query->where('name', 'like', $this->activeLetter.'%');
+            $query->where('name', 'like', $this->activeLetter . '%');
         }
 
         // Filter Logic for "buka" - uses centralized service logic
@@ -201,9 +208,18 @@ class ExploreSearch extends Component
                 $query->orderBy('name', 'asc');
             } elseif ($this->sort === 'name_za') {
                 $query->orderBy('name', 'desc');
-            } elseif (! $this->search && ! $this->activeLetter && $this->sort === 'relevance') {
-                // Fair Play: Randomized order on every refresh
-                $query->inRandomOrder($this->randomSeed);
+            } elseif (!$this->search && !$this->activeLetter && $this->sort === 'relevance') {
+                // Fair Play: Cached random order (refreshes every 5 minutes)
+                $randomIds = \Illuminate\Support\Facades\Cache::remember(
+                    'cafe_random_order_' . ($this->randomSeed % 10),
+                    now()->addMinutes(5),
+                    fn() => Cafe::where('status', 'published')->pluck('id')->shuffle()->toArray()
+                );
+
+                if (!empty($randomIds)) {
+                    $idList = implode(',', array_map('intval', $randomIds));
+                    $query->orderByRaw("FIELD(id, {$idList})");
+                }
             } else {
                 $query->latest();
             }
@@ -212,7 +228,7 @@ class ExploreSearch extends Component
         $cafesPaginator = $query->paginate($this->perPage);
 
         // Dispatch events for map update if needed
-        $this->dispatch('cafes-updated', cafes: collect($cafesPaginator->items())->map(fn ($c) => [
+        $this->dispatch('cafes-updated', cafes: collect($cafesPaginator->items())->map(fn($c) => [
             'id' => $c->id,
             'name' => $c->name,
             'lat' => $c->latitude,

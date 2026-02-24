@@ -35,8 +35,24 @@ class CafeRoulette extends Component
 
         $searchService = app(CafeSearchService::class);
 
+        // Optimization: Use cached random IDs instead of inRandomOrder()
+        $allIds = cache()->remember('active_cafe_ids', 600, function () {
+            return Cafe::where('status', 'published')->pluck('id')->toArray();
+        });
+
+        if (empty($allIds)) {
+            $this->candidates = [];
+            $this->winner = null;
+
+            return;
+        }
+
+        // Pick 15 random IDs to filter down
+        $randomIds = array_intersect($allIds, \Illuminate\Support\Arr::random($allIds, min(count($allIds), 15)));
+
         // Fetch published cafes that are currently open (slim select for performance)
         $query = Cafe::query()
+            ->whereIn('id', $randomIds)
             ->where('status', 'published')
             ->select(['id', 'name', 'slug', 'address', 'city_id', 'image_path', 'images', 'is_24_hours', 'operating_hours', 'weekday_open', 'weekday_close', 'weekend_open', 'weekend_close'])
             ->with(['city:id,name']);
@@ -44,12 +60,7 @@ class CafeRoulette extends Component
         // Apply openNow scope
         $query = $searchService->scopeOpenNow($query);
 
-        // Get random batch of open cafes via DB for scalability
-        $cafes = $query->inRandomOrder()
-            ->limit(12) // Fetch a bit more for shuffle variety
-            ->get()
-            ->shuffle()
-            ->take(8);
+        $cafes = $query->get()->shuffle()->take(8);
 
         if ($cafes->isEmpty()) {
             $this->candidates = [];

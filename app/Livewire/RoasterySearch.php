@@ -4,9 +4,12 @@ namespace App\Livewire;
 
 use App\Models\City;
 use App\Models\Roastery;
+use Livewire\Attributes\Lazy;
 use Livewire\Component;
+
 use Livewire\WithPagination;
 
+#[Lazy]
 class RoasterySearch extends Component
 {
     use WithPagination;
@@ -39,7 +42,6 @@ class RoasterySearch extends Component
 
     protected $rules = [
         'search' => 'max:100',
-        'cityId' => 'nullable|exists:cities,id',
     ];
 
     public function mount(): void
@@ -63,6 +65,10 @@ class RoasterySearch extends Component
 
     public function updatedFilter(): void
     {
+        if (!in_array($this->filter, ['semua', 'buka', 'terdekat'])) {
+            $this->filter = 'semua';
+        }
+
         if ($this->filter === 'terdekat') {
             $this->dispatch('request-location');
         }
@@ -71,6 +77,10 @@ class RoasterySearch extends Component
 
     public function setSort(string $sort): void
     {
+        if (!in_array($sort, ['relevance', 'name_az', 'name_za', 'distance'])) {
+            $sort = 'relevance';
+        }
+
         $this->sort = $sort;
         if (in_array($sort, ['name_az', 'name_za'])) {
             $this->activeLetter = null;
@@ -123,8 +133,8 @@ class RoasterySearch extends Component
     {
         return \Illuminate\Support\Facades\Cache::remember(
             'cities_list',
-            now()->addMinutes(10),
-            fn () => City::select(['id', 'name'])->orderBy('name')->get()
+            now()->addHour(),
+            fn() => City::select(['id', 'name'])->orderBy('name')->get()
         );
     }
 
@@ -160,7 +170,7 @@ class RoasterySearch extends Component
         }
 
         if ($this->activeLetter) {
-            $query->where('name', 'like', $this->activeLetter.'%');
+            $query->where('name', 'like', $this->activeLetter . '%');
         }
 
         if ($this->filter === 'buka') {
@@ -174,9 +184,18 @@ class RoasterySearch extends Component
                 $query->orderBy('name', 'asc');
             } elseif ($this->sort === 'name_za') {
                 $query->orderBy('name', 'desc');
-            } elseif (! $this->search && ! $this->activeLetter && $this->sort === 'relevance') {
-                // Fair Play: Randomized order on every refresh
-                $query->inRandomOrder($this->randomSeed);
+            } elseif (!$this->search && !$this->activeLetter && $this->sort === 'relevance') {
+                // Fair Play: Cached random order (refreshes every 5 minutes)
+                $randomIds = \Illuminate\Support\Facades\Cache::remember(
+                    'roastery_random_order_' . ($this->randomSeed % 10),
+                    now()->addMinutes(5),
+                    fn() => Roastery::where('status', 'published')->pluck('id')->shuffle()->toArray()
+                );
+
+                if (!empty($randomIds)) {
+                    $idList = implode(',', array_map('intval', $randomIds));
+                    $query->orderByRaw("FIELD(id, {$idList})");
+                }
             } else {
                 $query->latest();
             }

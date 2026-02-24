@@ -68,7 +68,8 @@ class CafeSearchService
 
     /**
      * Scope query to search using Fulltext Index.
-     * Fallback to LIKE if search term is short or no results.
+     * Short terms (≤3 chars) use LIKE since fulltext min word length is typically 3-4.
+     * Name LIKE is kept as fallback since fulltext may not match in all scenarios.
      */
     public function scopeSearch(Builder $query, string $term): void
     {
@@ -79,18 +80,15 @@ class CafeSearchService
             return;
         }
 
-        // Fulltext Search in Boolean Mode
+        // Fulltext Search in Boolean Mode with name LIKE fallback
         // Sanitize term to prevent SQL syntax errors from boolean operators (<, >, (, ), etc)
         $sanitizedTerm = preg_replace('/[+\-><()~*\"@]/', ' ', $term);
         $sanitizedTerm = trim(preg_replace('/\s+/', ' ', $sanitizedTerm));
 
         $query->where(function ($q) use ($term, $sanitizedTerm) {
             $q->whereFullText(['name', 'address', 'description'], $sanitizedTerm, ['mode' => 'boolean'])
-                ->orWhere('name', 'like', "%{$term}%"); // Hybrid approach: Prefer FT, fallback/combine LIKE for partial matches not covered by FT
+                ->orWhere('name', 'like', "%{$term}%");
         });
-
-        // Note: In pure boolean mode we might not need "like", but for user expectations (partial words), hybrid is safer initially.
-        // Optimization: If dataset is huge, remove the OR LIKE part.
     }
 
     /**

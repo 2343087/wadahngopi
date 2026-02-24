@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Trust Cloudflare proxies (production) - prevents IP spoofing
         $middleware->trustProxies(at: [
-            // Cloudflare IPv4 ranges
+            // Cloudflare IPv4 ranges (https://www.cloudflare.com/ips-v4/)
             '173.245.48.0/20',
             '103.21.244.0/22',
             '103.22.200.0/22',
@@ -29,9 +29,13 @@ return Application::configure(basePath: dirname(__DIR__))
             '104.24.0.0/14',
             '172.64.0.0/13',
             '131.0.72.0/22',
-            // Local development
-            '*',
+            // Local development (Herd)
+            '127.0.0.1',
+            '::1',
         ]);
+
+        // Sanitize Livewire requests (strip browser-injected toJSON calls from Boost)
+        $middleware->append(\App\Http\Middleware\SanitizeLivewireRequests::class);
 
         // Add security headers
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UserRole;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -16,8 +17,9 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // Developer, Admin (Cafe Owner), and Roastery (Roastery Owner) can access panel
-        return in_array($this->role, ['admin', 'developer', 'roastery']);
+        $role = UserRole::tryFrom($this->role);
+
+        return $role?->canAccessPanel() ?? false;
     }
 
     public function cafes()
@@ -57,6 +59,14 @@ class User extends Authenticatable implements FilamentUser
      *
      * @return array<string, string>
      */
+    /**
+     * Check if user has a specific role.
+     */
+    public function hasRole(UserRole $role): bool
+    {
+        return UserRole::tryFrom($this->role) === $role;
+    }
+
     protected function casts(): array
     {
         return [
