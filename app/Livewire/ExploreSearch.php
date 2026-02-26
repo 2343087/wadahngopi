@@ -62,7 +62,7 @@ class ExploreSearch extends Component
 
     public function updatedFilter(): void
     {
-        if (! in_array($this->filter, ['semua', 'buka', 'terdekat'])) {
+        if (!in_array($this->filter, ['semua', 'buka', 'terdekat'])) {
             $this->filter = 'semua';
         }
 
@@ -74,7 +74,7 @@ class ExploreSearch extends Component
 
     public function updatedSort(): void
     {
-        if (! in_array($this->sort, ['relevance', 'name_az', 'name_za', 'distance'])) {
+        if (!in_array($this->sort, ['relevance', 'name_az', 'name_za', 'distance'])) {
             $this->sort = 'relevance';
         }
 
@@ -152,7 +152,7 @@ class ExploreSearch extends Component
         return \Illuminate\Support\Facades\Cache::remember(
             'cities_list',
             now()->addHour(),
-            fn () => City::select(['id', 'name'])->orderBy('name')->get()
+            fn() => City::select(['id', 'name'])->orderBy('name')->get()
         );
     }
 
@@ -189,7 +189,7 @@ class ExploreSearch extends Component
 
         // Letter Filter
         if ($this->activeLetter) {
-            $query->where('name', 'like', $this->activeLetter.'%');
+            $query->where('name', 'like', $this->activeLetter . '%');
         }
 
         // Filter Logic for "buka" - uses centralized service logic
@@ -205,18 +205,10 @@ class ExploreSearch extends Component
                 $query->orderBy('name', 'asc');
             } elseif ($this->sort === 'name_za') {
                 $query->orderBy('name', 'desc');
-            } elseif (! $this->search && ! $this->activeLetter && $this->sort === 'relevance') {
-                // Fair Play: Cached random order (refreshes every 5 minutes)
-                $randomIds = \Illuminate\Support\Facades\Cache::remember(
-                    'cafe_random_order_'.($this->randomSeed % 10),
-                    now()->addMinutes(5),
-                    fn () => Cafe::where('status', 'published')->pluck('id')->shuffle()->toArray()
-                );
-
-                if (! empty($randomIds)) {
-                    $idList = implode(',', array_map('intval', $randomIds));
-                    $query->orderByRaw("FIELD(id, {$idList})");
-                }
+            } elseif (!$this->search && !$this->activeLetter && $this->sort === 'relevance') {
+                // Fair Play: Seeded random order — consistent per-session, refreshes on new visit
+                // RAND(seed) is O(n log n) vs FIELD() which is O(n²) with large datasets
+                $query->orderByRaw('RAND(?)', [$this->randomSeed]);
             } else {
                 $query->latest();
             }
@@ -225,7 +217,7 @@ class ExploreSearch extends Component
         $cafesPaginator = $query->paginate($this->perPage);
 
         // Dispatch events for map update if needed
-        $this->dispatch('cafes-updated', cafes: collect($cafesPaginator->items())->map(fn ($c) => [
+        $this->dispatch('cafes-updated', cafes: collect($cafesPaginator->items())->map(fn($c) => [
             'id' => $c->id,
             'name' => $c->name,
             'lat' => $c->latitude,

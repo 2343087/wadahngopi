@@ -40,10 +40,10 @@ class CafeSearchService
 
                                 // Overnight case: 22:00 - 02:00 (Close < Open)
                                 ->orWhere(function ($overnight) use ($now, $openCol, $closeCol) {
-                                    $overnight->whereRaw("$closeCol < $openCol")
-                                        ->where(fn ($k) => $k->whereRaw("? >= $openCol", [$now])
-                                            ->orWhereRaw("? <= $closeCol", [$now]));
-                                });
+                                $overnight->whereRaw("$closeCol < $openCol")
+                                    ->where(fn($k) => $k->whereRaw("? >= $openCol", [$now])
+                                        ->orWhereRaw("? <= $closeCol", [$now]));
+                            });
                         });
                 });
         });
@@ -67,28 +67,52 @@ class CafeSearchService
     }
 
     /**
-     * Scope query to search using Fulltext Index.
+     * Scope query to search using Fulltext Index with LIKE fallback.
      * Short terms (≤3 chars) use LIKE since fulltext min word length is typically 3-4.
-     * Name LIKE is kept as fallback since fulltext may not match in all scenarios.
+     * If FULLTEXT index is missing (e.g. on hosting where migration didn't run),
+     * gracefully falls back to LIKE-only search instead of crashing.
      */
     public function scopeSearch(Builder $query, string $term): void
     {
+        // Sanitize wildcards to prevent LIKE injection (% and _ are SQL wildcards)
+        $safeTerm = str_replace(['%', '_'], ['\%', '\_'], $term);
+
         // For short terms, Fulltext might not trigger well, use LIKE
         if (strlen($term) <= 3) {
-            $query->where('name', 'like', "%{$term}%");
+            $query->where(function ($q) use ($safeTerm) {
+                $q->where('name', 'like', "%{$safeTerm}%")
+                    ->orWhere('address', 'like', "%{$safeTerm}%");
+            });
 
             return;
         }
 
-        // Fulltext Search in Boolean Mode with name LIKE fallback
-        // Sanitize term to prevent SQL syntax errors from boolean operators (<, >, (, ), etc)
+        // Sanitize term to prevent SQL syntax errors from boolean operators
         $sanitizedTerm = preg_replace('/[+\-><()~*\"@]/', ' ', $term);
         $sanitizedTerm = trim(preg_replace('/\s+/', ' ', $sanitizedTerm));
 
-        $query->where(function ($q) use ($term, $sanitizedTerm) {
-            $q->whereFullText(['name', 'address', 'description'], $sanitizedTerm, ['mode' => 'boolean'])
-                ->orWhere('name', 'like', "%{$term}%");
-        });
+        // Try Fulltext first, fallback to LIKE if index doesn't exist
+        try {
+            // Test if FULLTEXT index exists by building a test query
+            $tableName = $query->getModel()->getTable();
+            \Illuminate\Support\Facades\DB::select(
+                "SELECT 1 FROM `{$tableName}` WHERE MATCH(`name`, `address`, `description`) AGAINST(? IN BOOLEAN MODE) LIMIT 1",
+                [$sanitizedTerm]
+            );
+
+            // If we get here, FULLTEXT index exists — use it
+            $query->where(function ($q) use ($safeTerm, $sanitizedTerm) {
+                $q->whereFullText(['name', 'address', 'description'], $sanitizedTerm, ['mode' => 'boolean'])
+                    ->orWhere('name', 'like', "%{$safeTerm}%");
+            });
+        } catch (\Illuminate\Database\QueryException $e) {
+            // FULLTEXT index doesn't exist — fallback to LIKE search
+            $query->where(function ($q) use ($safeTerm) {
+                $q->where('name', 'like', "%{$safeTerm}%")
+                    ->orWhere('address', 'like', "%{$safeTerm}%")
+                    ->orWhere('description', 'like', "%{$safeTerm}%");
+            });
+        }
     }
 
     /**
@@ -100,8 +124,8 @@ class CafeSearchService
         $now = $currentTime ?: now()->format('H:i:s');
 
         // Normalize to H:i:s format
-        $open = strlen($open) === 5 ? $open.':00' : $open;
-        $close = strlen($close) === 5 ? $close.':00' : $close;
+        $open = strlen($open) === 5 ? $open . ':00' : $open;
+        $close = strlen($close) === 5 ? $close . ':00' : $close;
 
         if ($close < $open) {
             // Cross-day logic: Open 22:00, Close 02:00

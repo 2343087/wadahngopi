@@ -47,8 +47,9 @@ class CafeRoulette extends Component
             return;
         }
 
-        // Pick 15 random IDs to filter down
-        $randomIds = array_intersect($allIds, \Illuminate\Support\Arr::random($allIds, min(count($allIds), 15)));
+        // Pick up to 15 random IDs safely (handles case where fewer exist)
+        $sampleSize = min(count($allIds), 15);
+        $randomIds = collect($allIds)->random($sampleSize)->toArray();
 
         // Fetch published cafes that are currently open (slim select for performance)
         $query = Cafe::query()

@@ -56,7 +56,7 @@ it('includes security headers on responses', function () {
     $response->assertHeader('Referrer-Policy');
 });
 
-it('includes unsafe-eval in CSP header for Livewire compatibility', function () {
+it('includes unsafe-eval in CSP header for Alpine.js compatibility', function () {
     $response = $this->get(route('home'));
 
     $csp = $response->headers->get('Content-Security-Policy');

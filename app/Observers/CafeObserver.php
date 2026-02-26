@@ -53,9 +53,16 @@ class CafeObserver
     private function clearCache(?Cafe $cafe = null): void
     {
         Cache::forget('home_cafes');
+        Cache::forget('active_cafe_ids');
+
+        // Clear random order cache (10 buckets)
+        for ($i = 0; $i < 10; $i++) {
+            Cache::forget("cafe_random_order_{$i}");
+        }
 
         if ($cafe) {
-            Cache::forget("cafe_{$cafe->id}");
+            // Must match CafeController's cache key format: "cafe_{slug}"
+            Cache::forget("cafe_{$cafe->slug}");
         }
     }
 }

@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Cafe;
+use App\Models\Roastery;
 use App\Observers\CafeObserver;
+use App\Observers\RoasteryObserver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -25,7 +27,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Cafe::observe(CafeObserver::class);
+        // Only register observers outside of migration context
+        // (SoftDeletes global scope causes issues during migrate:fresh)
+        if (!app()->runningInConsole() || !collect($_SERVER['argv'] ?? [])->contains(fn($v) => str_contains($v, 'migrate'))) {
+            Cafe::observe(CafeObserver::class);
+            Roastery::observe(RoasteryObserver::class);
+        }
 
         // Increase memory limit for image processing
         if (ini_get('memory_limit') !== '-1') {

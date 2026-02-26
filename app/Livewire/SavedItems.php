@@ -33,13 +33,14 @@ class SavedItems extends Component
         $this->items = [];
 
         // Load Cafes
-        if (! empty($this->cafeIds)) {
+        if (!empty($this->cafeIds)) {
             $cafes = Cafe::query()
                 ->whereIn('id', $this->cafeIds)
                 ->where('status', 'published')
-                ->with('facilities')
+                ->select(['id', 'name', 'slug', 'address', 'image_path', 'is_24_hours', 'operating_hours', 'weekday_open', 'weekday_close', 'weekend_open', 'weekend_close'])
+                ->with('facilities:id,cafe_id,name')
                 ->get()
-                ->map(fn ($c) => [
+                ->map(fn($c) => [
                     'id' => $c->id,
                     'type' => 'cafe',
                     'name' => $c->name ?? 'Unnamed Cafe',
@@ -53,13 +54,13 @@ class SavedItems extends Component
         }
 
         // Load Roasteries
-        if (! empty($this->roasteryIds)) {
+        if (!empty($this->roasteryIds)) {
             $roasteries = Roastery::query()
                 ->whereIn('id', $this->roasteryIds)
                 ->where('status', 'published')
                 ->select(['id', 'name', 'slug', 'address', 'image_path', 'is_24_hours', 'operating_hours', 'weekday_open', 'weekday_close', 'weekend_open', 'weekend_close'])
                 ->get()
-                ->map(fn ($r) => [
+                ->map(fn($r) => [
                     'id' => $r->id,
                     'type' => 'roastery',
                     'name' => $r->name,

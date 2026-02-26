@@ -5,12 +5,13 @@ namespace App\Models;
 use App\Traits\HasOperatingHours;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Roastery extends Model
 {
     /** @use HasFactory<\Database\Factories\RoasteryFactory> */
-    use HasFactory, HasOperatingHours;
+    use HasFactory, HasOperatingHours, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -106,9 +107,9 @@ class Roastery extends Model
 
         // Normalize Indonesian numbers
         if (str_starts_with($value, '0')) {
-            $value = '62'.substr($value, 1);
-        } elseif (! str_starts_with($value, '62')) {
-            $value = '62'.$value;
+            $value = '62' . substr($value, 1);
+        } elseif (!str_starts_with($value, '62')) {
+            $value = '62' . $value;
         }
 
         $this->attributes['whatsapp_number'] = $value;
@@ -147,7 +148,7 @@ class Roastery extends Model
 
         static::saving(function ($roastery) {
             // Sync operating_hours JSON to dedicated columns for performance query scope
-            if (! empty($roastery->operating_hours) && $roastery->isDirty('operating_hours')) {
+            if (!empty($roastery->operating_hours) && $roastery->isDirty('operating_hours')) {
                 $hours = $roastery->operating_hours;
                 $roastery->weekday_open = data_get($hours, 'weekday.open');
                 $roastery->weekday_close = data_get($hours, 'weekday.close');
@@ -156,7 +157,7 @@ class Roastery extends Model
             }
 
             // Sync Spatial Location (POINT) for optimized proximity search
-            if (($roastery->isDirty(['latitude', 'longitude']) || ! $roastery->location)) {
+            if (($roastery->isDirty(['latitude', 'longitude']) || !$roastery->location)) {
                 $lat = (float) ($roastery->latitude ?: 0);
                 $lng = (float) ($roastery->longitude ?: 0);
 
@@ -171,7 +172,7 @@ class Roastery extends Model
         });
 
         static::updating(function ($roastery) {
-            if ($roastery->isDirty('name') && ! $roastery->isDirty('slug')) {
+            if ($roastery->isDirty('name') && !$roastery->isDirty('slug')) {
                 $roastery->slug = static::generateUniqueSlug($roastery->name);
             }
         });
@@ -217,7 +218,7 @@ class Roastery extends Model
                     return $cleanImg;
                 }
 
-                return '/storage/'.$cleanImg;
+                return '/storage/' . $cleanImg;
             })
             ->filter()
             ->values()

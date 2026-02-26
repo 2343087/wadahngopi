@@ -62,7 +62,7 @@ class RoasterySearch extends Component
 
     public function updatedFilter(): void
     {
-        if (! in_array($this->filter, ['semua', 'buka', 'terdekat'])) {
+        if (!in_array($this->filter, ['semua', 'buka', 'terdekat'])) {
             $this->filter = 'semua';
         }
 
@@ -74,7 +74,7 @@ class RoasterySearch extends Component
 
     public function setSort(string $sort): void
     {
-        if (! in_array($sort, ['relevance', 'name_az', 'name_za', 'distance'])) {
+        if (!in_array($sort, ['relevance', 'name_az', 'name_za', 'distance'])) {
             $sort = 'relevance';
         }
 
@@ -131,7 +131,7 @@ class RoasterySearch extends Component
         return \Illuminate\Support\Facades\Cache::remember(
             'cities_list',
             now()->addHour(),
-            fn () => City::select(['id', 'name'])->orderBy('name')->get()
+            fn() => City::select(['id', 'name'])->orderBy('name')->get()
         );
     }
 
@@ -167,7 +167,7 @@ class RoasterySearch extends Component
         }
 
         if ($this->activeLetter) {
-            $query->where('name', 'like', $this->activeLetter.'%');
+            $query->where('name', 'like', $this->activeLetter . '%');
         }
 
         if ($this->filter === 'buka') {
@@ -181,18 +181,9 @@ class RoasterySearch extends Component
                 $query->orderBy('name', 'asc');
             } elseif ($this->sort === 'name_za') {
                 $query->orderBy('name', 'desc');
-            } elseif (! $this->search && ! $this->activeLetter && $this->sort === 'relevance') {
-                // Fair Play: Cached random order (refreshes every 5 minutes)
-                $randomIds = \Illuminate\Support\Facades\Cache::remember(
-                    'roastery_random_order_'.($this->randomSeed % 10),
-                    now()->addMinutes(5),
-                    fn () => Roastery::where('status', 'published')->pluck('id')->shuffle()->toArray()
-                );
-
-                if (! empty($randomIds)) {
-                    $idList = implode(',', array_map('intval', $randomIds));
-                    $query->orderByRaw("FIELD(id, {$idList})");
-                }
+            } elseif (!$this->search && !$this->activeLetter && $this->sort === 'relevance') {
+                // Fair Play: Seeded random order — consistent per-session, refreshes on new visit
+                $query->orderByRaw('RAND(?)', [$this->randomSeed]);
             } else {
                 $query->latest();
             }

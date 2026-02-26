@@ -8,14 +8,14 @@ use Livewire\Livewire;
 
 // --- Cached Random IDs ---
 
-it('uses cached random IDs for relevance sort', function () {
+it('uses seeded random order for relevance sort', function () {
     Cafe::factory()->count(5)->create(['status' => 'published']);
 
-    // First render populates the cache
+    // Render should succeed with RAND(seed) ordering
     Livewire::test(ExploreSearch::class)
         ->assertSuccessful();
 
-    // Check that a cache key was created for random order
+    // No more cache keys for random order — uses RAND(seed) instead
     $cacheExists = false;
     for ($i = 0; $i < 10; $i++) {
         if (Cache::has("cafe_random_order_{$i}")) {
@@ -24,7 +24,8 @@ it('uses cached random IDs for relevance sort', function () {
         }
     }
 
-    expect($cacheExists)->toBeTrue();
+    // RAND(seed) doesn't need caching — confirm no stale cache keys
+    expect($cacheExists)->toBeFalse();
 });
 
 // --- View Counter Batching ---
