@@ -176,20 +176,57 @@ class RoasterySearch extends Component
             $query->nearest($this->userLat, $this->userLng);
         }
 
-        if ($this->filter !== 'terdekat') {
-            if ($this->sort === 'name_az') {
-                $query->orderBy('name', 'asc');
-            } elseif ($this->sort === 'name_za') {
-                $query->orderBy('name', 'desc');
-            } elseif (!$this->search && !$this->activeLetter && $this->sort === 'relevance') {
-                // Fair Play: Seeded random order — consistent per-session, refreshes on new visit
-                $query->orderByRaw('RAND(?)', [$this->randomSeed]);
-            } else {
-                $query->latest();
+        // Cached total count
+        $locationHash = ($this->userLat && $this->userLng) ? round($this->userLat, 2) . ',' . round($this->userLng, 2) : 'none';
+        $cacheKeyTotal = "roastery_total_v1_" . md5($this->cityId . $this->search . $this->activeLetter . $this->filter . $locationHash);
+        $totalResults = \Illuminate\Support\Facades\Cache::remember($cacheKeyTotal, now()->addMinutes(5), fn() => $query->count());
+
+        // Optimized Sort & Randomization
+        $isHomeRandom = (!$this->search && !$this->activeLetter && $this->sort === 'relevance' && $this->filter !== 'terdekat');
+
+        if ($isHomeRandom) {
+            // Cached shuffled IDs — same strategy as ExploreSearch
+            $shuffledIds = \Illuminate\Support\Facades\Cache::remember(
+                "shuffled_roastery_v1_{$this->randomSeed}_{$this->cityId}",
+                now()->addMinutes(30),
+                function () {
+                    srand($this->randomSeed);
+                    $ids = Roastery::where('status', 'published')
+                        ->when($this->cityId, fn($q) => $q->where('city_id', $this->cityId))
+                        ->pluck('id')
+                        ->toArray();
+                    shuffle($ids);
+                    srand();
+                    return $ids;
+                }
+            );
+
+            $slice = array_slice($shuffledIds, 0, $this->perPage);
+            if (!empty($slice)) {
+                $placeholders = implode(',', array_fill(0, count($slice), '?'));
+                $query->whereIn('id', $slice)
+                    ->orderByRaw("FIELD(id, {$placeholders})", $slice);
+            }
+        } else {
+            if ($this->filter !== 'terdekat') {
+                if ($this->sort === 'name_az') {
+                    $query->orderBy('name', 'asc');
+                } elseif ($this->sort === 'name_za') {
+                    $query->orderBy('name', 'desc');
+                } else {
+                    $query->latest();
+                }
             }
         }
 
-        $roasteries = $query->paginate($this->perPage);
+        // Use LengthAwarePaginator for seamless infinite scroll
+        $roasteries = new \Illuminate\Pagination\LengthAwarePaginator(
+            $query->limit($this->perPage)->get(),
+            $totalResults,
+            $this->perPage,
+            1,
+            ['path' => route('roastery')]
+        );
 
         return view('livewire.roastery-search', [
             'roasteries' => $roasteries,

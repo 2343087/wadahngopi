@@ -157,8 +157,8 @@
         </template>
     </div>
 
-    {{-- Cafe Grid Premium --}}
-    <main class="explore-cafe-grid" wire:loading.remove.delay.shorter>
+    {{-- Cafe Grid Premium - Keep visible to avoid scroll jumping --}}
+    <main class="explore-cafe-grid">
         @forelse($cafes as $cafe)
             <a href="{{ route('cafes.show', $cafe) }}" class="cafe-card-2026 group card-stagger" wire:key="cafe-{{ $cafe->id }}">
                     {{-- Fixed Height Image Container --}}
@@ -296,29 +296,38 @@
         @endforelse
     </main>
 
-    {{-- Infinite Scroll Sentinel --}}
+    {{-- Load More Section --}}
     @if($cafes->hasMorePages())
-        <div class="scroll-sentinel" 
-            x-data="{ observer: null }"
-            x-init="
-                observer = new IntersectionObserver((entries) => {
-                    entries.forEach(e => { if (e.isIntersecting) $wire.loadMore(); });
-                }, { rootMargin: '200px' });
-                observer.observe($el);
-            "
-            x-destroy="observer?.disconnect()">
-            <div class="loading-more-spinner" wire:loading.delay wire:target="loadMore"></div>
-            <span class="text-xs font-bold text-[#8B7355]/60 uppercase tracking-widest" wire:loading.delay wire:target="loadMore">Memuat...</span>
+        <div class="w-full py-8 flex flex-col items-center gap-4" wire:key="load-more-{{ $perPage }}">
+
+            {{-- Loading State --}}
+            <div wire:loading wire:target="loadMore" class="flex flex-col items-center gap-3">
+                <div class="loading-more-spinner"></div>
+                <span class="text-[0.6rem] font-black text-[#8B7355]/60 uppercase tracking-widest animate-pulse">Menyiapkan Kafe Lainnya...</span>
+            </div>
+
+            {{-- Manual Load More Button --}}
+            <button wire:click="loadMore" wire:loading.remove wire:target="loadMore"
+                class="px-6 py-2.5 bg-espresso/10 hover:bg-espresso/20 text-espresso font-bold text-xs rounded-full transition-all active:scale-95 flex items-center gap-2">
+                <i class="ph-bold ph-arrow-down"></i>
+                Muat Lagi ({{ $cafes->total() - $perPage > 0 ? number_format($cafes->total() - $perPage) : 0 }} tersisa)
+            </button>
         </div>
     @else
-        @if($cafes->count() > 0)
-            <div class="scroll-sentinel">
-                <div class="end-of-results">
-                    <i class="ph-fill ph-check-circle"></i>
-                    <span>Semua cafe sudah ditampilkan</span>
+        <div class="scroll-sentinel py-16">
+            <div class="end-of-results bg-amber-50/50 border border-amber-100 flex flex-col gap-2 p-6 rounded-3xl">
+                <div class="flex items-center gap-2 justify-center">
+                    <i class="ph-fill ph-check-circle text-amber-500 text-xl"></i>
+                    <span class="text-espresso font-black">Selesai Menjelajah</span>
                 </div>
+                <p class="text-[0.7rem] text-center text-[#8B7355] font-medium max-w-[200px]">
+                    Semua {{ number_format($cafes->total()) }} cafe sudah ditampilkan.
+                </p>
+                <button wire:click="resetAllFilters" class="mt-2 text-xs font-bold text-amber-600 hover:text-amber-700">
+                    Kembali ke Atas ↑
+                </button>
             </div>
-        @endif
+        </div>
     @endif
 
     {{-- Styles moved to resources/css/app.css --}}

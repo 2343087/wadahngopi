@@ -110,11 +110,11 @@ it('increases perPage when loading more', function () {
         ->assertSet('perPage', 24);
 });
 
-it('caps perPage at 120', function () {
+it('caps perPage at MAX_PER_PAGE', function () {
     Livewire::test(ExploreSearch::class)
-        ->set('perPage', 120)
+        ->set('perPage', 1000)
         ->call('loadMore')
-        ->assertSet('perPage', 120);
+        ->assertSet('perPage', 1000);
 });
 
 // --- Reset Filters ---

@@ -159,31 +159,35 @@
     <div class="main-container" id="main-container">
         @yield('content')
 
-        <nav class="bottom-nav">
+        <nav class="bottom-nav" role="navigation" aria-label="Menu utama">
             <a href="{{ route('home') }}" class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}"
-                wire:navigate>
-                <i class="{{ request()->routeIs('home') ? 'ph-fill ph-house' : 'ph ph-house' }}"></i>
+                wire:navigate aria-label="Beranda">
+                <i class="{{ request()->routeIs('home') ? 'ph-fill ph-house' : 'ph ph-house' }}" aria-hidden="true"></i>
                 <span>BERANDA</span>
             </a>
             <a href="{{ route('roastery') }}" class="nav-item {{ request()->routeIs('roastery') ? 'active' : '' }}"
-                wire:navigate>
-                <i class="{{ request()->routeIs('roastery') ? 'ph-fill ph-coffee-bean' : 'ph ph-coffee-bean' }}"></i>
+                wire:navigate aria-label="Roastery">
+                <i class="{{ request()->routeIs('roastery') ? 'ph-fill ph-coffee-bean' : 'ph ph-coffee-bean' }}"
+                    aria-hidden="true"></i>
                 <span>ROASTERY</span>
             </a>
             <a href="{{ route('explore') }}" class="nav-item {{ request()->routeIs('explore') ? 'active' : '' }}"
-                wire:navigate>
-                <i class="{{ request()->routeIs('explore') ? 'ph-fill ph-compass' : 'ph ph-compass' }}"></i>
+                wire:navigate aria-label="Jelajahi Cafe">
+                <i class="{{ request()->routeIs('explore') ? 'ph-fill ph-compass' : 'ph ph-compass' }}"
+                    aria-hidden="true"></i>
                 <span>JELAJAHI</span>
             </a>
             <a href="{{ route('saved') }}" class="nav-item {{ request()->routeIs('saved') ? 'active' : '' }}"
-                wire:navigate>
-                <i
-                    class="{{ request()->routeIs('saved') ? 'ph-fill ph-bookmark-simple' : 'ph ph-bookmark-simple' }}"></i>
+                wire:navigate aria-label="Simpan Favorit">
+                <i class="{{ request()->routeIs('saved') ? 'ph-fill ph-bookmark-simple' : 'ph ph-bookmark-simple' }}"
+                    aria-hidden="true"></i>
                 <span>SIMPAN</span>
             </a>
             <a href="{{ route('information') }}"
-                class="nav-item {{ request()->routeIs('information*') ? 'active' : '' }}" wire:navigate>
-                <i class="{{ request()->routeIs('information*') ? 'ph-fill ph-newspaper' : 'ph ph-newspaper' }}"></i>
+                class="nav-item {{ request()->routeIs('information*') ? 'active' : '' }}" wire:navigate
+                aria-label="Info & Berita">
+                <i class="{{ request()->routeIs('information*') ? 'ph-fill ph-newspaper' : 'ph ph-newspaper' }}"
+                    aria-hidden="true"></i>
                 <span>INFO</span>
             </a>
         </nav>
@@ -210,6 +214,13 @@
                     if (status === 419) {
                         preventDefault();
                         window.location.reload();
+                    }
+                    if (status === 500 || status === 0) {
+                        preventDefault();
+                        // Show friendly toast instead of crashing
+                        window.dispatchEvent(new CustomEvent('toast', {
+                            detail: { message: 'Terjadi kesalahan, coba lagi ya ☕', type: 'error' }
+                        }));
                     }
                 })
             })

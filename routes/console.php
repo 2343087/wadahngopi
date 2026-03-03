@@ -7,6 +7,5 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-\Illuminate\Support\Facades\Schedule::command('app:sync-information-views')->everyFifteenMinutes();
-\Illuminate\Support\Facades\Schedule::command('app:scrape-coffee-news')->twiceDaily(5, 17);
 \Illuminate\Support\Facades\Schedule::command('app:flush-view-counters')->everyFiveMinutes();
+\Illuminate\Support\Facades\Schedule::command('app:scrape-coffee-news')->twiceDaily(5, 17);

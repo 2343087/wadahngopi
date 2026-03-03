@@ -12,6 +12,7 @@ class ExploreSearch extends Component
     use WithPagination;
 
     public int $perPage = 12;
+    public const MAX_PER_PAGE = 1000;
 
     public string $search = '';
 
@@ -118,7 +119,7 @@ class ExploreSearch extends Component
      */
     public function loadMore(): void
     {
-        if ($this->perPage >= 120) {
+        if ($this->perPage >= self::MAX_PER_PAGE) {
             return;
         }
         $this->perPage += 12;
@@ -158,6 +159,7 @@ class ExploreSearch extends Component
 
     public function render()
     {
+        // 1. Initial Query with Essential Fields
         $query = Cafe::query()
             ->where('status', 'published')
             ->select([
@@ -175,55 +177,88 @@ class ExploreSearch extends Component
                 'weekday_open',
                 'weekday_close',
                 'weekend_open',
-                'weekend_close',
+                'weekend_close'
             ])
             ->with(['facilities:id,cafe_id,name', 'city:id,name']);
 
+        // 2. Apply Filters & Location
         if ($this->cityId) {
             $query->where('city_id', $this->cityId);
         }
-
         if ($this->search) {
             $query->search($this->search);
         }
-
-        // Letter Filter
         if ($this->activeLetter) {
             $query->where('name', 'like', $this->activeLetter . '%');
         }
-
-        // Filter Logic for "buka" - uses centralized service logic
         if ($this->filter === 'buka') {
             $query->openNow();
         } elseif ($this->filter === 'terdekat' && $this->userLat !== null && $this->userLng !== null) {
             $query->nearest($this->userLat, $this->userLng);
         }
 
-        // Sort Logic (if not already sorted by distance via filter)
-        if ($this->filter !== 'terdekat') {
+        // 3. Robust Total Counting (Cached to save DB load at 50k scale)
+        $locationHash = ($this->userLat && $this->userLng) ? round($this->userLat, 2) . ',' . round($this->userLng, 2) : 'none';
+        $cacheKeyTotal = "total_v8_" . md5($this->cityId . $this->search . $this->activeLetter . $this->filter . $locationHash);
+        $totalResults = \Illuminate\Support\Facades\Cache::remember($cacheKeyTotal, now()->addMinutes(5), fn() => $query->count());
+
+        // 4. Optimized Sort & Randomization
+        $isHomeRandom = ($this->sort === 'relevance' && !$this->search && !$this->activeLetter);
+
+        if ($isHomeRandom) {
+            // God Tier Optimization: Shuffle IDs in memory and cache for the session
+            $shuffledIds = \Illuminate\Support\Facades\Cache::remember(
+                "shuffled_v7_{$this->randomSeed}_{$this->cityId}",
+                now()->addMinutes(30),
+                function () {
+                    srand($this->randomSeed);
+                    $ids = Cafe::where('status', 'published')
+                        ->when($this->cityId, fn($q) => $q->where('city_id', $this->cityId))
+                        ->pluck('id')
+                        ->toArray();
+                    shuffle($ids);
+                    srand(); // Reset
+                    return $ids;
+                }
+            );
+
+            $slice = array_slice($shuffledIds, 0, $this->perPage);
+            if (!empty($slice)) {
+                $placeholders = implode(',', array_fill(0, count($slice), '?'));
+                $query->whereIn('id', $slice)
+                    ->orderByRaw("FIELD(id, {$placeholders})", $slice);
+            }
+        } else {
+            // Standard Sorts
             if ($this->sort === 'name_az') {
                 $query->orderBy('name', 'asc');
             } elseif ($this->sort === 'name_za') {
                 $query->orderBy('name', 'desc');
-            } elseif (!$this->search && !$this->activeLetter && $this->sort === 'relevance') {
-                // Fair Play: Seeded random order — consistent per-session, refreshes on new visit
-                // RAND(seed) is O(n log n) vs FIELD() which is O(n²) with large datasets
-                $query->orderByRaw('RAND(?)', [$this->randomSeed]);
             } else {
                 $query->latest();
             }
         }
 
-        $cafesPaginator = $query->paginate($this->perPage);
+        // 5. Final Result Paginator
+        // Force Page 1 because we grow perPage for a seamless infinite scroll experience
+        $cafesPaginator = new \Illuminate\Pagination\LengthAwarePaginator(
+            $query->limit($this->perPage)->get(),
+            $totalResults,
+            $this->perPage,
+            1,
+            ['path' => route('explore')]
+        );
 
-        // Dispatch events for map update if needed
-        $this->dispatch('cafes-updated', cafes: collect($cafesPaginator->items())->map(fn($c) => [
-            'id' => $c->id,
-            'name' => $c->name,
-            'lat' => $c->latitude,
-            'lng' => $c->longitude,
-            'url' => route('cafes.show', $c),
-        ])->toArray());
+        // 6. Map Update (Limited to avoid choking the browser)
+        if ($this->perPage <= 24 || $this->search) {
+            $this->dispatch('cafes-updated', cafes: collect($cafesPaginator->items())->map(fn($c) => [
+                'id' => $c->id,
+                'name' => $c->name,
+                'lat' => $c->latitude,
+                'lng' => $c->longitude,
+                'url' => route('cafes.show', $c),
+            ])->toArray());
+        }
 
         return view('livewire.explore-search', [
             'cafes' => $cafesPaginator,

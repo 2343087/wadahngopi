@@ -49,6 +49,12 @@ class CafeRoulette extends Component
 
         // Pick up to 15 random IDs safely (handles case where fewer exist)
         $sampleSize = min(count($allIds), 15);
+        if ($sampleSize === 0) {
+            $this->candidates = [];
+            $this->winner = null;
+
+            return;
+        }
         $randomIds = collect($allIds)->random($sampleSize)->toArray();
 
         // Fetch published cafes that are currently open (slim select for performance)

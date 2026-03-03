@@ -271,26 +271,31 @@
         @endforelse
     </main>
 
-    {{-- Infinite Scroll Sentinel --}}
+    {{-- Load More Section --}}
     @if($roasteries->hasMorePages())
-        <div class="scroll-sentinel" 
-            x-data="{ observer: null }"
-            x-init="
-                observer = new IntersectionObserver((entries) => {
-                    entries.forEach(e => { if (e.isIntersecting) $wire.loadMore(); });
-                }, { rootMargin: '200px' });
-                observer.observe($el);
-            "
-            x-destroy="observer?.disconnect()">
-            <div class="loading-more-spinner" wire:loading.delay wire:target="loadMore"></div>
-            <span class="text-xs font-bold text-[#8B7355]/60 uppercase tracking-widest" wire:loading.delay wire:target="loadMore">Memuat...</span>
+        <div class="w-full py-8 flex flex-col items-center gap-4" wire:key="load-more-{{ $perPage }}">
+            <div wire:loading wire:target="loadMore" class="flex flex-col items-center gap-3">
+                <div class="loading-more-spinner"></div>
+                <span class="text-[0.6rem] font-black text-[#8B7355]/60 uppercase tracking-widest animate-pulse">Menyiapkan Roastery Lainnya...</span>
+            </div>
+            <button wire:click="loadMore" wire:loading.remove wire:target="loadMore"
+                class="px-6 py-2.5 bg-espresso/10 hover:bg-espresso/20 text-espresso font-bold text-xs rounded-full transition-all active:scale-95 flex items-center gap-2"
+                aria-label="Muat lebih banyak roastery">
+                <i class="ph-bold ph-arrow-down"></i>
+                Muat Lagi ({{ $roasteries->total() - $perPage > 0 ? number_format($roasteries->total() - $perPage) : 0 }} tersisa)
+            </button>
         </div>
     @else
         @if($roasteries->count() > 0)
-            <div class="scroll-sentinel">
-                <div class="end-of-results">
-                    <i class="ph-fill ph-check-circle"></i>
-                    <span>Semua roastery sudah ditampilkan</span>
+            <div class="scroll-sentinel py-16">
+                <div class="end-of-results bg-amber-50/50 border border-amber-100 flex flex-col gap-2 p-6 rounded-3xl">
+                    <div class="flex items-center gap-2 justify-center">
+                        <i class="ph-fill ph-check-circle text-amber-500 text-xl"></i>
+                        <span class="text-espresso font-black">Selesai Menjelajah</span>
+                    </div>
+                    <p class="text-[0.7rem] text-center text-[#8B7355] font-medium max-w-[200px]">
+                        Semua {{ number_format($roasteries->total()) }} roastery sudah ditampilkan.
+                    </p>
                 </div>
             </div>
         @endif

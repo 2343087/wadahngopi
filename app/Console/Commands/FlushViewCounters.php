@@ -19,11 +19,10 @@ class FlushViewCounters extends Command
         Information::query()->select('id')->chunk(100, function ($articles) use (&$flushed): void {
             foreach ($articles as $article) {
                 $key = "info_views:{$article->id}";
-                $views = (int) Cache::get($key, 0);
+                $views = (int) Cache::pull($key, 0);
 
                 if ($views > 0) {
                     Information::where('id', $article->id)->increment('views', $views);
-                    Cache::forget($key);
                     $flushed++;
                 }
             }

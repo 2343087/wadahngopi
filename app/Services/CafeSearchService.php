@@ -92,21 +92,29 @@ class CafeSearchService
         $sanitizedTerm = trim(preg_replace('/\s+/', ' ', $sanitizedTerm));
 
         // Try Fulltext first, fallback to LIKE if index doesn't exist
-        try {
-            // Test if FULLTEXT index exists by building a test query
-            $tableName = $query->getModel()->getTable();
-            \Illuminate\Support\Facades\DB::select(
-                "SELECT 1 FROM `{$tableName}` WHERE MATCH(`name`, `address`, `description`) AGAINST(? IN BOOLEAN MODE) LIMIT 1",
-                [$sanitizedTerm]
-            );
+        // Cache the FULLTEXT index check per-table for 1 hour to avoid extra query per search
+        $tableName = $query->getModel()->getTable();
+        $hasFulltext = \Illuminate\Support\Facades\Cache::remember(
+            "fulltext_index_{$tableName}",
+            now()->addHour(),
+            function () use ($tableName) {
+                try {
+                    \Illuminate\Support\Facades\DB::select(
+                        "SELECT 1 FROM `{$tableName}` WHERE MATCH(`name`, `address`, `description`) AGAINST('test' IN BOOLEAN MODE) LIMIT 1"
+                    );
+                    return true;
+                } catch (\Illuminate\Database\QueryException $e) {
+                    return false;
+                }
+            }
+        );
 
-            // If we get here, FULLTEXT index exists — use it
+        if ($hasFulltext) {
             $query->where(function ($q) use ($safeTerm, $sanitizedTerm) {
                 $q->whereFullText(['name', 'address', 'description'], $sanitizedTerm, ['mode' => 'boolean'])
                     ->orWhere('name', 'like', "%{$safeTerm}%");
             });
-        } catch (\Illuminate\Database\QueryException $e) {
-            // FULLTEXT index doesn't exist — fallback to LIKE search
+        } else {
             $query->where(function ($q) use ($safeTerm) {
                 $q->where('name', 'like', "%{$safeTerm}%")
                     ->orWhere('address', 'like', "%{$safeTerm}%")

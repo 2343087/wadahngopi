@@ -38,6 +38,21 @@ class RoasteryObserver
     private function clearCache(?Roastery $roastery = null): void
     {
         Cache::forget('cities_list');
+        Cache::forget('active_roastery_ids');
+
+        // Clear shuffled and total count caches via Redis pattern
+        try {
+            $prefix = config('cache.prefix', 'laravel_cache') . ':';
+
+            foreach (['shuffled_roastery_*', 'roastery_total_*'] as $pattern) {
+                $keys = \Illuminate\Support\Facades\Redis::keys($prefix . $pattern);
+                foreach ($keys as $key) {
+                    \Illuminate\Support\Facades\Redis::del($key);
+                }
+            }
+        } catch (\Throwable $e) {
+            // Fallback: cache expires naturally (5-30 min)
+        }
 
         if ($roastery) {
             Cache::forget("roastery_{$roastery->slug}");
