@@ -40,29 +40,79 @@ class CafeSearchService
 
                                 // Overnight case: 22:00 - 02:00 (Close < Open)
                                 ->orWhere(function ($overnight) use ($now, $openCol, $closeCol) {
-                                    $overnight->whereRaw("$closeCol < $openCol")
-                                        ->where(fn ($k) => $k->whereRaw("? >= $openCol", [$now])
-                                            ->orWhereRaw("? <= $closeCol", [$now]));
-                                });
+                                $overnight->whereRaw("$closeCol < $openCol")
+                                    ->where(fn($k) => $k->whereRaw("? >= $openCol", [$now])
+                                        ->orWhereRaw("? <= $closeCol", [$now]));
+                            });
                         });
                 });
         });
     }
 
     /**
-     * Scope query to order by nearest location using Bounding Box optimization.
-     * 1. First filters by rough bounding box (using index)
-     * 2. Then calculates exact distance
+     * Scope query to order by nearest location.
+     *
+     * Strategy:
+     * 1. Try MySQL 8 Spatial (ST_Distance_Sphere) — fastest, uses SPATIAL index
+     * 2. Fallback to Haversine formula — works on MariaDB, MySQL 5.7, any SQL
+     *
+     * The fallback is cached per-table so we only detect once per hour.
      */
     public function scopeNearest(Builder $query, float $lat, float $lng, int $radiusKm = 20): Builder
     {
-        // Use MySQL Spatial Function ST_Distance_Sphere for ultra-fast calculation
-        // Default SRID 4326 in MySQL 8.0+ is (Latitude, Longitude)
-        $point = "POINT($lat $lng)";
+        $tableName = $query->getModel()->getTable();
+
+        // Check if MySQL Spatial functions are available (cached per hour)
+        $hasSpatial = \Illuminate\Support\Facades\Cache::remember(
+            "spatial_support_{$tableName}",
+            now()->addHour(),
+            function () use ($tableName) {
+                try {
+                    \Illuminate\Support\Facades\DB::select(
+                        "SELECT ST_Distance_Sphere(
+                            ST_GeomFromText('POINT(0 0)', 4326),
+                            ST_GeomFromText('POINT(0 0)', 4326)
+                        ) AS dist"
+                    );
+                    // Also verify the location column exists and has data
+                    $hasLocation = \Illuminate\Support\Facades\DB::select(
+                        "SELECT COUNT(*) as cnt FROM `{$tableName}` WHERE location IS NOT NULL LIMIT 1"
+                    );
+
+                    return ($hasLocation[0]->cnt ?? 0) > 0;
+                } catch (\Throwable $e) {
+                    return false;
+                }
+            }
+        );
+
+        if ($hasSpatial) {
+            // Fast path: MySQL 8.0+ with SPATIAL index
+            $point = "POINT($lat $lng)";
+
+            return $query
+                ->whereRaw('ST_Distance_Sphere(location, ST_GeomFromText(?, 4326)) <= ?', [$point, $radiusKm * 1000])
+                ->selectRaw('(ST_Distance_Sphere(location, ST_GeomFromText(?, 4326)) / 1000) AS distance', [$point])
+                ->orderBy('distance');
+        }
+
+        // Fallback: Haversine formula using latitude/longitude columns
+        // Works on MariaDB, MySQL 5.7, and any SQL database
+        $haversine = "(
+            6371 * ACOS(
+                LEAST(1, COS(RADIANS(?)) * COS(RADIANS(latitude)) *
+                COS(RADIANS(longitude) - RADIANS(?)) +
+                SIN(RADIANS(?)) * SIN(RADIANS(latitude)))
+            )
+        )";
 
         return $query
-            ->whereRaw('ST_Distance_Sphere(location, ST_GeomFromText(?, 4326)) <= ?', [$point, $radiusKm * 1000])
-            ->selectRaw('(ST_Distance_Sphere(location, ST_GeomFromText(?, 4326)) / 1000) AS distance', [$point])
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->where('latitude', '!=', 0)
+            ->where('longitude', '!=', 0)
+            ->whereRaw("{$haversine} <= ?", [$lat, $lng, $lat, $radiusKm])
+            ->selectRaw("{$haversine} AS distance", [$lat, $lng, $lat])
             ->orderBy('distance');
     }
 
@@ -133,8 +183,8 @@ class CafeSearchService
         $now = $currentTime ?: now()->format('H:i:s');
 
         // Normalize to H:i:s format
-        $open = strlen($open) === 5 ? $open.':00' : $open;
-        $close = strlen($close) === 5 ? $close.':00' : $close;
+        $open = strlen($open) === 5 ? $open . ':00' : $open;
+        $close = strlen($close) === 5 ? $close . ':00' : $close;
 
         if ($close < $open) {
             // Cross-day logic: Open 22:00, Close 02:00

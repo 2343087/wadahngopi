@@ -168,12 +168,18 @@ class Cafe extends Model
             }
 
             // Sync Spatial Location (POINT) for optimized proximity search
+            // Wrapped in try-catch: MariaDB / MySQL 5.7 may not support SRID 4326
             if (($cafe->isDirty(['latitude', 'longitude']) || !$cafe->location)) {
-                $lat = (float) ($cafe->latitude ?: 0);
-                $lng = (float) ($cafe->longitude ?: 0);
+                try {
+                    $lat = (float) ($cafe->latitude ?: 0);
+                    $lng = (float) ($cafe->longitude ?: 0);
 
-                // Default SRID 4326 order is (Latitude, Longitude) in MySQL 8.0+
-                $cafe->location = \Illuminate\Support\Facades\DB::raw("ST_GeomFromText('POINT($lat $lng)', 4326)");
+                    // Try MySQL 8 syntax first (with SRID)
+                    $cafe->location = \Illuminate\Support\Facades\DB::raw("ST_GeomFromText('POINT($lat $lng)', 4326)");
+                } catch (\Throwable $e) {
+                    // MariaDB/MySQL 5.7 fallback: skip spatial sync
+                    // The Haversine fallback in CafeSearchService will use lat/lng columns directly
+                }
             }
         });
 

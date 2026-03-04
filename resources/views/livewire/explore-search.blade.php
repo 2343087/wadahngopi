@@ -346,6 +346,11 @@
         initComponent() {
             // Keep header scroll effect
             this.isScrolled = window.pageYOffset > 50;
+
+            // Auto-request GPS if page loaded/refreshed with filter=terdekat but coordinates lost
+            if (this.$wire.filter === 'terdekat' && !this.$wire.userLat) {
+                this.getLocation();
+            }
         },
 
         getLocation() {
