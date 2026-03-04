@@ -51,11 +51,10 @@ class Register extends BaseRegister
     protected function handleRegistration(array $data): Model
     {
         // Double-check: even if someone bypasses frontend, block unauthorized roles
-        if (!in_array($data['role'] ?? '', self::ALLOWED_ROLES, true)) {
+        if (! in_array($data['role'] ?? '', self::ALLOWED_ROLES, true)) {
             $data['role'] = 'admin'; // Default fallback
         }
 
         return parent::handleRegistration($data);
     }
 }
-

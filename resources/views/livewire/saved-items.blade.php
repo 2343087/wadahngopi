@@ -2,9 +2,7 @@
 <div wire:poll.30s="loadItems" x-data="savedItemsLogic()" x-init="initFromStorage()" class="min-h-screen">
     <div x-effect="$wire.updateIds(savedCafeIds, savedRoasteryIds)"></div>
 
-    {{-- Premium Skeleton --}}
-    {{-- Premium Skeleton --}}
-    {{-- Premium Skeleton --}}
+    {{-- Skeleton Loading --}}
     <div wire:loading class="space-y-4 pb-32">
         <template x-for="i in 3" :key="'skel-'+i">
             <x-skeleton.saved-card />

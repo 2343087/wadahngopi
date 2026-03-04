@@ -140,7 +140,7 @@
     {{-- Premium Skeleton Shimmer (Shown while loading) --}}
     <div class="explore-cafe-grid" wire:loading>
         <template x-for="i in 6" :key="'skel-'+i">
-            <x-skeleton.cafe-card />
+            <x-skeleton.roastery-card />
         </template>
     </div>
 

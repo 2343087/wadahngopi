@@ -60,16 +60,22 @@ class CafeObserver
             Cache::forget("cafe_random_order_{$i}");
         }
 
-        // Clear all shuffled and total count caches via Redis pattern
-        // This ensures new/updated cafes appear immediately
+        // Clear all shuffled and total count caches via Redis SCAN (non-blocking)
+        // SCAN is O(1) per call vs KEYS which is O(N) and blocks Redis entirely
         try {
             $prefix = config('cache.prefix', 'laravel_cache') . ':';
 
             foreach (['shuffled_v7_*', 'shuffled_v8_*', 'total_v7_*', 'total_v8_*'] as $pattern) {
-                $keys = \Illuminate\Support\Facades\Redis::keys($prefix . $pattern);
-                foreach ($keys as $key) {
-                    \Illuminate\Support\Facades\Redis::del($key);
-                }
+                $cursor = null;
+                do {
+                    [$cursor, $keys] = \Illuminate\Support\Facades\Redis::scan(
+                        $cursor ?? 0,
+                        ['match' => $prefix . $pattern, 'count' => 100]
+                    );
+                    if (!empty($keys)) {
+                        \Illuminate\Support\Facades\Redis::del(...$keys);
+                    }
+                } while ($cursor);
             }
         } catch (\Throwable $e) {
             // Fallback: If Redis pattern clear fails, the cache will expire naturally (5-30 min)

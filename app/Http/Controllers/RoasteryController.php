@@ -18,8 +18,11 @@ class RoasteryController extends Controller
         abort_if($roastery->status !== 'published', 404);
 
         // Cache per-roastery with slug-based key for 10 minutes
+        // CRITICAL: Strip binary `location` (POINT) field before caching.
+        // File/database cache drivers corrupt binary data during serialize().
         $roastery = Cache::remember("roastery_{$roastery->slug}", now()->addMinutes(10), function () use ($roastery) {
             $roastery->load('city');
+            $roastery->offsetUnset('location');
 
             return $roastery;
         });

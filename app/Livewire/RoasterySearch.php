@@ -62,7 +62,7 @@ class RoasterySearch extends Component
 
     public function updatedFilter(): void
     {
-        if (!in_array($this->filter, ['semua', 'buka', 'terdekat'])) {
+        if (! in_array($this->filter, ['semua', 'buka', 'terdekat'])) {
             $this->filter = 'semua';
         }
 
@@ -74,7 +74,7 @@ class RoasterySearch extends Component
 
     public function setSort(string $sort): void
     {
-        if (!in_array($sort, ['relevance', 'name_az', 'name_za', 'distance'])) {
+        if (! in_array($sort, ['relevance', 'name_az', 'name_za', 'distance'])) {
             $sort = 'relevance';
         }
 
@@ -131,7 +131,7 @@ class RoasterySearch extends Component
         return \Illuminate\Support\Facades\Cache::remember(
             'cities_list',
             now()->addHour(),
-            fn() => City::select(['id', 'name'])->orderBy('name')->get()
+            fn () => City::select(['id', 'name'])->orderBy('name')->get()
         );
     }
 
@@ -167,7 +167,7 @@ class RoasterySearch extends Component
         }
 
         if ($this->activeLetter) {
-            $query->where('name', 'like', $this->activeLetter . '%');
+            $query->where('name', 'like', $this->activeLetter.'%');
         }
 
         if ($this->filter === 'buka') {
@@ -177,12 +177,12 @@ class RoasterySearch extends Component
         }
 
         // Cached total count
-        $locationHash = ($this->userLat && $this->userLng) ? round($this->userLat, 2) . ',' . round($this->userLng, 2) : 'none';
-        $cacheKeyTotal = "roastery_total_v1_" . md5($this->cityId . $this->search . $this->activeLetter . $this->filter . $locationHash);
-        $totalResults = \Illuminate\Support\Facades\Cache::remember($cacheKeyTotal, now()->addMinutes(5), fn() => $query->count());
+        $locationHash = ($this->userLat && $this->userLng) ? round($this->userLat, 2).','.round($this->userLng, 2) : 'none';
+        $cacheKeyTotal = 'roastery_total_v1_'.md5($this->cityId.$this->search.$this->activeLetter.$this->filter.$locationHash);
+        $totalResults = \Illuminate\Support\Facades\Cache::remember($cacheKeyTotal, now()->addMinutes(5), fn () => $query->count());
 
         // Optimized Sort & Randomization
-        $isHomeRandom = (!$this->search && !$this->activeLetter && $this->sort === 'relevance' && $this->filter !== 'terdekat');
+        $isHomeRandom = (! $this->search && ! $this->activeLetter && $this->sort === 'relevance' && $this->filter !== 'terdekat');
 
         if ($isHomeRandom) {
             // Cached shuffled IDs — same strategy as ExploreSearch
@@ -192,17 +192,18 @@ class RoasterySearch extends Component
                 function () {
                     srand($this->randomSeed);
                     $ids = Roastery::where('status', 'published')
-                        ->when($this->cityId, fn($q) => $q->where('city_id', $this->cityId))
+                        ->when($this->cityId, fn ($q) => $q->where('city_id', $this->cityId))
                         ->pluck('id')
                         ->toArray();
                     shuffle($ids);
                     srand();
+
                     return $ids;
                 }
             );
 
             $slice = array_slice($shuffledIds, 0, $this->perPage);
-            if (!empty($slice)) {
+            if (! empty($slice)) {
                 $placeholders = implode(',', array_fill(0, count($slice), '?'));
                 $query->whereIn('id', $slice)
                     ->orderByRaw("FIELD(id, {$placeholders})", $slice);

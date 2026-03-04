@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
+use App\Models\Cafe;
 use App\Models\City;
 use App\Models\User;
-use App\Models\Cafe;
-use App\Enums\UserRole;
+use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Faker\Factory as Faker;
 
 class StressTestSeeder extends Seeder
 {
@@ -36,7 +36,7 @@ class StressTestSeeder extends Seeder
             for ($i = 0; $i < 100; $i++) {
                 $users[] = [
                     'name' => $faker->name,
-                    'email' => "owner_{$i}_" . Str::random(5) . "@example.com",
+                    'email' => "owner_{$i}_".Str::random(5).'@example.com',
                     'password' => bcrypt('password123'),
                     'role' => UserRole::Admin->value,
                     'created_at' => now(),
@@ -53,17 +53,17 @@ class StressTestSeeder extends Seeder
         for ($i = 0; $i < $totalCafes; $i += $batchSize) {
             $cafesBatch = [];
             for ($j = 0; $j < $batchSize; $j++) {
-                $name = $faker->unique()->company . ' ' . $faker->randomElement(['Coffee', 'Cafe', 'Roastery', 'Eatery', 'Space']);
+                $name = $faker->unique()->company.' '.$faker->randomElement(['Coffee', 'Cafe', 'Roastery', 'Eatery', 'Space']);
                 $lat = $faker->latitude(-5, 5); // Random Indonesia coverage
                 $lng = $faker->longitude(95, 141);
 
                 $cafesBatch[] = [
                     'name' => $name,
-                    'slug' => Str::slug($name) . '-' . Str::random(5),
+                    'slug' => Str::slug($name).'-'.Str::random(5),
                     'description' => $faker->paragraph(3),
                     'address' => $faker->address,
                     'google_maps_url' => "https://maps.google.com/?q={$lat},{$lng}",
-                    'whatsapp_number' => '628' . $faker->numerify('#########'),
+                    'whatsapp_number' => '628'.$faker->numerify('#########'),
                     'has_wifi' => $faker->boolean(80),
                     'status' => 'published',
                     'latitude' => $lat,
@@ -87,7 +87,7 @@ class StressTestSeeder extends Seeder
 
         // 4. Create Random Facilities for some cafes
         // We only do this for 10% of cafes to avoid giant seeder time
-        $this->command->info("Menambahkan fasilitas acak...");
+        $this->command->info('Menambahkan fasilitas acak...');
         $randomCafeIds = Cafe::inRandomOrder()->take(5000)->pluck('id')->toArray();
         $facilitiesBatch = [];
         foreach ($randomCafeIds as $cafeId) {
@@ -109,6 +109,6 @@ class StressTestSeeder extends Seeder
             DB::table('facilities')->insert($chunk);
         }
 
-        $this->command->info("Selesai! 50.000 data cafe berhasil dibuat.");
+        $this->command->info('Selesai! 50.000 data cafe berhasil dibuat.');
     }
 }

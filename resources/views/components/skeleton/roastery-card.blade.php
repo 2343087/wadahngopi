@@ -1,10 +1,26 @@
-{{-- Skeleton Roastery Card --}}
+{{-- Skeleton Roastery Card — matches actual roastery card (cafe-card-2026 without tags) --}}
 <div class="cafe-card-2026 skeleton-card" aria-hidden="true">
-    <div class="cafe-card-image">
-        <div class="skeleton-shimmer" style="width:100%; height:100%; border-radius:inherit;"></div>
+    {{-- Image Area --}}
+    <div class="cafe-card-image skeleton-shimmer relative">
+        {{-- Status Badge Placeholder --}}
+        <div class="absolute top-3 left-3 z-10">
+            <div class="h-5 w-16 bg-white/30 rounded-full skeleton"></div>
+        </div>
     </div>
+
+    {{-- Content Area --}}
     <div class="cafe-card-content">
-        <div class="skeleton-shimmer" style="width:70%; height:14px; border-radius:8px;"></div>
-        <div class="skeleton-shimmer" style="width:90%; height:10px; border-radius:6px; margin-top:8px;"></div>
+        {{-- Title --}}
+        <div class="space-y-2">
+            <div class="h-4 w-3/4 bg-gray-200 rounded-md skeleton"></div>
+            {{-- Address with icon placeholder --}}
+            <div class="flex items-center gap-1.5">
+                <div class="h-3 w-3 bg-gray-200 rounded-full skeleton"></div>
+                <div class="h-3 w-2/3 bg-gray-200 rounded-md skeleton"></div>
+            </div>
+        </div>
+
+        {{-- Spacer (no tags for roastery) --}}
+        <div class="mt-auto"></div>
     </div>
 </div>

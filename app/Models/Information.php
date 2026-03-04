@@ -37,7 +37,7 @@ class Information extends Model
     protected function content(): Attribute
     {
         return Attribute::make(
-            set: fn(string $value) => clean($value),
+            set: fn (string $value) => clean($value),
         );
     }
 }

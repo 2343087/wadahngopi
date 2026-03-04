@@ -12,7 +12,8 @@ class ExploreSearch extends Component
     use WithPagination;
 
     public int $perPage = 12;
-    public const MAX_PER_PAGE = 1000;
+
+    public const MAX_PER_PAGE = 120;
 
     public string $search = '';
 
@@ -177,7 +178,7 @@ class ExploreSearch extends Component
                 'weekday_open',
                 'weekday_close',
                 'weekend_open',
-                'weekend_close'
+                'weekend_close',
             ])
             ->with(['facilities:id,cafe_id,name', 'city:id,name']);
 
@@ -199,7 +200,7 @@ class ExploreSearch extends Component
 
         // 3. Robust Total Counting (Cached to save DB load at 50k scale)
         $locationHash = ($this->userLat && $this->userLng) ? round($this->userLat, 2) . ',' . round($this->userLng, 2) : 'none';
-        $cacheKeyTotal = "total_v8_" . md5($this->cityId . $this->search . $this->activeLetter . $this->filter . $locationHash);
+        $cacheKeyTotal = 'total_v8_' . md5($this->cityId . $this->search . $this->activeLetter . $this->filter . $locationHash);
         $totalResults = \Illuminate\Support\Facades\Cache::remember($cacheKeyTotal, now()->addMinutes(5), fn() => $query->count());
 
         // 4. Optimized Sort & Randomization
@@ -218,6 +219,7 @@ class ExploreSearch extends Component
                         ->toArray();
                     shuffle($ids);
                     srand(); // Reset
+    
                     return $ids;
                 }
             );

@@ -40,10 +40,10 @@ class CafeSearchService
 
                                 // Overnight case: 22:00 - 02:00 (Close < Open)
                                 ->orWhere(function ($overnight) use ($now, $openCol, $closeCol) {
-                                $overnight->whereRaw("$closeCol < $openCol")
-                                    ->where(fn($k) => $k->whereRaw("? >= $openCol", [$now])
-                                        ->orWhereRaw("? <= $closeCol", [$now]));
-                            });
+                                    $overnight->whereRaw("$closeCol < $openCol")
+                                        ->where(fn ($k) => $k->whereRaw("? >= $openCol", [$now])
+                                            ->orWhereRaw("? <= $closeCol", [$now]));
+                                });
                         });
                 });
         });
@@ -102,6 +102,7 @@ class CafeSearchService
                     \Illuminate\Support\Facades\DB::select(
                         "SELECT 1 FROM `{$tableName}` WHERE MATCH(`name`, `address`, `description`) AGAINST('test' IN BOOLEAN MODE) LIMIT 1"
                     );
+
                     return true;
                 } catch (\Illuminate\Database\QueryException $e) {
                     return false;
@@ -132,8 +133,8 @@ class CafeSearchService
         $now = $currentTime ?: now()->format('H:i:s');
 
         // Normalize to H:i:s format
-        $open = strlen($open) === 5 ? $open . ':00' : $open;
-        $close = strlen($close) === 5 ? $close . ':00' : $close;
+        $open = strlen($open) === 5 ? $open.':00' : $open;
+        $close = strlen($close) === 5 ? $close.':00' : $close;
 
         if ($close < $open) {
             // Cross-day logic: Open 22:00, Close 02:00
