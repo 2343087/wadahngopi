@@ -36,15 +36,17 @@
 
         /* Apex Container */
         .fi-wn-login-page {
-            position: fixed !important;
-            inset: 0 !important;
+            position: relative !important;
+            min-height: 100vh !important;
+            width: 100% !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             background: #060606 !important;
-            z-index: 9999 !important;
-            overflow: hidden !important;
+            z-index: 10 !important;
+            overflow-x: hidden !important;
             font-family: 'Outfit', sans-serif !important;
+            padding: 2rem 1rem !important;
         }
 
         .fi-wn-login-page::before {
@@ -52,8 +54,8 @@
             position: absolute;
             top: -30%;
             right: -20%;
-            width: 70vw;
-            height: 70vw;
+            width: 100vw;
+            height: 100vw;
             background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, transparent 70%);
             filter: blur(120px);
             z-index: -1;
@@ -74,8 +76,7 @@
         .fi-wn-login-container {
             width: 100%;
             max-width: 480px;
-            /* Slightly wider for register form */
-            padding: 2rem;
+            padding: 0;
             position: relative;
             z-index: 10;
             animation: apexFadeUp 0.8s ease-out;
@@ -123,34 +124,20 @@
             -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
             border: 1px solid rgba(255, 255, 255, 0.05) !important;
             border-radius: 32px !important;
-            padding: 2rem !important;
+            padding: 2.25rem !important;
             box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-
-        /* Custom Scrollbar */
-        .fi-wn-login-card::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .fi-wn-login-card::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .fi-wn-login-card::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            overflow-y: visible !important;
+            max-height: none !important;
         }
 
         /* Input Overrides */
         .fi-wn-login-page .fi-fo-field-wrp-label {
-            font-size: 0.65rem !important;
+            font-size: 0.68rem !important;
             font-weight: 800 !important;
             color: rgba(255, 255, 255, 0.4) !important;
             text-transform: uppercase !important;
             letter-spacing: 0.12em !important;
-            margin-bottom: 0.4rem !important;
+            margin-bottom: 0.45rem !important;
         }
 
         .fi-wn-login-page .fi-input-wrapper {
@@ -211,6 +198,44 @@
             letter-spacing: 0.2em;
             margin-bottom: 2rem;
             text-transform: uppercase;
+        }
+
+        @media (max-width: 480px) {
+            .fi-wn-login-page {
+                padding: 1.5rem 0.75rem !important;
+            }
+
+            .fi-wn-login-title {
+                font-size: 1.25rem;
+            }
+
+            .fi-wn-login-subtitle {
+                font-size: 0.6rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .fi-wn-login-logo-box {
+                width: 52px !important;
+                height: 52px !important;
+                padding: 10px !important;
+                margin-bottom: 1.25rem !important;
+                border-radius: 14px !important;
+            }
+
+            .fi-wn-login-card {
+                padding: 1.5rem 1rem !important;
+                border-radius: 24px !important;
+            }
+
+            .fi-wn-login-page .fi-fo-field-wrp-label {
+                font-size: 0.58rem !important;
+                margin-bottom: 0.3rem !important;
+            }
+
+            .fi-wn-login-page button[type="submit"] {
+                padding: 0.85rem !important;
+                font-size: 0.7rem !important;
+            }
         }
     </style>
 

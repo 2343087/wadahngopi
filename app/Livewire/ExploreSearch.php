@@ -207,28 +207,12 @@ class ExploreSearch extends Component
         $isHomeRandom = ($this->sort === 'relevance' && !$this->search && !$this->activeLetter);
 
         if ($isHomeRandom) {
-            // God Tier Optimization: Shuffle IDs in memory and cache for the session
-            $shuffledIds = \Illuminate\Support\Facades\Cache::remember(
-                "shuffled_v7_{$this->randomSeed}_{$this->cityId}",
-                now()->addMinutes(30),
-                function () {
-                    srand($this->randomSeed);
-                    $ids = Cafe::where('status', 'published')
-                        ->when($this->cityId, fn($q) => $q->where('city_id', $this->cityId))
-                        ->pluck('id')
-                        ->toArray();
-                    shuffle($ids);
-                    srand(); // Reset
-    
-                    return $ids;
-                }
-            );
-
-            $slice = array_slice($shuffledIds, 0, $this->perPage);
-            if (!empty($slice)) {
-                $placeholders = implode(',', array_fill(0, count($slice), '?'));
-                $query->whereIn('id', $slice)
-                    ->orderByRaw("FIELD(id, {$placeholders})", $slice);
+            // High Performance Randomization: Database-agnostic seeded random
+            $driver = $query->getConnection()->getDriverName();
+            if ($driver === 'sqlite') {
+                $query->orderByRaw('ABS(RANDOM()) % ?', [$this->randomSeed ?: 1000]);
+            } else {
+                $query->orderByRaw('RAND(?)', [$this->randomSeed]);
             }
         } else {
             // Standard Sorts
@@ -237,7 +221,10 @@ class ExploreSearch extends Component
             } elseif ($this->sort === 'name_za') {
                 $query->orderBy('name', 'desc');
             } else {
-                $query->latest();
+                // If special filter (like nearest) is not active, fallback to latest
+                if ($this->filter !== 'terdekat') {
+                    $query->latest();
+                }
             }
         }
 

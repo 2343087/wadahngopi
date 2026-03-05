@@ -34,11 +34,11 @@ class ProductionCheckCommand extends Command
             $this->checkPass('APP_ENV is production');
             $passed++;
         } else {
-            $this->checkWarn('APP_ENV is "'.config('app.env').'" — should be "production"');
+            $this->checkWarn('APP_ENV is "' . config('app.env') . '" — should be "production"');
             $warnings++;
         }
 
-        if (! empty(config('app.key'))) {
+        if (!empty(config('app.key'))) {
             $this->checkPass('APP_KEY is set');
             $passed++;
         } else {
@@ -85,11 +85,11 @@ class ProductionCheckCommand extends Command
         $this->components->info('Security Configuration');
 
         if (config('session.secure')) {
-            $this->checkPass('Secure cookies enabled');
+            $this->checkPass('Secure cookies enabled (SESSION_SECURE_COOKIE)');
             $passed++;
         } else {
-            $this->checkWarn('Secure cookies disabled — enable for HTTPS');
-            $warnings++;
+            $this->checkFail('Secure cookies disabled — MUST be true for HTTPS in production');
+            $failed++;
         }
 
         if (config('session.encrypt')) {
@@ -97,6 +97,42 @@ class ProductionCheckCommand extends Command
             $passed++;
         } else {
             $this->checkWarn('Session encryption disabled');
+            $warnings++;
+        }
+
+        // Database Password Check
+        $dbPassword = config('database.connections.' . config('database.default') . '.password');
+        if (!empty($dbPassword)) {
+            $this->checkPass('Database password is set');
+            $passed++;
+        } else {
+            $this->checkFail('Database password is EMPTY — MUST be set in production');
+            $failed++;
+        }
+
+        // Directory Permissions (Storage & Cache)
+        $paths = [storage_path(), base_path('bootstrap/cache')];
+        foreach ($paths as $path) {
+            if (is_writable($path)) {
+                $this->checkPass("Directory is writable: " . basename($path));
+                $passed++;
+            } else {
+                $this->checkFail("Directory is NOT writable: " . basename($path));
+                $failed++;
+            }
+        }
+
+        // Composer Audit Check (Security)
+        if (file_exists(base_path('composer.lock'))) {
+            $this->components->task('Checking composer dependencies for vulnerabilities...', function () use (&$passed, &$failed) {
+                exec('composer audit --format=json 2>&1', $output, $resultCode);
+                if ($resultCode === 0) {
+                    return true;
+                }
+                return false;
+            });
+
+            $this->checkWarn('Ensure you run "composer audit" regularly to check for vulnerable dependencies.');
             $warnings++;
         }
 

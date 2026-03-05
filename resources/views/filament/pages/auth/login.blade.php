@@ -36,15 +36,17 @@
 
         /* Apex Container */
         .fi-wn-login-page {
-            position: fixed !important;
-            inset: 0 !important;
+            position: relative !important;
+            min-height: 100vh !important;
+            width: 100% !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             background: #060606 !important;
-            z-index: 9999 !important;
-            overflow: hidden !important;
+            z-index: 10 !important;
+            overflow-x: hidden !important;
             font-family: 'Outfit', sans-serif !important;
+            padding: 2rem 1rem !important;
         }
 
         .fi-wn-login-page::before {
@@ -52,8 +54,8 @@
             position: absolute;
             top: -30%;
             right: -20%;
-            width: 70vw;
-            height: 70vw;
+            width: 100vw;
+            height: 100vw;
             background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, transparent 70%);
             filter: blur(120px);
             z-index: -1;
@@ -74,7 +76,7 @@
         .fi-wn-login-container {
             width: 100%;
             max-width: 420px;
-            padding: 2.5rem;
+            padding: 0;
             position: relative;
             z-index: 10;
             animation: apexFadeUp 0.8s ease-out;
@@ -199,12 +201,44 @@
         }
 
         @media (max-width: 480px) {
-            .fi-wn-login-container {
-                padding: 1.25rem;
+            .fi-wn-login-page {
+                padding: 1.5rem 0.75rem !important;
+            }
+
+            .fi-wn-login-title {
+                font-size: 1.35rem;
+            }
+
+            .fi-wn-login-subtitle {
+                font-size: 0.65rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .fi-wn-login-logo-box {
+                width: 64px !important;
+                height: 64px !important;
+                padding: 14px !important;
+                margin-bottom: 1.5rem !important;
             }
 
             .fi-wn-login-card {
-                padding: 2rem 1.5rem;
+                padding: 1.75rem 1.25rem !important;
+                border-radius: 24px !important;
+            }
+
+            .fi-wn-login-page .fi-fo-field-wrp-label {
+                font-size: 0.6rem !important;
+            }
+
+            .fi-wn-login-page button[type="submit"] {
+                padding: 0.9rem !important;
+                font-size: 0.75rem !important;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .fi-wn-login-title {
+                font-size: 1.15rem;
             }
         }
     </style>

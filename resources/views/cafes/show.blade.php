@@ -50,12 +50,12 @@
 
     <div class="detail-wrapper"
         x-data="cafeDetailComponent({
-                                                                                                                                            id: {{ $cafe->id }},
-                                                                                                                                            images: {{ json_encode($galleryImages) }},
-                                                                                                                                            allCategories: {{ json_encode($allCats) }},
-                                                                                                                                            defaultTab: {{ json_encode($defaultTab) }},
-                                                                                                                                            menuImages: {{ json_encode($activeGalleryImages->map(fn($img) => ['url' => str_starts_with($img['image'], 'http') ? $img['image'] : '/storage/' . $img['image'], 'tag' => $img['tag']])->values()) }}
-                                                                                                                                        })">
+                                                                                                                                                id: {{ $cafe->id }},
+                                                                                                                                                images: {{ json_encode($galleryImages) }},
+                                                                                                                                                allCategories: {{ json_encode($allCats) }},
+                                                                                                                                                defaultTab: {{ json_encode($defaultTab) }},
+                                                                                                                                                menuImages: {{ json_encode($activeGalleryImages->map(fn($img) => ['url' => str_starts_with($img['image'], 'http') ? $img['image'] : '/storage/' . $img['image'], 'tag' => $img['tag']])->values()) }}
+                                                                                                                                            })">
 
         {{-- Hero Skeleton (Shown while image loading) --}}
         <div x-show="!imagesLoaded" class="absolute inset-0 z-50 bg-white">
@@ -120,7 +120,7 @@
         <div class="detail-content-luxury animate-up">
             <div class="mb-6">
                 <h1 class="text-3xl font-black text-[#2C1810] leading-tight mb-2">{{ $cafe->name }}</h1>
-                <div class="flex items-start gap-2 tphp artisan testext-slate-500 font-medium text-sm">
+                <div class="flex items-start gap-2 text-slate-500 font-medium text-sm">
                     <i class="ph-fill ph-map-pin text-amber-600 text-lg mt-0.5"></i>
                     <span>{{ $cafe->address }}</span>
                 </div>
