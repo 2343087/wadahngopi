@@ -4,27 +4,27 @@
 
 .bottom-nav {
     position: fixed;
-    bottom: 24px;
+    bottom: 32px; /* Ditinggikan agar terlihat melayang */
     left: 50%;
     transform: translateX(-50%);
-    width: calc(100% - 32px);
-    max-width: 400px;
-    height: 72px;
+    width: calc(100% - 48px);
+    max-width: 380px; /* Lebih ramping (pil style) */
+    height: 70px;
     background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: blur(16px) saturate(200%);
-    -webkit-backdrop-filter: blur(16px) saturate(200%);
+    backdrop-filter: blur(24px) saturate(200%); /* Blur lebih pekat (premium) */
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 0 12px;
-    border-radius: 36px;
+    padding: 0 16px;
+    border-radius: 40px; /* Lebih bundar full */
     box-shadow:
-        0 20px 50px -12px rgba(26, 15, 10, 0.2),
-        inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
-        inset 0 -1px 0 0 rgba(255, 255, 255, 0.4);
+        0 24px 60px -12px rgba(26, 15, 10, 0.25),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
+        inset 0 -1px 0 0 rgba(255, 255, 255, 0.3);
     z-index: var(--z-nav);
     transition: var(--transition-bounce);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 .nav-item {

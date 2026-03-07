@@ -49,12 +49,14 @@
 
             {{-- Responsive Premium Glass Card --}}
             <main
-                class="fresh-glass flex-1 flex flex-col rounded-[32px] shadow-[0_20px_50px_-10px_rgba(135,100,80,0.1)] relative z-20 animate-fade-up delay-400 border border-white/60 pb-32">
+                class="fresh-glass flex-1 flex flex-col rounded-[40px] shadow-[0_30px_60px_-15px_rgba(135,100,80,0.12)] relative z-20 animate-fade-up delay-400 border border-white/80 pb-36">
 
-                <div class="flex-1 flex flex-col rounded-[32px] px-5 py-5 relative overflow-hidden">
+                <div class="flex-1 flex flex-col rounded-[40px] px-6 py-6 relative overflow-hidden">
                     {{-- Inner Glass Texture --}}
-                    <div class="absolute inset-0 bg-gradient-to-br from-white/90 to-white/40 backdrop-blur-3xl"></div>
-                    <div class="absolute inset-0 bg-noise opacity-[0.012] pointer-events-none"></div>
+                    <div
+                        class="absolute inset-0 bg-gradient-to-br from-white/95 via-white/70 to-white/40 backdrop-blur-[40px]">
+                    </div>
+                    <div class="absolute inset-0 bg-noise opacity-[0.015] pointer-events-none"></div>
 
                     {{-- Section Header --}}
                     <div class="flex items-start gap-3.5 mb-5 relative z-10">
@@ -110,10 +112,10 @@
                     </div>
 
                     {{-- Vibrant CTA Stack --}}
-                    <div class="flex flex-col gap-2 relative z-10 mb-5">
+                    <div class="flex flex-col gap-3 relative z-10 mb-6">
                         {{-- Explore --}}
                         <a href="{{ route('explore') }}"
-                            class="group flex items-center gap-3 p-3 rounded-[20px] bg-amber-500 shadow-[0_8px_16px_-4px_rgba(245,158,11,0.25)] hover:bg-amber-400 transition-all duration-300 active:scale-[0.98]">
+                            class="group flex items-center gap-3.5 p-3.5 rounded-[24px] bg-gradient-to-br from-amber-400 to-amber-500 shadow-[0_12px_24px_-6px_rgba(245,158,11,0.35)] hover:shadow-[0_16px_32px_-6px_rgba(245,158,11,0.45)] transition-all duration-400 active:scale-[0.97] ring-1 ring-amber-300/50">
                             <div
                                 class="w-10 h-10 rounded-[12px] flex items-center justify-center text-[1.1rem] shrink-0 bg-white shadow-sm text-amber-600 transition-transform group-hover:scale-105">
                                 <i class="ph-bold ph-compass"></i>
@@ -154,17 +156,17 @@
                     </div>
 
                     {{-- Clean Partner Portal --}}
-                    <div class="mt-auto pt-4 border-t border-black/5 relative z-10">
+                    <div class="mt-auto pt-5 border-t border-black/5 relative z-10">
                         <p
-                            class="text-[0.48rem] font-black text-[#2A1C15]/45 tracking-[0.25em] text-center mb-3.5 uppercase leading-relaxed">
+                            class="text-[0.5rem] font-black text-[#140C08]/50 tracking-[0.25em] text-center mb-4 uppercase leading-relaxed">
                             MASUK DAN DAFTAR CAFE SERTA ROASTERY ANDA SEKARANG JUGA</p>
-                        <div class="grid grid-cols-2 gap-2.5">
+                        <div class="grid grid-cols-2 gap-3">
                             <a href="/admin/login"
-                                class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-[14px] bg-black/5 border border-transparent hover:bg-black/10 transition-all text-[#2A1C15] font-bold text-[0.7rem]">
+                                class="flex items-center justify-center gap-2 px-4 py-3 rounded-[16px] bg-black/5 border border-transparent hover:bg-black/10 transition-all text-[#140C08] font-bold text-[0.75rem]">
                                 Masuk
                             </a>
                             <a href="/admin/register"
-                                class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-[14px] bg-[#2A1C15] hover:opacity-90 transition-all text-white font-black text-[0.7rem] shadow-sm">
+                                class="flex items-center justify-center gap-2 px-4 py-3 rounded-[16px] bg-gradient-to-b from-[#2A1C15] to-[#140C08] hover:opacity-95 transition-all text-white font-black text-[0.75rem] shadow-[0_8px_16px_-4px_rgba(20,12,8,0.3)] ring-1 ring-white/10">
                                 Daftar
                             </a>
                         </div>

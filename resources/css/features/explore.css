@@ -15,25 +15,27 @@
     z-index: var(--z-sticky);
     padding: 32px 20px 12px;
     background: #FFFDFB;
-    border-radius: 0 0 32px 32px;
+    border-radius: 0 0 36px 36px;
+    /* Lebih membulat */
     overflow: visible;
-    box-shadow: 0 4px 20px rgba(26, 15, 10, 0.05);
-    transition: padding 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
-    will-change: padding, background, box-shadow;
+    box-shadow: 0 8px 32px rgba(20, 12, 8, 0.04);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Transisi sangat elegan */
+    will-change: padding, background, box-shadow, transform;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
 .explore-hero-2026.is-compact {
-    padding-top: 35px;
-    padding-bottom: 12px;
-    gap: 4px;
-    background: rgba(255, 253, 251, 0.98);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(111, 78, 55, 0.1);
-    box-shadow: 0 10px 40px rgba(26, 15, 10, 0.12);
+    padding-top: 36px;
+    padding-bottom: 20px;
+    gap: 6px;
+    background: rgba(255, 253, 251, 0.95);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 16px 40px -12px rgba(20, 12, 8, 0.12);
 }
 
 /* Spacers */
@@ -156,16 +158,17 @@
     gap: 12px;
     background: white;
     padding: 10px 16px;
-    border-radius: 20px;
-    box-shadow: 0 4px 24px rgba(26, 15, 10, 0.08), inset 0 0 0 1px rgba(26, 15, 10, 0.03);
+    border-radius: 24px;
+    /* Squircle bulat */
+    box-shadow: 0 8px 24px rgba(20, 12, 8, 0.05), inset 0 0 0 1px rgba(20, 12, 8, 0.04);
     position: relative;
     z-index: var(--z-search);
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .explore-search-2026:focus-within {
     transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(26, 15, 10, 0.12), inset 0 0 0 2px var(--color-amber);
+    box-shadow: 0 12px 32px rgba(20, 12, 8, 0.1), inset 0 0 0 2px var(--color-amber);
 }
 
 .search-icon-pulse {

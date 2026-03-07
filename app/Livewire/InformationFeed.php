@@ -15,7 +15,7 @@ class InformationFeed extends Component
 
     public function setCategory(string $category): void
     {
-        if (! in_array($category, ['Semua', 'Berita', 'Edukasi', 'Lomba', 'Promo'])) {
+        if (!in_array($category, ['Semua', 'Berita', 'Edukasi', 'Lomba', 'Promo'])) {
             return;
         }
 
@@ -29,7 +29,7 @@ class InformationFeed extends Component
         return Cache::remember(
             'info_feed_popular',
             now()->addMinutes(5),
-            fn () => Information::where('is_published', true)
+            fn() => Information::where('is_published', true)
                 ->select(['id', 'title', 'slug', 'image_path', 'published_at', 'views', 'category', 'created_at'])
                 ->orderBy('views', 'desc')
                 ->take(5)
@@ -41,7 +41,8 @@ class InformationFeed extends Component
 
     public function loadMore(): void
     {
-        if ($this->perPage >= 100) {
+        // Proteksi batas atas Memory Payload maximum 50 data untuk frontend livewire.
+        if ($this->perPage >= 50) {
             return;
         }
         $this->perPage += 10;

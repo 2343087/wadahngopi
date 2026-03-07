@@ -17,12 +17,14 @@ class InformationController extends Controller
     {
         abort_unless($information->is_published, 404);
 
-        // Rate-limited view counter: 1 increment per article per session
-        // Uses cache-based batching to avoid per-request DB writes
-        $sessionKey = "info_viewed_{$information->id}";
-        if (! session()->has($sessionKey)) {
+        // Absolute Secure Rate-limited view counter: 1 increment per article per minute/IP
+        $clientIp = request()->ip();
+        $rateLimitKey = "info_view_{$information->id}_{$clientIp}";
+
+        // Hanya tambah view 1x tiap menit untuk IP yang sama. 
+        if (!\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($rateLimitKey, 1)) {
             Cache::increment("info_views:{$information->id}");
-            session()->put($sessionKey, true);
+            \Illuminate\Support\Facades\RateLimiter::hit($rateLimitKey, 60); // Cooldown 1 menit
         }
 
         return view('information.show', compact('information'));

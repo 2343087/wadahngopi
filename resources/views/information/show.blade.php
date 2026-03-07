@@ -4,29 +4,29 @@
 
 @section('content')
     <div x-data="{ 
-                                scrolled: 0,
-                                progress: 0,
-                                init() {
-                                    window.addEventListener('scroll', () => {
-                                        let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-                                        let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                                        this.progress = (winScroll / height) * 100;
-                                        this.scrolled = winScroll;
-                                    });
-                                },
-                                share() {
-                                    if (navigator.share) {
-                                        navigator.share({
-                                            title: '{{ addslashes($information->title) }}',
-                                            text: '{{ addslashes($information->summary ?? "Baca berita terbaru tentang kopi di WadahNgopi!") }}',
-                                            url: window.location.href,
-                                        }).catch(console.error);
-                                    } else {
-                                        navigator.clipboard.writeText(window.location.href);
-                                        alert('Link disalin ke clipboard!');
+                                    scrolled: 0,
+                                    progress: 0,
+                                    init() {
+                                        window.addEventListener('scroll', () => {
+                                            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                                            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                                            this.progress = (winScroll / height) * 100;
+                                            this.scrolled = winScroll;
+                                        });
+                                    },
+                                    share() {
+                                        if (navigator.share) {
+                                            navigator.share({
+                                                title: '{{ addslashes($information->title) }}',
+                                                text: '{{ addslashes($information->summary ?? "Baca berita terbaru tentang kopi di WadahNgopi!") }}',
+                                                url: window.location.href,
+                                            }).catch(console.error);
+                                        } else {
+                                            navigator.clipboard.writeText(window.location.href);
+                                            alert('Link disalin ke clipboard!');
+                                        }
                                     }
-                                }
-                            }" class="min-h-screen bg-white pb-40 font-['Plus_Jakarta_Sans'] antialiased">
+                                }" class="min-h-screen bg-white pb-40 font-['Plus_Jakarta_Sans'] antialiased">
 
         {{-- Top Reading Bar --}}
         <div class="fixed top-0 left-0 w-full h-[3px] z-[70] pointer-events-none">
@@ -57,28 +57,27 @@
 
                 {{-- 3. Main Title --}}
                 <h1
-                    class="text-2xl md:text-4xl font-black text-[--color-espresso] leading-[1.2] tracking-tight mb-6 break-words">
+                    class="text-2xl md:text-[2.5rem] font-black text-[#140C08] leading-[1.15] tracking-tight mb-5 break-words">
                     {{ $information->title }}
                 </h1>
 
                 {{-- 4. Meta Data (Date, Author & Views) --}}
-                <div class="flex items-center gap-4 mb-10 pb-6 border-b border-slate-50">
+                <div class="flex items-center gap-4 mb-8 pb-6 border-b border-black/5">
                     <div
-                        class="w-12 h-12 rounded-2xl bg-[--color-espresso]/5 flex items-center justify-center text-[--color-espresso] shadow-inner">
+                        class="w-12 h-12 rounded-[16px] bg-[#140C08]/5 flex items-center justify-center text-[#140C08] shadow-inner">
                         <i class="ph-fill ph-user-circle text-3xl opacity-80"></i>
                     </div>
                     <div class="flex flex-col flex-1">
                         <div class="flex items-center justify-between">
-                            <span class="text-[--color-espresso] text-[0.85rem] font-black">Tim WadahNgopi</span>
-                            <div
-                                class="flex items-center gap-1.5 px-3 py-1 bg-slate-50 rounded-full border border-slate-100">
+                            <span class="text-[#140C08] text-[0.85rem] font-black">Tim WadahNgopi</span>
+                            <div class="flex items-center gap-1.5 px-3 py-1 bg-black/5 rounded-full border border-black/5">
                                 <i class="ph-bold ph-eye text-[--color-amber] text-xs"></i>
                                 <span
-                                    class="text-[0.65rem] font-black text-slate-500 uppercase tracking-tighter">{{ number_format($information->views) }}
+                                    class="text-[0.65rem] font-black text-[#140C08]/60 uppercase tracking-widest">{{ number_format($information->views) }}
                                     Views</span>
                             </div>
                         </div>
-                        <time class="text-slate-400 text-[0.65rem] font-bold uppercase tracking-[0.15em] mt-0.5">
+                        <time class="text-[#140C08]/40 text-[0.65rem] font-black uppercase tracking-[0.2em] mt-0.5">
                             {{ $information->published_at?->format('d M Y') ?? $information->created_at->format('d M Y') }}
                         </time>
                     </div>
@@ -86,13 +85,13 @@
 
                 {{-- 5. Main Image (Premium Blur + Contain) --}}
                 <div
-                    class="mb-12 relative w-full aspect-video md:aspect-[21/10] rounded-[32px] overflow-hidden shadow-2xl shadow-black/5 border border-slate-100 bg-[#F5EFED] isolate">
+                    class="mb-10 relative w-full aspect-[4/3] md:aspect-[21/10] rounded-[32px] overflow-hidden shadow-[0_24px_60px_-12px_rgba(20,12,8,0.12)] border border-[#140C08]/5 bg-[#F8F7F5] isolate">
                     @php
                         $imageSrc = $information->image_path && str_starts_with($information->image_path, 'http') ? $information->image_path : ($information->image_path ? Storage::url($information->image_path) : 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=1200');
                     @endphp
 
                     {{-- 1. Blurred Background (Fill Space) --}}
-                    <div class="absolute inset-0 bg-cover bg-center blur-2xl scale-110 opacity-60"
+                    <div class="absolute inset-0 bg-cover bg-center blur-[40px] scale-125 opacity-40 saturate-150"
                         style="background-image: url('{{ $imageSrc }}');">
                     </div>
 
@@ -101,7 +100,8 @@
                         alt="{{ $information->title }}">
 
                     {{-- 3. Subtle Overlay --}}
-                    <div class="absolute inset-0 bg-black/5 z-20 pointer-events-none"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-20 pointer-events-none">
+                    </div>
                 </div>
 
                 {{-- 6. Executive Summary --}}
@@ -129,20 +129,20 @@
         .prose-news {
             color: #2C1810;
             font-size: 1.05rem;
-            line-height: 1.75;
+            line-height: 1.8;
+            font-weight: 500;
         }
 
         .prose-news p {
-            margin-bottom: 1.5rem;
-            font-weight: 500;
+            margin-bottom: 1.75rem;
         }
 
         .prose-news h2 {
             font-weight: 900;
-            color: var(--color-espresso);
-            font-size: 1.5rem;
-            margin-top: 3rem;
-            margin-bottom: 1rem;
+            color: #140C08;
+            font-size: 1.6rem;
+            margin-top: 3.5rem;
+            margin-bottom: 1.25rem;
             letter-spacing: -0.02em;
         }
 

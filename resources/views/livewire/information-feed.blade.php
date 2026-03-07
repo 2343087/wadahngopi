@@ -82,7 +82,7 @@
                             class="group flex-shrink-0 snap-center relative transition-transform active:scale-95">
                             {{-- Premium Vertical Card --}}
                             <div
-                                class="w-[280px] aspect-[4/3] rounded-[24px] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.08)] relative isolate border border-white/50 bg-[#F5EFED] group-hover:shadow-[0_20px_40px_rgb(0,0,0,0.12)] transition-shadow duration-500">
+                                class="w-[280px] aspect-[4/3] rounded-[32px] overflow-hidden shadow-[0_12px_40px_0_rgba(20,12,8,0.06)] relative isolate border border-white/60 bg-[#F5EFED] group-hover:shadow-[0_24px_60px_-12px_rgba(20,12,8,0.12)] transition-shadow duration-500">
 
                                 {{-- Image --}}
                                 @php
@@ -153,16 +153,16 @@
             <div class="flex flex-col gap-4">
                 @forelse($informations as $info)
                     <a href="{{ route('information.show', $info) }}"
-                        class="group relative flex gap-4 p-3 bg-white hover:bg-white rounded-[24px] border border-[#1a0f0a]/5 shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-300 active:scale-[0.99] overflow-hidden">
+                        class="group relative flex gap-4 p-3.5 bg-white hover:bg-white rounded-[28px] border border-black/5 shadow-[0_4px_12px_rgba(20,12,8,0.03)] hover:shadow-[0_16px_40px_-12px_rgba(20,12,8,0.08)] transition-all duration-400 active:scale-[0.98] overflow-hidden">
 
                         {{-- Hover Effect Glow --}}
                         <div
-                            class="absolute inset-0 bg-gradient-to-r from-[#F59E0B]/0 via-[#F59E0B]/5 to-[#F59E0B]/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000">
+                            class="absolute inset-0 bg-gradient-to-r from-amber-400/0 via-amber-400/5 to-amber-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 pointer-events-none">
                         </div>
 
                         {{-- Thumbnail --}}
                         <div
-                            class="w-[100px] h-[100px] shrink-0 rounded-[20px] overflow-hidden bg-gray-100 relative shadow-inner isolate">
+                            class="w-[110px] h-[110px] shrink-0 rounded-[20px] overflow-hidden bg-[#F5EFED] relative shadow-inner isolate">
                             @php
                                 $thumb = $info->image_path ? (str_starts_with($info->image_path, 'http') ? $info->image_path : Storage::url($info->image_path)) : null;
                             @endphp

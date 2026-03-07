@@ -6,23 +6,27 @@
     --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
 
     /* Brand Colors */
-    --color-espresso: #1A0F0A;
+    --color-espresso: #140C08;
+    /* Lebih pekat, elegan */
     --color-coffee: #7F5539;
     --color-coffee-dark: #2C1810;
     --color-coffee-light: #B08968;
     --color-cream: #FFFDFB;
     --color-cream-dark: #F5EFED;
     --color-amber: #F59E0B;
+    /* Golden Amber */
 
     /* Text */
     --color-text: #1F1815;
     --color-text-muted: #8D7B70;
 
-    /* Shadow System (single source) */
-    --shadow-soft: 0 4px 12px rgba(26, 15, 10, 0.04), 0 2px 4px rgba(26, 15, 10, 0.02);
-    --shadow-premium: 0 20px 50px -12px rgba(26, 15, 10, 0.15), 0 10px 20px -5px rgba(26, 15, 10, 0.1);
-    --shadow-glass: 0 8px 32px 0 rgba(26, 15, 10, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.4);
-    --glow-amber: 0 0 20px rgba(245, 158, 11, 0.3);
+    /* Shadow System (single source) - Lebih soft ala iOS */
+    --shadow-soft: 0 4px 12px rgba(20, 12, 8, 0.03), 0 2px 4px rgba(20, 12, 8, 0.01);
+    --shadow-premium: 0 24px 60px -12px rgba(20, 12, 8, 0.12), 0 10px 20px -5px rgba(20, 12, 8, 0.08);
+    /* Lebih menyebar, elegan */
+    --shadow-glass: 0 12px 40px 0 rgba(20, 12, 8, 0.06), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+    /* Glass reflection lebih jernih */
+    --glow-amber: 0 0 24px rgba(245, 158, 11, 0.35);
 
     /* Motion */
     --transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);

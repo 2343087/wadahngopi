@@ -24,14 +24,18 @@ class CafeRoulette extends Component
      */
     public function spin(): void
     {
-        // Server-side rate limit: 2 second cooldown
-        $now = now()->timestamp;
-        if ($now - $this->lastSpinAt < 2) {
-            $this->addError('spin', 'Sabar ya, tunggu sebentar sebelum spin lagi!');
+        // Server-side absolutely strict rate limit via Facade (mencegah bypass state browser)
+        $rateLimitKey = 'roulette_spin:' . request()->ip();
 
+        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($rateLimitKey, 1)) {
+            $this->addError('spin', 'Sabar ya, sistem terlalu sibuk. Tunggu sebentar!');
             return;
         }
-        $this->lastSpinAt = $now;
+
+        // Atur cooldown 2 detik
+        \Illuminate\Support\Facades\RateLimiter::hit($rateLimitKey, 2);
+
+        $this->lastSpinAt = now()->timestamp;
 
         $searchService = app(CafeSearchService::class);
 
