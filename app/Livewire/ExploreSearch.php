@@ -52,6 +52,7 @@ class ExploreSearch extends Component
     {
         $this->validate(['search' => 'max:100']);
         $this->perPage = 12;
+        $this->sort = 'relevance'; // Reset sort for better search UX
         $this->resetPage();
     }
 

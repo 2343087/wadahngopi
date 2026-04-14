@@ -18,9 +18,10 @@
                     <img src="{{ asset('wadahngopi.png') }}" alt="Logo">
                 </div>
                 <div class="flex flex-col">
-                    <h1 class="explore-brand">Wadah<span>Ngopi</span></h1>
-                    <p class="explore-tagline">JELAJAHI KOPI FAVORITMU</p>
+                    <h1 class="explore-brand font-heading tracking-premium">Wadah<span class="text-shimmer">Ngopi</span></h1>
+                    <p class="explore-tagline text-premium-label">Jelajahi Kopi Favoritmu</p>
                 </div>
+
             </div>
         </div>
 
@@ -126,11 +127,12 @@
                 </button>
                 @foreach($cities as $city)
                     <button wire:click="$set('cityId', '{{ $city['id'] }}')" wire:loading.attr="disabled"
-                        class="city-pill {{ $cityId == $city['id'] ? 'active' : '' }} disabled:opacity-50">
+                        class="city-pill {{ (string)$cityId === (string)$city['id'] ? 'active' : '' }} disabled:opacity-50">
                         <span wire:loading.remove wire:target="$set('cityId', '{{ $city['id'] }}')">{{ $city['name'] }}</span>
                         <span wire:loading wire:target="$set('cityId', '{{ $city['id'] }}')"><i class="ph-bold ph-spinner animate-spin"></i></span>
                     </button>
                 @endforeach
+
             </div>
         </div>
 
@@ -239,18 +241,17 @@
 
                 {{-- Card Content --}}
                 <div class="cafe-card-content">
-                    <h3 class="cafe-card-title">{{ $cafe->name }}</h3>
-                    <p class="cafe-card-address">
-                        <i class="ph-fill ph-map-pin"></i>
+                    <h3 class="cafe-card-title font-heading tracking-premium">{{ $cafe->name }}</h3>
+                    <p class="cafe-card-address font-medium">
+                        <i class="ph-fill ph-map-pin text-amber-500"></i>
                         <span class="drop-shadow-sm">{{ $cafe->address }}</span>    
                     </p>
-
-                    {{-- Facilities Tags --}}
+                    
                     @if($cafe->facilities->isNotEmpty())
                         <div class="cafe-card-tags">
                             @foreach($cafe->facilities->take(3) as $facility)
-                                <span class="cafe-tag">
-                                    {{ Str::limit($facility->name, 10) }}
+                                <span class="cafe-tag text-[0.6rem] font-black uppercase tracking-widest bg-cream-dark/50">
+                                    {{ Str::limit($facility->name, 12) }}
                                 </span>
                             @endforeach
                             @if($cafe->facilities->count() > 3)
@@ -258,10 +259,10 @@
                             @endif
                         </div>
                     @else 
-                        {{-- Placeholder separation if no facilities --}}
                         <div class="mt-auto"></div> 
                     @endif
                 </div>
+
 
                 {{-- Hover Shine Effect --}}
                 <div class="card-shine"></div>

@@ -195,10 +195,12 @@ class CafeSearchService
             // Cross-day logic: Open 22:00, Close 02:00
             // Current time 01:00 is VALID (<= 02:00)
             // Current time 23:00 is VALID (>= 22:00)
-            return ($now >= $open && $now <= '23:59:59') || ($now >= '00:00:00' && $now < $close);
+            return ($now >= $open && $now <= '23:59:59') || ($now >= '00:00:00' && $now <= $close);
         }
 
         // Standard case (Open 08:00, Close 22:00)
-        return $now >= $open && $now < $close;
+        // Match MySQL BETWEEN behavior (inclusive)
+        return $now >= $open && $now <= $close;
+
     }
 }

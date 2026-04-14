@@ -18,11 +18,12 @@
 /* --- 2. Reset & Base Layout --- */
 @import "./base/reset.css";
 
-/* --- 3. Typography --- */
+/* --- 3. Keyframes (load early for animations) --- */
+@import "./animations/keyframes.css";
+
+/* --- 4. Typography --- */
 @import "./base/typography.css";
 
-/* --- 4. Keyframes (must load before classes that use them) --- */
-@import "./animations/keyframes.css";
 
 /* --- 5. Effects (reusable utilities) --- */
 @import "./effects/glass.css";

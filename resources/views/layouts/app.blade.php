@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
+
 <head>
+    <script>document.documentElement.classList.add('js-active')</script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#6F4E37">
@@ -42,9 +44,8 @@
     <!-- Fonts - Modern & Premium -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
 
     <!-- Icons - Phosphor & Bootstrap (Original Set) -->
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
@@ -326,7 +327,44 @@
             });
         })();
     </script>
+    {{-- Premium Reveal System (Handles .card-stagger visibility) --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        // Add visible class with a small stagger delay if multiple items reveal at once
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, 50 * (index % 10)); 
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const observeElements = () => {
+                document.querySelectorAll('.card-stagger:not(.visible)').forEach(el => observer.observe(el));
+            };
+
+            // Initial observe
+            observeElements();
+
+            // Re-observe after Livewire updates or navigation
+            document.addEventListener('livewire:navigated', observeElements);
+            document.addEventListener('livewire:initialized', observeElements);
+            
+            // Hook into Livewire request finished to handle dynamic loading (like "Load More")
+            window.addEventListener('livewire:load', observeElements);
+            document.addEventListener('livewire:update', observeElements);
+        });
+    </script>
     @stack('scripts')
+
 </body>
 
 </html>

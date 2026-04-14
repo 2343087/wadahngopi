@@ -43,7 +43,8 @@ class CafeResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->placeholder('Contoh: Kopi Malem Jumat')
-                            ->label('Nama Cafe'),
+                            ->label('Nama Cafe')
+                            ->readOnly(fn () => auth()->user()?->role === 'admin'),
 
                         Forms\Components\Select::make('city_id')
                             ->relationship('city', 'name')
@@ -51,11 +52,13 @@ class CafeResource extends Resource
                             ->preload()
                             ->label('Kota Lokasi')
                             ->placeholder('Pilih kota...')
-                            ->required(),
+                            ->required()
+                            ->disabled(fn () => auth()->user()?->role === 'admin')
+                            ->dehydrated(),
                     ])
                     ->columns(2),
 
-                // SECTION 2: ADMIN ONLY CONTROLS
+                // SECTION 2: ADMIN/DEV CONTROLS
                 Forms\Components\Section::make('Kendali Admin 🛠️')
                     ->description('Hanya tim internal yang bisa otir-atik bagian ini.')
                     ->schema([
@@ -75,12 +78,22 @@ class CafeResource extends Resource
                             ])
                             ->label('Status Sekarang')
                             ->default('draft')
-                            ->required(),
+                            ->required()
+                            ->visible(fn () => auth()->user()?->role === 'developer'),
+                        
+                        Forms\Components\Select::make('status')
+                            ->options([
+                                'review' => 'Minta Approval Admin',
+                                'published' => 'Langsung Tayangin!',
+                            ])
+                            ->label('Mau Diapain?')
+                            ->required()
+                            ->visible(fn () => auth()->user()?->role === 'admin'),
                     ])
                     ->columns(2)
-                    ->visible(fn () => auth()->user()?->role === 'developer'),
+                    ->visible(fn () => in_array(auth()->user()?->role, ['developer', 'admin'])),
 
-                // SECTION: OWNER CONTENT (Content) - Hidden from Admin
+                // SECTION: MAIN CONTENT
                 Forms\Components\Section::make('Detail Kece Cafe Kamu ✨')
                     ->description('Isi semua info biar orang-orang pada mampir!')
                     ->schema([
@@ -96,10 +109,7 @@ class CafeResource extends Resource
                                             ->visibility('public')
                                             ->label('Upload Foto Menu')
                                             ->required()
-                                            // ->imageResizeMode('cover')
-                                            // ->imageResizeTargetWidth('1280')
-                                            // ->imageResizeTargetHeight('1920')
-                                            ->maxSize(5120) // 5MB Limit
+                                            ->maxSize(5120)
                                             ->columnSpan(2),
                                         Forms\Components\TextInput::make('tag')
                                             ->label('Kategori')
@@ -117,21 +127,8 @@ class CafeResource extends Resource
                                     ->columnSpanFull(),
                             ]),
 
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->maxLength(255)
-                            ->readOnly()
-                            ->label('Nama Cafe'),
-
-                        Forms\Components\Select::make('status')
-                            ->options([
-                                'review' => 'Minta Approval Admin',
-                                'published' => 'Langsung Tayangin!',
-                            ])
-                            ->label('Mau Diapain?')
-                            ->visible(fn () => auth()->user()?->role === 'developer'),
-
                         Forms\Components\RichEditor::make('description')
+
                             ->label('Tentang Cafe Kamu')
                             ->placeholder('Ceritain dong apa yang bikin cafe kamu spesial...')
                             ->fileAttachmentsDirectory('cafes/description-images')
