@@ -409,18 +409,75 @@ wadahngopi/
 
 ---
 
-## 🤝 Kontribusi
+## 👑 Tim Pengembang (The Core Team)
 
-Tertarik ikut mengembangkan WadahNgopi? Fork repo ini dan submit Pull Request. Pastikan:
-1. Semua test tetap **pass** (`php artisan test`)
-2. Tidak merusak UI/UX yang sudah ada
-3. Ikuti coding standard project (PSR-12)
+WadahNgopi dikembangkan oleh tim engineer yang berfokus pada kualitas kode tingkat tinggi, keamanan, dan estetika premium.
+
+<table align="center">
+  <tr>
+    <td align="center" width="200">
+      <a href="https://github.com/2343087">
+        <img src="https://github.com/2343087.png" width="100" style="border-radius:24px;" alt="Chomelius Delon">
+        <br />
+        <strong>Chomelius Delon</strong>
+      </a>
+      <br />
+      <em>Lead Architect<br />& Apex Engineer</em>
+    </td>
+    <td align="center" width="200">
+      <a href="https://github.com/RisyalPramudititia">
+        <img src="https://github.com/RisyalPramudititia.png" width="100" style="border-radius:24px;" alt="Ricol">
+        <br />
+        <strong>RisyalPramudititi Ricol</strong>
+      </a>
+      <br />
+      <em>Core Contributor<br />& Feature Engineer</em>
+    </td>
+  </tr>
+</table>
+
+### 💎 Filosofi Engineering: "New Apex Protocol"
+Projek ini mengikuti standar **Antigravity AI New Apex Protocol**, yang menitikberatkan pada:
+- **Zero Assumption**: Setiap baris kode didasarkan pada data dan audit sistem yang mendalam.
+- **Security Fortress**: CSP ketat, proteksi IDOR, dan validasi input yang tak tereksploitasi.
+- **Root Cause Obsession**: Kami tidak menambal gejala, kami mencabut akar masalah.
+- **Premium Aesthetics**: UI yang dibangun dengan prinsip kenyamanan, kemewahan, dan responsivitas.
+
+---
+
+## 🤝 Kontribusi & Kolaborasi
+
+WadahNgopi adalah projek **Open Source (Proprietary Powered)**. Jika Anda tertarik untuk berkolaborasi atau menggunakan teknologi kami untuk riset:
+1.  **Fork** repository ini.
+2.  Pastikan semua test tetap **PASS** (`php artisan test`).
+3.  Kirim **Pull Request (PR)** dengan deskripsi perubahan yang jelas.
+
+---
+
+## 📂 Struktur Project (Apex Minimalist)
+
+```
+wadahngopi/
+├── app/
+│   ├── Filament/Resources/   # Admin Panel Level Dewa
+│   ├── Http/Middleware/      # Security Fortress (CSP, Headers)
+│   ├── Livewire/             # SPA Logic (Tanpa React/Vue overhead)
+│   ├── Models/               # Data Core with Observers Sync
+│   └── Services/             # Specialized Logic (Search Engine)
+├── resources/
+│   ├── css/                  # Modular Architecture (Tokens, Typography, Anims)
+│   └── views/
+│       ├── layouts/          # Premium App Shell
+│       └── livewire/         # Reactive UI Patterns
+├── tests/                    # 198+ Automated Tests (Pest v4)
+└── public/                   # Production Assets (Vite Built)
+```
 
 ---
 
 ## 📄 Lisensi
 
-Project ini bersifat **proprietary** — hak milik AK Kreatif. Untuk penggunaan komersial atau kolaborasi, hubungi developer.
+Project ini dikelola dan dimiliki oleh **AK Kreatif**. Penggunaan komersial harus mendapatkan izin tertulis dari tim pengembang.
 
 ---
 
@@ -429,3 +486,4 @@ Project ini bersifat **proprietary** — hak milik AK Kreatif. Untuk penggunaan 
   <em>Diseduh dengan ❤️ dan baris kode presisi dari Kalimantan.</em><br><br>
   <code>☕ brew(); code(); repeat();</code>
 </p>
+
