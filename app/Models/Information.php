@@ -40,4 +40,18 @@ class Information extends Model
             set: fn (string $value) => clean($value),
         );
     }
+
+    /**
+     * Get a clean short summary for preview.
+     */
+    protected function shortContent(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $text = strip_tags($this->content);
+                $text = preg_replace('/\s+/', ' ', $text); // Remove multiple spaces/newlines
+                return \Illuminate\Support\Str::limit(trim($text), 100);
+            }
+        );
+    }
 }

@@ -50,15 +50,17 @@ class InformationFeed extends Component
 
     public function render()
     {
-        $query = Information::where('is_published', true)
-            ->select(['id', 'title', 'slug', 'image_path', 'published_at', 'views', 'category', 'created_at']);
+        $query = Information::query()
+            ->where('is_published', true)
+            ->select(['id', 'title', 'slug', 'image_path', 'published_at', 'views', 'category', 'created_at', 'content']);
 
         if ($this->activeCategory !== 'Semua') {
             $query->where('category', $this->activeCategory);
         }
 
         $informations = $query->latest('published_at')
-            ->paginate($this->perPage);
+            ->limit($this->perPage)
+            ->get();
 
         return view('livewire.information-feed', [
             'informations' => $informations,

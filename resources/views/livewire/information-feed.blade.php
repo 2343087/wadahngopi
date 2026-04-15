@@ -124,7 +124,7 @@
                                         {{ $info->title }}
                                     </h3>
                                     <p class="text-white/70 text-xs font-medium line-clamp-1">
-                                        {{ Str::limit(strip_tags($info->content), 50) }}
+                                        {{ $info->short_content }}
                                     </p>
                                 </div>
                             </div>
@@ -244,21 +244,19 @@
                 @endforelse
             </div>
 
-            {{-- Load More Section --}}
-            @if($informations->hasMorePages())
-                <div class="w-full py-8 flex flex-col items-center gap-4" wire:key="load-more-info-{{ $perPage ?? 10 }}">
-                    <div wire:loading wire:target="loadMore" class="flex flex-col items-center gap-3">
+            {{-- Load More Section (Infinite Scroll) --}}
+            @php
+                $hasMore = $informations->count() >= $perPage && $perPage < 50;
+            @endphp
+            
+            @if($hasMore)
+                <div x-intersect.margin.500px="$wire.loadMore()" class="w-full py-12 flex flex-col items-center gap-4">
+                    <div class="flex flex-col items-center gap-3">
                         <div class="loading-more-spinner"></div>
-                        <span
-                            class="text-[0.6rem] font-black text-[#8B7355]/60 uppercase tracking-widest animate-pulse">Memuat
-                            artikel...</span>
+                        <span class="text-[0.6rem] font-black text-[#8B7355]/60 uppercase tracking-widest animate-pulse">
+                            Menyeduh artikel baru...
+                        </span>
                     </div>
-                    <button wire:click="loadMore" wire:loading.remove wire:target="loadMore"
-                        class="px-6 py-2.5 bg-espresso/10 hover:bg-espresso/20 text-espresso font-bold text-xs rounded-full transition-all active:scale-95 flex items-center gap-2"
-                        aria-label="Muat lebih banyak artikel">
-                        <i class="ph-bold ph-arrow-down"></i>
-                        Muat Lagi
-                    </button>
                 </div>
             @else
                 @if($informations->count() > 0)
@@ -266,7 +264,7 @@
                         <div class="end-of-results bg-amber-50/50 border border-amber-100 flex flex-col gap-2 p-6 rounded-3xl">
                             <div class="flex items-center gap-2 justify-center">
                                 <i class="ph-fill ph-check-circle text-amber-500 text-xl"></i>
-                                <span class="text-espresso font-black">Semua artikel sudah ditampilkan</span>
+                                <span class="text-espresso font-black">Kamu sudah mencapai batas akhir ☕</span>
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,5 @@
 {{-- Livewire Saved Items Component --}}
-<div wire:poll.30s="loadItems" x-data="savedItemsLogic()" x-init="initFromStorage()" class="min-h-screen">
-    <div x-effect="$wire.updateIds(savedCafeIds, savedRoasteryIds)"></div>
+<div wire:poll.30s="loadItems" x-data="savedItemsLogic()" x-init="initFromStorage($wire)" class="min-h-screen">
 
     {{-- Skeleton Loading --}}
     <div wire:loading class="space-y-4 pb-32">
@@ -161,8 +160,10 @@
         savedRoasteryIds: [],
         showDeleteModal: false,
         itemToDelete: null,
+        $wire: null,
 
-        initFromStorage() {
+        initFromStorage(wireInstance) {
+            this.$wire = wireInstance;
             try {
                 // Read Cafes
                 const storedCafes = localStorage.getItem('wadah-bookmarks');
@@ -171,9 +172,18 @@
                 // Read Roasteries
                 const storedRoasteries = localStorage.getItem('wadah-roastery-bookmarks');
                 this.savedRoasteryIds = storedRoasteries ? JSON.parse(storedRoasteries) : [];
+                
+                // Initial Sync to Livewire
+                this.syncToLivewire();
             } catch (e) {
                 this.savedCafeIds = [];
                 this.savedRoasteryIds = [];
+            }
+        },
+
+        syncToLivewire() {
+            if (this.$wire) {
+                this.$wire.updateIds(this.savedCafeIds, this.savedRoasteryIds);
             }
         },
 
@@ -192,6 +202,9 @@
                 this.savedRoasteryIds = this.savedRoasteryIds.filter(i => i != this.itemToDelete.id);
                 localStorage.setItem('wadah-roastery-bookmarks', JSON.stringify(this.savedRoasteryIds));
             }
+
+            // Sync after delete
+            this.syncToLivewire();
 
             // Haptic feedback
             if (navigator.vibrate) navigator.vibrate(50);
