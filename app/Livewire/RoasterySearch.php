@@ -204,9 +204,14 @@ class RoasterySearch extends Component
             }
         }
 
-        // Use LengthAwarePaginator for seamless infinite scroll
+        // 5. Final Result Paginator & Binary Cleanse
+        // CRITICAL: Strip location field before Livewire serialization
+        $results = $query->limit($this->perPage)->get()->each(function ($roastery) {
+            unset($roastery->location);
+        });
+
         $roasteries = new \Illuminate\Pagination\LengthAwarePaginator(
-            $query->limit($this->perPage)->get(),
+            $results,
             $totalResults,
             $this->perPage,
             1,

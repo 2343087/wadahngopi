@@ -33,7 +33,7 @@ class CafeController extends Controller
         // causing "Malformed UTF-8" JsonException when Blade renders json_encode().
         $cafe = Cache::remember("cafe_{$cafe->slug}", now()->addMinutes(10), function () use ($cafe) {
             $cafe->load(['facilities', 'city']);
-            $cafe->offsetUnset('location');
+            unset($cafe->location);
 
             return $cafe;
         });

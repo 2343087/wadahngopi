@@ -100,15 +100,17 @@ class CafeSearchService
         // Works on MariaDB, MySQL 5.7, and any SQL database
         $haversine = "(
             6371 * ACOS(
-                LEAST(1, COS(RADIANS(?)) * COS(RADIANS(latitude)) *
+                LEAST(1, MAX(-1, COS(RADIANS(?)) * COS(RADIANS(latitude)) *
                 COS(RADIANS(longitude) - RADIANS(?)) +
-                SIN(RADIANS(?)) * SIN(RADIANS(latitude)))
+                SIN(RADIANS(?)) * SIN(RADIANS(latitude))))
             )
         )";
 
         return $query
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
+            ->whereBetween('latitude', [-90, 90])
+            ->whereBetween('longitude', [-180, 180])
             ->where('latitude', '!=', 0)
             ->where('longitude', '!=', 0)
             ->whereRaw("{$haversine} <= ?", [$lat, $lng, $lat, $radiusKm])

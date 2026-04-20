@@ -28,13 +28,13 @@
         {{-- Premium Search Box --}}
         <div class="explore-search-2026" @click.away="showSortMenu = false">
             <div class="search-icon-pulse">
-                <i class="ph-bold ph-magnifying-glass" wire:loading.remove wire:target="search"></i>
-                <i class="ph-bold ph-spinner animate-spin text-amber-500" wire:loading wire:target="search"></i>
+                <i class="ph-bold ph-magnifying-glass" wire:loading.remove wire:target="search, filter, cityId, sort, activeLetter"></i>
+                <i class="ph-bold ph-spinner animate-spin text-amber-500" wire:loading wire:target="search, filter, cityId, sort, activeLetter"></i>
             </div>
             <input type="text" id="cafe-search" name="search" wire:model.live.debounce.500ms="search" placeholder="Cari cafe favoritmu..." 
-                class="explore-search-input">
-            <button class="explore-sort-btn" @click="showSortMenu = !showSortMenu"
-                :class="showSortMenu ? 'active' : ''">
+                class="explore-search-input disabled:opacity-50" wire:loading.attr="disabled" wire:target="search, filter, cityId, sort, activeLetter">
+            <button class="explore-sort-btn disabled:opacity-50" @click="showSortMenu = !showSortMenu"
+                :class="showSortMenu ? 'active' : ''" wire:loading.attr="disabled" wire:target="search, filter, cityId, sort, activeLetter">
                 <i class="ph-bold ph-sliders-horizontal"></i>
             </button>
 
@@ -102,16 +102,22 @@
                     <i class="ph-bold ph-spinner animate-spin" wire:loading wire:target="$set('filter', 'semua')"></i>
                     <span>Semua</span>
                 </button>
-                <button class="category-pill" :class="$wire.filter === 'terdekat' ? 'active' : ''"
-                    @click="getLocation()">
-                    <i class="ph-fill ph-map-pin" x-show="!isLocating" wire:loading.remove wire:target="setUserLocation"></i>
-                    <i class="ph ph-circle-notch animate-spin" x-show="isLocating" wire:loading wire:target="setUserLocation"></i>
+                <button class="category-pill disabled:opacity-70 disabled:cursor-not-allowed" 
+                    :class="$wire.filter === 'terdekat' ? 'active' : ''"
+                    @click="getLocation()"
+                    wire:loading.attr="disabled"
+                    wire:target="setUserLocation, filter">
+                    <i class="ph-fill ph-map-pin" x-show="!isLocating" wire:loading.remove wire:target="setUserLocation, filter"></i>
+                    <i class="ph ph-circle-notch animate-spin text-amber-500" x-show="isLocating" wire:loading wire:target="setUserLocation, filter"></i>
                     <span>Terdekat</span>
                 </button>
-                <button class="category-pill pill-open disabled:opacity-50" :class="$wire.filter === 'buka' ? 'active' : ''"
-                    wire:click="$set('filter', 'buka')" wire:loading.attr="disabled">
-                    <span class="pulse-dot" wire:loading.remove wire:target="$set('filter', 'buka')"></span>
-                    <i class="ph-bold ph-spinner animate-spin" wire:loading wire:target="$set('filter', 'buka')"></i>
+                <button class="category-pill pill-open disabled:opacity-70 disabled:cursor-not-allowed" 
+                    :class="$wire.filter === 'buka' ? 'active' : ''"
+                    wire:click="$set('filter', 'buka')" 
+                    wire:loading.attr="disabled"
+                    wire:target="filter">
+                    <span class="pulse-dot" wire:loading.remove wire:target="filter"></span>
+                    <i class="ph-bold ph-spinner animate-spin text-emerald-500" wire:loading wire:target="filter"></i>
                     <span>Sedang Buka</span>
                 </button>
             </div>
@@ -159,8 +165,8 @@
         </template>
     </div>
 
-    {{-- Cafe Grid Premium - Keep visible to avoid scroll jumping --}}
-    <main class="explore-cafe-grid">
+    {{-- Cafe Grid Premium - Hidden while loading more to prevent jump --}}
+    <main class="explore-cafe-grid" wire:loading.remove wire:target="loadMore, filter, cityId, search, activeLetter">
         @forelse($cafes as $cafe)
             <a href="{{ route('cafes.show', $cafe) }}" class="cafe-card-2026 group card-stagger" wire:key="cafe-{{ $cafe->id }}">
                     {{-- Fixed Height Image Container --}}

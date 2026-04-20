@@ -70,8 +70,22 @@ class ExploreSearch extends Component
         }
 
         if ($this->filter === 'terdekat') {
-            $this->dispatch('request-location');
+            // If we don't have location yet, don't trigger the filter query just yet
+            if (!$this->userLat || !$this->userLng) {
+                $this->dispatch('request-location');
+                // Temporarily revert to 'semua' until location is received
+                // This prevents "Empty results" while waiting for GPS
+                $this->filter = 'semua';
+                return;
+            }
+            $this->sort = 'distance';
         }
+
+        if ($this->filter !== 'terdekat') {
+            $this->userLat = null;
+            $this->userLng = null;
+        }
+
         $this->resetPage();
     }
 
@@ -144,10 +158,10 @@ class ExploreSearch extends Component
     {
         $this->userLat = $lat;
         $this->userLng = $lng;
-        // If filter is currently 'terdekat', we can now process it correctly
-        if ($this->filter === 'terdekat') {
-            $this->sort = 'distance'; // Auto switch sort to distance
-        }
+        // Now that we have location, we can safely switch to 'terdekat'
+        $this->filter = 'terdekat';
+        $this->sort = 'distance';
+        $this->resetPage();
     }
 
     public function getCitiesProperty()
@@ -161,6 +175,8 @@ class ExploreSearch extends Component
 
     public function render()
     {
+        $totalResults = 0;
+
         // 1. Initial Query with Essential Fields
         $query = Cafe::query()
             ->where('status', 'published')
@@ -199,49 +215,82 @@ class ExploreSearch extends Component
             $query->nearest($this->userLat, $this->userLng);
         }
 
-        // 3. Robust Total Counting (Cached to save DB load at 50k scale)
-        $locationHash = ($this->userLat && $this->userLng) ? round($this->userLat, 2) . ',' . round($this->userLng, 2) : 'none';
-        $cacheKeyTotal = 'total_v8_' . md5($this->cityId . $this->search . $this->activeLetter . $this->filter . $locationHash);
-        $totalResults = \Illuminate\Support\Facades\Cache::remember($cacheKeyTotal, now()->addMinutes(5), fn() => $query->count());
-
-        // 4. Optimized Sort & Randomization
-        $isHomeRandom = ($this->sort === 'relevance' && !$this->search && !$this->activeLetter);
+        // 4. Optimized Sort & Randomization for 50k Rows
+        $isHomeRandom = ($this->sort === 'relevance' && !$this->search && !$this->activeLetter && $this->filter === 'semua');
 
         if ($isHomeRandom) {
-            // High Performance Randomization: Database-agnostic seeded random
-            $driver = $query->getConnection()->getDriverName();
-            if ($driver === 'sqlite') {
-                $query->orderByRaw('ABS(RANDOM()) % ?', [$this->randomSeed ?: 1000]);
+            // HIGH-SPEED ID SAMPLING STRATEGY
+            // Instead of ORDER BY RAND() which sorts 50,000 items, we cache a pool of IDs.
+            $citySuffix = $this->cityId ? "_city_{$this->cityId}" : '_all';
+            $cacheKeyPool = "cafe_id_pool_v2" . $citySuffix;
+
+            $idPool = \Illuminate\Support\Facades\Cache::remember($cacheKeyPool, now()->addMinutes(30), function () {
+                $q = Cafe::where('status', 'published');
+                if ($this->cityId) $q->where('city_id', $this->cityId);
+                return $q->pluck('id')->toArray();
+            });
+
+            // Seeded selection to maintain pagination stability
+            if (!empty($idPool)) {
+                $count = count($idPool);
+                mt_srand($this->randomSeed);
+                
+                // Shuffle is too slow for 50k every hit? 
+                // Actually shuffle() on 50k ints is ~5-10ms. Totally fine.
+                $shuffledIds = $idPool;
+                shuffle($shuffledIds);
+                
+                $randomIds = array_slice($shuffledIds, 0, $this->perPage);
+                $query->whereIn('id', $randomIds);
+                
+                // Keep the exact order from the slice
+                $idsString = implode(',', $randomIds);
+                if (!empty($idsString)) {
+                    $query->orderByRaw("FIELD(id, {$idsString})");
+                }
+                $totalResults = $count;
             } else {
-                $query->orderByRaw('RAND(?)', [$this->randomSeed]);
+                // Emergency Fallback: If cache pool fails, use a stable sort to avoid empty screen
+                $query->latest();
+                $totalResults = 0; // Will be corrected by the next hit or fallback logic
             }
         } else {
+            // 3. Robust Total Counting for standard filters
+            $locationHash = ($this->userLat && $this->userLng) ? round($this->userLat, 3) . ',' . round($this->userLng, 3) : 'none';
+            $cacheKeyTotal = 'total_v11_' . md5($this->cityId . $this->search . $this->activeLetter . $this->filter . $locationHash);
+            $totalResults = \Illuminate\Support\Facades\Cache::remember($cacheKeyTotal, now()->addMinutes(10), fn() => $query->count());
+
             // Standard Sorts
             if ($this->sort === 'name_az') {
                 $query->orderBy('name', 'asc');
             } elseif ($this->sort === 'name_za') {
                 $query->orderBy('name', 'desc');
+            } elseif ($this->sort === 'distance' && $this->userLat && $this->userLng) {
+                // Distance order is handled by nearest scope
             } else {
-                // If special filter (like nearest) is not active, fallback to latest
-                if ($this->filter !== 'terdekat') {
-                    $query->latest();
-                }
+                $query->latest();
             }
         }
 
-        // 5. Final Result Paginator
-        // Force Page 1 because we grow perPage for a seamless infinite scroll experience
+        // 5. Final Result Fetch & Binary Cleanse
+        // We use limit() instead of paginate() to maintain the 'Load More' logic 
+        // without the complexity of Laravel's internal page numbering conflicts.
+        $results = $query->limit($this->perPage)->get()->each(function ($c) {
+            unset($c->location);
+        });
+
+        // Use a perfectly stable paginator for Livewire 3
         $cafesPaginator = new \Illuminate\Pagination\LengthAwarePaginator(
-            $query->limit($this->perPage)->get(),
-            $totalResults,
+            $results,
+            ($totalResults > 0) ? $totalResults : $results->count(),
             $this->perPage,
             1,
-            ['path' => route('explore')]
+            ['path' => url()->current()]
         );
 
-        // 6. Map Update (Limited to avoid choking the browser)
+        // 6. Map Update
         if ($this->perPage <= 24 || $this->search) {
-            $this->dispatch('cafes-updated', cafes: collect($cafesPaginator->items())->map(fn($c) => [
+            $this->dispatch('cafes-updated', cafes: collect($results)->map(fn($c) => [
                 'id' => $c->id,
                 'name' => $c->name,
                 'lat' => $c->latitude,

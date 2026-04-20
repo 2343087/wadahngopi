@@ -22,7 +22,7 @@ class RoasteryController extends Controller
         // File/database cache drivers corrupt binary data during serialize().
         $roastery = Cache::remember("roastery_{$roastery->slug}", now()->addMinutes(10), function () use ($roastery) {
             $roastery->load('city');
-            $roastery->offsetUnset('location');
+            unset($roastery->location);
 
             return $roastery;
         });
