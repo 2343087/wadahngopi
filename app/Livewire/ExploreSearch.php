@@ -220,39 +220,39 @@ class ExploreSearch extends Component
 
         if ($isHomeRandom) {
             // HIGH-SPEED ID SAMPLING STRATEGY
-            // Instead of ORDER BY RAND() which sorts 50,000 items, we cache a pool of IDs.
+            // Instead of ORDER BY RAND() which is O(N) sorting, we use a cached pool of IDs.
             $citySuffix = $this->cityId ? "_city_{$this->cityId}" : '_all';
-            $cacheKeyPool = "cafe_id_pool_v2" . $citySuffix;
+            $cacheKeyPool = "cafe_id_pool_v3" . $citySuffix; // Incremented version to force fresh cache
 
-            $idPool = \Illuminate\Support\Facades\Cache::remember($cacheKeyPool, now()->addMinutes(30), function () {
+            $idPool = \Illuminate\Support\Facades\Cache::remember($cacheKeyPool, now()->addHours(1), function () {
                 $q = Cafe::where('status', 'published');
                 if ($this->cityId) $q->where('city_id', $this->cityId);
                 return $q->pluck('id')->toArray();
             });
 
-            // Seeded selection to maintain pagination stability
-            if (!empty($idPool)) {
+            if (!empty($idPool) && is_array($idPool)) {
                 $count = count($idPool);
-                mt_srand($this->randomSeed);
                 
-                // Shuffle is too slow for 50k every hit? 
-                // Actually shuffle() on 50k ints is ~5-10ms. Totally fine.
+                // Use a seeded shuffle for pagination stability within a session
                 $shuffledIds = $idPool;
+                mt_srand($this->randomSeed);
                 shuffle($shuffledIds);
                 
                 $randomIds = array_slice($shuffledIds, 0, $this->perPage);
-                $query->whereIn('id', $randomIds);
                 
-                // Keep the exact order from the slice
-                $idsString = implode(',', $randomIds);
-                if (!empty($idsString)) {
+                if (!empty($randomIds)) {
+                    $query->whereIn('id', $randomIds);
+                    
+                    // Maintain the specific order of the slice
+                    $idsString = implode(',', $randomIds);
                     $query->orderByRaw("FIELD(id, {$idsString})");
                 }
+                
                 $totalResults = $count;
             } else {
-                // Emergency Fallback: If cache pool fails, use a stable sort to avoid empty screen
+                // Emergency Fallback: If cache pool fails or is empty
                 $query->latest();
-                $totalResults = 0; // Will be corrected by the next hit or fallback logic
+                $totalResults = Cafe::where('status', 'published')->count(); 
             }
         } else {
             // 3. Robust Total Counting for standard filters

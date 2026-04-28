@@ -88,10 +88,12 @@
     will-change: transform, opacity;
 }
 
-/* If JS is active, we hide them initially for the reveal effect */
+/* If JS is active, we can optionally apply a slight entrance, 
+   but we don't hide them completely to avoid blank screen delay. */
 .js-active .card-stagger {
-    opacity: 0;
-    transform: translateY(20px);
+    /* We use a very subtle initial state that still looks okay if JS is slow */
+    opacity: 1; 
+    transform: none;
 }
 
 .card-stagger.visible {

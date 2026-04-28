@@ -96,14 +96,26 @@
     </div>
     <script>
         (function () {
-            var s = document.getElementById('splash-screen');
+            const s = document.getElementById('splash-screen');
+            if (!s) return;
+
+            const hideSplash = () => {
+                if (s.classList.contains('splash-hide')) return;
+                s.classList.add('splash-hide');
+                setTimeout(() => s.remove(), 500);
+            };
+
             if (!sessionStorage.getItem('wadah-splash')) {
                 s.style.display = '';
                 sessionStorage.setItem('wadah-splash', '1');
-                setTimeout(function () {
-                    s.classList.add('splash-hide');
-                    setTimeout(function () { s.remove(); }, 500);
-                }, 1400);
+                
+                // Smart Reveal: Hide as soon as DOM is ready or after a shorter safety timeout
+                window.addEventListener('load', hideSplash);
+                // Also hide when Livewire is ready (faster for SPA feel)
+                document.addEventListener('livewire:initialized', hideSplash);
+                
+                // Maximum safety timeout (reduced from 1.4s to 1s)
+                setTimeout(hideSplash, 1000);
             } else {
                 s.remove();
             }
@@ -332,35 +344,43 @@
         document.addEventListener('DOMContentLoaded', () => {
             const observerOptions = {
                 threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
+                rootMargin: '0px 0px 100px 0px' // Increased margin for smoother reveal
             };
 
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry, index) => {
                     if (entry.isIntersecting) {
-                        // Add visible class with a small stagger delay if multiple items reveal at once
+                        // Small staggered delay for visual appeal
                         setTimeout(() => {
                             entry.target.classList.add('visible');
-                        }, 50 * (index % 10)); 
+                        }, 30 * (index % 10)); 
                         observer.unobserve(entry.target);
                     }
                 });
             }, observerOptions);
 
             const observeElements = () => {
-                document.querySelectorAll('.card-stagger:not(.visible)').forEach(el => observer.observe(el));
+                // Find all stagger cards that are not yet visible
+                const elements = document.querySelectorAll('.card-stagger:not(.visible)');
+                elements.forEach(el => observer.observe(el));
             };
 
-            // Initial observe
+            // Initial execution
             observeElements();
 
-            // Re-observe after Livewire updates or navigation
-            document.addEventListener('livewire:navigated', observeElements);
-            document.addEventListener('livewire:initialized', observeElements);
+            // Livewire 3 Hooks - Crucial for SPA and dynamic updates
+            document.addEventListener('livewire:navigated', () => {
+                observeElements();
+            });
+
+            // Handle content updates (like pagination or filters)
+            Livewire.hook('morph.updated', ({ el }) => {
+                observeElements();
+            });
             
-            // Hook into Livewire request finished to handle dynamic loading (like "Load More")
-            window.addEventListener('livewire:load', observeElements);
-            document.addEventListener('livewire:update', observeElements);
+            // Fallback: If for some reason the script fails to detect, 
+            // we don't want the user seeing a blank screen forever.
+            setTimeout(observeElements, 2000); 
         });
     </script>
     @stack('scripts')

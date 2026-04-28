@@ -166,7 +166,9 @@
     </div>
 
     {{-- Cafe Grid Premium - Hidden while loading more to prevent jump --}}
-    <main class="explore-cafe-grid" wire:loading.remove wire:target="loadMore, filter, cityId, search, activeLetter">
+    <main class="explore-cafe-grid" 
+        wire:loading.class="opacity-50 pointer-events-none" 
+        wire:target="loadMore, filter, cityId, search, activeLetter, sort, setSort, setLetter">
         @forelse($cafes as $cafe)
             <a href="{{ route('cafes.show', $cafe) }}" class="cafe-card-2026 group card-stagger" wire:key="cafe-{{ $cafe->id }}">
                     {{-- Fixed Height Image Container --}}
