@@ -1,90 +1,63 @@
-/* =============================================
-   BOTTOM NAVIGATION — Liquid Glass Premium
-   ============================================= */
+/* ============================================
+   BOTTOM NAV — FLOATING PILL (SAFE EDITION)
+   ============================================ */
 
 .bottom-nav {
-    position: fixed;
-    bottom: 32px; /* Ditinggikan agar terlihat melayang */
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 48px);
-    max-width: 380px; /* Lebih ramping (pil style) */
-    height: 70px;
-    background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: blur(24px) saturate(200%); /* Blur lebih pekat (premium) */
-    -webkit-backdrop-filter: blur(24px) saturate(200%);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0 16px;
-    border-radius: 40px; /* Lebih bundar full */
-    box-shadow:
-        0 24px 60px -12px rgba(26, 15, 10, 0.25),
-        inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
-        inset 0 -1px 0 0 rgba(255, 255, 255, 0.3);
-    z-index: var(--z-nav);
-    transition: var(--transition-bounce);
-    border: 1px solid rgba(255, 255, 255, 0.6);
+  position: fixed !important;
+  bottom: 24px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: calc(100% - 48px) !important;
+  max-width: 400px !important;
+  height: 72px !important;
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  border-radius: 36px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-around !important;
+  padding: 0 12px !important;
+  z-index: 9999 !important;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    0 1px 0 rgba(255, 255, 255, 0.6) inset !important;
 }
 
 .nav-item {
-    text-decoration: none !important;
-    color: #4B5563;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    flex: 1;
-    height: 100%;
-    position: relative;
-    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-    gap: 4px;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  color: #8B7355 !important;
+  transition: all 0.3s ease !important;
+  flex: 1 !important;
+  position: relative !important;
 }
 
 .nav-item i {
-    font-size: 1.6rem;
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s ease;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
-    font-weight: bold;
+  font-size: 24px !important;
+  margin-bottom: 4px !important;
 }
 
-.nav-item span {
-    font-size: 0.65rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-    opacity: 0.8;
-    transition: all 0.3s ease;
+.nav-label {
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em !important;
 }
 
-/* Active State */
 .nav-item.active {
-    color: var(--color-espresso);
+  color: #2C1810 !important;
 }
 
-.nav-item.active i {
-    transform: translateY(-5px) scale(1.1);
-    color: var(--color-amber);
-    filter: drop-shadow(0 4px 6px rgba(245, 158, 11, 0.3));
-}
-
-.nav-item.active span {
-    opacity: 1;
-    transform: translateY(-2px);
-    color: var(--color-espresso);
-    letter-spacing: 0.05em;
-}
-
-/* Active Dot Indicator */
 .nav-item.active::after {
-    content: '';
-    position: absolute;
-    bottom: 8px;
-    width: 6px;
-    height: 6px;
-    background: var(--color-amber);
-    border-radius: 50%;
-    box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
-    animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  content: '' !important;
+  position: absolute !important;
+  bottom: -8px !important;
+  width: 4px !important;
+  height: 4px !important;
+  background: #EAB308 !important;
+  border-radius: 50% !important;
 }

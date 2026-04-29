@@ -1,13 +1,6 @@
 /* =============================================
    WADAHNGOPI — CSS Architecture 2026
-   ==============================================
-   This file is the SINGLE entry point.
-   All styles are organized in modular files.
-
-   IMPORT ORDER MATTERS:
-   1. Tailwind → 2. Tokens → 3. Reset → 4. Animations (keyframes first)
-   5. Effects → 6. Components → 7. Features → 8. Transitions
-   ============================================= */
+   ============================================== */
 
 /* --- 0. Tailwind CSS --- */
 @import "tailwindcss";

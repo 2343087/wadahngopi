@@ -8,44 +8,46 @@
     animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
-.delay-100 {
-    animation-delay: 0.1s;
+.animate-up {
+    animation: slideUpFade 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    opacity: 0;
+    transform: translateY(24px);
 }
 
-.delay-200 {
-    animation-delay: 0.2s;
-}
-
-.delay-300 {
-    animation-delay: 0.3s;
-}
+/* Animation Delay Utilities */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
 
 /* Refined Hover Float (More subtle, premium) */
 .hover-float {
-    transition: var(--transition-smooth);
+    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
     display: inline-block;
 }
 
 .hover-float:hover {
     transform: translateY(-3px);
-    filter: drop-shadow(var(--shadow-soft));
 }
 
-/* --- Card Interactive System --- */
-.cafe-card-2026 {
-    transition: var(--transition-premium);
-    position: relative;
-    overflow: hidden;
-    background: white;
-    border-radius: 24px;
+/* NOTE: .cafe-card-2026 and .card-shine are fully defined in components/cards.css
+   DO NOT redefine them here — that would override the 3D tilt & bento entrance. */
+
+/* Staggerable Card Entrances (Intersection Observer based) */
+.card-stagger {
+    opacity: 1; /* Fallback: Visible by default */
+    transform: none;
+    transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform, opacity;
 }
 
-.cafe-card-2026:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: var(--shadow-premium);
+.card-stagger.visible {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
 }
 
-/* Glossy Shine Sweep */
+/* Glossy Shine Sweep — helper only, actual behaviour in cards.css */
 .card-shine {
     position: absolute;
     top: 0;
@@ -55,48 +57,25 @@
     background: linear-gradient(
         to right,
         transparent,
-        rgba(255, 255, 255, 0.4),
+        rgba(255, 255, 255, 0.28),
         transparent
     );
-    transform: skewX(-25deg);
-    transition: 0.75s var(--transition-smooth);
+    transform: skewX(-20deg);
+    transition: left 0.7s cubic-bezier(0.23, 1, 0.32, 1);
     pointer-events: none;
-    z-index: 5;
+    z-index: 4;
 }
 
-.cafe-card-2026:hover .card-shine {
-    left: 150%;
-}
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .animate-fade-up,
+    .animate-up {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
 
-/* --- Animation Utilities --- */
-.animate-fade-up {
-    opacity: 0;
-    animation: fadeUp 0.8s var(--ease-premium) forwards;
-}
-
-.animate-up {
-    animation: slideUpFade 0.7s var(--ease-premium) forwards;
-    opacity: 0;
-    transform: translateY(24px);
-}
-
-/* Staggerable Card Entrances (Intersection Observer based) */
-.card-stagger {
-    opacity: 1; /* Fallback: Visible by default */
-    transform: none;
-    transition: opacity 0.8s var(--ease-premium), transform 0.8s var(--ease-premium);
-    will-change: transform, opacity;
-}
-
-/* If JS is active, we can optionally apply a slight entrance, 
-   but we don't hide them completely to avoid blank screen delay. */
-.js-active .card-stagger {
-    /* We use a very subtle initial state that still looks okay if JS is slow */
-    opacity: 1; 
-    transform: none;
-}
-
-.card-stagger.visible {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
+    .card-stagger {
+        transition: none;
+    }
 }

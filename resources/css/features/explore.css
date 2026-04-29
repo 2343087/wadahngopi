@@ -151,24 +151,41 @@
     object-fit: contain;
 }
 
-/* --- Search Box 2026 --- */
+/* --- Search Box 2026 — Premium Glassmorphism --- */
 .explore-search-2026 {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: white;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
     padding: 10px 16px;
     border-radius: 24px;
-    /* Squircle bulat */
-    box-shadow: 0 8px 24px rgba(20, 12, 8, 0.05), inset 0 0 0 1px rgba(20, 12, 8, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-top: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow:
+        0 4px 24px rgba(20, 12, 8, 0.06),
+        0 1px 0 rgba(255, 255, 255, 0.9) inset;
     position: relative;
     z-index: var(--z-search);
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    will-change: transform, box-shadow;
 }
 
 .explore-search-2026:focus-within {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(20, 12, 8, 0.1), inset 0 0 0 2px var(--color-amber);
+    background: rgba(255, 255, 255, 0.92);
+    border-color: rgba(234, 179, 8, 0.42);
+    box-shadow:
+        0 8px 32px rgba(234, 179, 8, 0.14),
+        0 0 0 4px rgba(234, 179, 8, 0.08),
+        0 1px 0 rgba(255, 255, 255, 1) inset;
+    transform: translateY(-1px);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+    .explore-search-2026 {
+        background: rgba(255, 255, 255, 0.97);
+    }
 }
 
 .search-icon-pulse {
@@ -267,20 +284,50 @@
     overflow-y: auto;
 }
 
-/* --- Cafe Grid --- */
+/* --- Cafe Grid — Bento Masonry 2026 --- */
 .explore-cafe-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 16px;
-    padding: 20px 16px 140px;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-flow: dense; /* Crucial for Bento Layout: fills gaps automatically */
+    gap: 12px;
+    padding: 16px 12px 140px;
+    perspective: 1200px;
+    transform-style: preserve-3d;
 }
 
-@media (max-width: 640px) {
+@media (min-width: 480px) {
     .explore-cafe-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        padding: 16px 12px 140px;
+        gap: 14px;
+        padding: 16px 14px 140px;
     }
+}
+
+@media (min-width: 768px) {
+    .explore-cafe-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        padding: 24px 20px 140px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .explore-cafe-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 640px) {
+    .explore-cafe-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 16px;
+        padding: 20px 16px 140px;
+    }
+}
+
+/* Featured card spans full width in bento grid */
+.explore-cafe-grid .card-featured {
+    grid-column: span 2;
 }
 
 /* --- Result Counter (single source) --- */

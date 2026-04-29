@@ -141,107 +141,72 @@
                 $hasWhatsApp = !empty($cafe->whatsapp_number);
             @endphp
 
-            @if($hasGoogleMaps || $hasWhatsApp || $activeSocialLinks->isNotEmpty())
-                <section class="mb-8">
-                    {{-- Section Title --}}
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-2">
-                            <i class="ph-bold ph-chats-circle text-amber-600 text-lg"></i>
-                            <h3 class="text-espresso text-sm font-bold uppercase tracking-wider">Hubungi & Follow</h3>
-                        </div>
+            {{-- Kontak & Sosmed — Magazine Bento Grid --}}
+            <section class="mb-10">
+                <div class="detail-bento-grid">
+                    {{-- Row 1: Lokasi + Chat --}}
+                    <div class="detail-bento-row">
+                        @if($hasGoogleMaps)
+                            <a href="{{ e($cafe->google_maps_url) }}" target="_blank" class="detail-tile detail-tile--lokasi">
+                                <div class="detail-tile__icon"><i class="ph-fill ph-map-pin"></i></div>
+                                <div>
+                                    <div class="detail-tile__label">Lokasi</div>
+                                    <div class="detail-tile__sublabel">Google Maps</div>
+                                </div>
+                            </a>
+                        @endif
+
+                        @if($hasWhatsApp)
+                            @php
+                                $rawWa = preg_replace('/[^0-9]/', '', $cafe->whatsapp_number);
+                                if (str_starts_with($rawWa, '08')) $rawWa = '62' . substr($rawWa, 1);
+                            @endphp
+                            <a href="https://wa.me/{{ $rawWa }}" target="_blank" class="detail-tile detail-tile--chat">
+                                <div class="detail-tile__icon"><i class="ph-fill ph-whatsapp-logo"></i></div>
+                                <div>
+                                    <div class="detail-tile__label">Chat</div>
+                                    <div class="detail-tile__sublabel">WhatsApp</div>
+                                </div>
+                            </a>
+                        @endif
                     </div>
 
-                    {{-- Action Buttons --}}
-                    {{-- Action Buttons --}}
-                    @if($hasGoogleMaps || $hasWhatsApp)
-                        <div class="flex items-center gap-3 mb-5">
-                            @if($hasGoogleMaps)
-                                <a href="{{ e($cafe->google_maps_url) }}" target="_blank" rel="noopener noreferrer"
-                                    class="flex-1 group/btn relative overflow-hidden p-[1px] rounded-2xl transition-all active:scale-[0.98] no-underline shadow-soft hover:shadow-lg hover:shadow-amber-500/20">
-                                    <div
-                                        class="absolute inset-0 bg-gradient-to-br from-amber-200 via-amber-100 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300">
-                                    </div>
-                                    <div
-                                        class="relative bg-white rounded-2xl p-3 flex items-center gap-3 h-full border border-transparant">
-                                        <div
-                                            class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-gradient-to-br from-amber-50 to-orange-50 text-amber-600 group-hover/btn:scale-110 transition-transform duration-300">
-                                            <i class="ph-fill ph-map-pin text-lg"></i>
-                                        </div>
-                                        <div class="min-w-0">
-                                            <span
-                                                class="text-espresso text-[0.85rem] font-bold block leading-none mb-1 group-hover/btn:text-amber-700 transition-colors">Lokasi</span>
-                                            <span
-                                                class="text-slate-400 text-[10px] font-semibold group-hover/btn:text-amber-600/70 transition-colors">Google
-                                                Maps</span>
-                                        </div>
-                                    </div>
-                                </a>
-                            @endif
-
-                            @if($hasWhatsApp)
-                                @php
-                                    $rawWa = preg_replace('/[^0-9]/', '', $cafe->whatsapp_number);
-                                    if (str_starts_with($rawWa, '08')) {
-                                        $rawWa = '62' . substr($rawWa, 1);
-                                    }
-                                @endphp
-                                <a href="https://wa.me/{{ $rawWa }}" target="_blank" rel="noopener noreferrer"
-                                    class="flex-1 group/btn relative overflow-hidden p-[1px] rounded-2xl transition-all active:scale-[0.98] no-underline shadow-soft hover:shadow-lg hover:shadow-emerald-500/20">
-                                    <div
-                                        class="absolute inset-0 bg-gradient-to-br from-emerald-200 via-emerald-100 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300">
-                                    </div>
-                                    <div
-                                        class="relative bg-white rounded-2xl p-3 flex items-center gap-3 h-full border border-transparant">
-                                        <div
-                                            class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-gradient-to-br from-emerald-50 to-green-50 text-emerald-600 group-hover/btn:scale-110 transition-transform duration-300">
-                                            <i class="ph-fill ph-whatsapp-logo text-lg"></i>
-                                        </div>
-                                        <div class="min-w-0">
-                                            <span
-                                                class="text-espresso text-[0.85rem] font-bold block leading-none mb-1 group-hover/btn:text-emerald-700 transition-colors">Chat</span>
-                                            <span
-                                                class="text-slate-400 text-[10px] font-semibold group-hover/btn:text-emerald-600/70 transition-colors">WhatsApp</span>
-                                        </div>
-                                    </div>
-                                </a>
-                            @endif
+                    {{-- Row 2: Jam Buka — Full Width --}}
+                    <div class="detail-tile detail-tile--fullwidth detail-tile--hours">
+                        <div class="detail-tile__icon"><i class="ph-fill ph-clock"></i></div>
+                        <div class="flex-1">
+                            <div class="detail-tile__label">Jam Operasional</div>
+                            <div class="text-[0.75rem] font-bold text-slate-500 flex items-center gap-1.5 mt-0.5">
+                                <livewire:cafe-detail :cafe-id="$cafe->id" />
+                            </div>
                         </div>
-                    @endif
+                    </div>
+                </div>
 
-                    {{-- Social Media Links --}}
-                    @if($activeSocialLinks->isNotEmpty())
-                        <div class="flex flex-wrap gap-2.5">
-                            @foreach($activeSocialLinks as $link)
-                                @php
-                                    $platform = strtolower($link['platform'] ?? '');
-                                    $iconClass = match ($platform) {
-                                        'instagram' => 'ph-fill ph-instagram-logo',
-                                        'tiktok' => 'ph-fill ph-tiktok-logo',
-                                        'facebook' => 'ph-fill ph-facebook-logo',
-                                        'x', 'twitter' => 'ph-fill ph-x-logo',
-                                        'youtube' => 'ph-fill ph-youtube-logo',
-                                        default => 'ph-fill ph-globe'
-                                    };
-                                    $label = match ($platform) {
-                                        'instagram' => 'Instagram',
-                                        'tiktok' => 'TikTok',
-                                        'facebook' => 'Facebook',
-                                        'x', 'twitter' => 'X',
-                                        'youtube' => 'YouTube',
-                                        default => 'Web'
-                                    };
-                                @endphp
-                                <a href="{{ e($link['url']) }}" target="_blank" rel="noopener noreferrer"
-                                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-espresso/5 bg-white shadow-soft text-espresso active:scale-95 transition-all no-underline hover:bg-espresso hover:text-white group/social">
-                                    <i
-                                        class="{{ $iconClass }} text-sm text-amber-600 group-hover/social:text-white transition-colors"></i>
-                                    <span class="text-[0.7rem] font-bold uppercase tracking-wider">{{ $label }}</span>
-                                </a>
-                            @endforeach
-                        </div>
-                    @endif
-                </section>
-            @endif
+                {{-- Social Media Links (Horizontal Scroll) --}}
+                @if($activeSocialLinks->isNotEmpty())
+                    <div class="flex gap-3 overflow-x-auto no-scrollbar px-4 mt-6 pb-2">
+                        @foreach($activeSocialLinks as $link)
+                            @php
+                                $platform = strtolower($link['platform'] ?? '');
+                                $icon = match ($platform) {
+                                    'instagram' => 'ph-fill ph-instagram-logo',
+                                    'tiktok' => 'ph-fill ph-tiktok-logo',
+                                    'facebook' => 'ph-fill ph-facebook-logo',
+                                    'x', 'twitter' => 'ph-fill ph-x-logo',
+                                    'youtube' => 'ph-fill ph-youtube-logo',
+                                    default => 'ph-fill ph-globe'
+                                };
+                            @endphp
+                            <a href="{{ e($link['url']) }}" target="_blank" 
+                               class="flex-shrink-0 flex items-center gap-2 px-4 py-3 rounded-2xl bg-white border border-slate-100 shadow-soft active:scale-95 transition-all no-underline">
+                                <i class="{{ $icon }} text-amber-600 text-lg"></i>
+                                <span class="text-[0.7rem] font-black uppercase tracking-widest text-espresso">{{ $platform }}</span>
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
+            </section>
 
             {{-- Features Section --}}
             <section class="mb-12">
