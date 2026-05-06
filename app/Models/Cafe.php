@@ -35,6 +35,8 @@ class Cafe extends Model
         'status',
         'social_links',
         'menu_images',
+        'wfc_avg_score',
+        'wfc_review_count',
     ];
 
     /**
@@ -73,6 +75,14 @@ class Cafe extends Model
     public function facilities(): HasMany
     {
         return $this->hasMany(Facility::class);
+    }
+
+    /**
+     * The WFC scores that belong to the cafe.
+     */
+    public function wfcScores(): HasMany
+    {
+        return $this->hasMany(WfcScore::class);
     }
 
     /**

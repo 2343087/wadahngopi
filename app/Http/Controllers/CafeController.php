@@ -32,7 +32,7 @@ class CafeController extends Controller
         // File/database cache drivers use PHP serialize() which corrupts binary data,
         // causing "Malformed UTF-8" JsonException when Blade renders json_encode().
         $cafe = Cache::remember("cafe_{$cafe->slug}", now()->addMinutes(10), function () use ($cafe) {
-            $cafe->load(['facilities', 'city']);
+            $cafe->load(['facilities', 'city', 'wfcScores' => fn($q) => $q->with('user')->whereNotNull('comment')->latest()]);
             unset($cafe->location);
 
             return $cafe;

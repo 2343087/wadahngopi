@@ -246,13 +246,26 @@ class ExploreSearch extends Component
                     // Maintain the specific order of the slice
                     $idsString = implode(',', $randomIds);
                     $query->orderByRaw("FIELD(id, {$idsString})");
+                    
+                    // Fetch results early to check for stale cache
+                    $results = $query->get();
+                    if ($results->isEmpty()) {
+                        \Illuminate\Support\Facades\Cache::forget($cacheKeyPool);
+                        $query = Cafe::where('status', 'published')->latest();
+                        $totalResults = $query->count();
+                        $results = $query->limit($this->perPage)->get();
+                    } else {
+                        $totalResults = $count;
+                    }
+                } else {
+                    $query->latest();
+                    $totalResults = Cafe::where('status', 'published')->count();
+                    $results = $query->limit($this->perPage)->get();
                 }
-                
-                $totalResults = $count;
             } else {
-                // Emergency Fallback: If cache pool fails or is empty
                 $query->latest();
                 $totalResults = Cafe::where('status', 'published')->count(); 
+                $results = $query->limit($this->perPage)->get();
             }
         } else {
             // 3. Robust Total Counting for standard filters
@@ -270,12 +283,12 @@ class ExploreSearch extends Component
             } else {
                 $query->latest();
             }
+
+            $results = $query->limit($this->perPage)->get();
         }
 
-        // 5. Final Result Fetch & Binary Cleanse
-        // We use limit() instead of paginate() to maintain the 'Load More' logic 
-        // without the complexity of Laravel's internal page numbering conflicts.
-        $results = $query->limit($this->perPage)->get()->each(function ($c) {
+        // 5. Binary Cleanse & Post-Processing
+        $results->each(function ($c) {
             unset($c->location);
         });
 

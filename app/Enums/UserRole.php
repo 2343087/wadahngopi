@@ -42,9 +42,9 @@ enum UserRole: string
     {
         return match ($this) {
             self::Developer => 'Developer',
-            self::Admin => 'Cafe Owner',
-            self::Roastery => 'Roastery Owner',
-            self::User => 'User',
+            self::Admin => 'Owner Cafe',
+            self::Roastery => 'Owner Roastery',
+            self::User => 'Pengunjung',
         };
     }
 }

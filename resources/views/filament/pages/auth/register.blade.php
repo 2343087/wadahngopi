@@ -246,10 +246,10 @@
             </div>
 
             <h1 class="fi-wn-login-title">
-                Join <span class="text-amber-500 italic">The Hub</span>
+                Gabung <span class="text-amber-500 italic">WadahNgopi</span>
             </h1>
             <p class="fi-wn-login-subtitle">
-                OWNER ONBOARDING
+                PENDAFTARAN AKUN
             </p>
         </header>
 

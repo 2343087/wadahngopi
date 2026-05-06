@@ -9,13 +9,13 @@ html {
 }
 
 body {
-    background-color: #FFFDFB;
-    color: #1A0F0A;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--color-cream);
+    color: var(--color-text);
+    font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
-    /* Dots pattern — scroll only (fixed kills mobile perf) */
-    background-image: radial-gradient(#1A0F0A 0.5px, transparent 0.5px);
+    /* Dots pattern — scroll only */
+    background-image: radial-gradient(var(--color-espresso) 0.5px, transparent 0.5px);
     background-size: 24px 24px;
     background-attachment: scroll;
 }
@@ -36,10 +36,10 @@ img {
     max-width: 480px;
     margin: 0 auto;
     min-height: 100dvh;
-    background: var(--color-cream);
+    background: transparent; /* Biar background body ngalir terus tanpa kepotong */
     position: relative;
     padding-bottom: 140px;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.05);
     display: block;
     overflow: visible !important;
     z-index: auto;

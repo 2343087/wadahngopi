@@ -12,6 +12,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Get or create base city
+        $samarinda = \App\Models\City::firstOrCreate(
+            ['slug' => 'samarinda'],
+            ['name' => 'Samarinda']
+        );
 
         $samarindaCafes = [
             ['name' => 'Coffee & Co. - SOUL', 'address' => 'City Centrum Mall, 1st Floor, Samarinda', 'rating' => 4.9, 'image_path' => 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=800', 'has_wifi' => true, 'latitude' => -0.502812, 'longitude' => 117.151240],
@@ -59,6 +64,7 @@ class DatabaseSeeder extends Seeder
 
             \App\Models\Cafe::factory()->create(array_merge($cafeData, [
                 'owner_id' => $admin->id,
+                'city_id' => $samarinda->id,
                 'status' => 'published',
             ]));
         }

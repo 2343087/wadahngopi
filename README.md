@@ -2,53 +2,83 @@
   <img src="public/wadahngopi.png" width="100" alt="WadahNgopi Logo">
 </p>
 
-<h1 align="center">WadahNgopi ☕</h1>
+<h1 align="center">WadahNgopi: Apex WFC Ecosystem ☕</h1>
 
 <p align="center">
-  <strong>Platform Pencarian Cafe & Roastery №1 di Indonesia</strong><br>
-  <em>Bukan sekadar direktori — ini pengalaman jelajah kopi yang imersif.</em>
+  <strong>Platform Pencarian Cafe & Roastery №1 di Indonesia — Ultra-Premium 2026 Edition</strong><br>
+  <em>Bukan sekadar direktori — ini kurator vibe produktivitas dan status sosial.</em>
 </p>
 
 <p align="center">
-  <a href="https://laravel.com"><img src="https://img.shields.io/badge/Laravel-12-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 12"></a>
-  <a href="https://livewire.laravel.com"><img src="https://img.shields.io/badge/Livewire-3-FB70A9?style=for-the-badge&logo=livewire&logoColor=white" alt="Livewire 3"></a>
+  <a href="https://laravel.com"><img src="https://img.shields.io/badge/Laravel-11-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 11"></a>
+  <a href="https://react.dev"><img src="https://img.shields.io/badge/React-Hybrid-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React Hybrid"></a>
   <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind-v4-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind v4"></a>
   <a href="https://filamentphp.com"><img src="https://img.shields.io/badge/Filament-v3-EEBB0B?style=for-the-badge&logo=filament&logoColor=white" alt="Filament v3"></a>
-  <a href="https://pestphp.com"><img src="https://img.shields.io/badge/Tests-198_Passed-22C55E?style=for-the-badge&logo=checkmarx&logoColor=white" alt="198 Tests Passed"></a>
   <img src="https://img.shields.io/badge/PWA-Ready-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white" alt="PWA Ready">
 </p>
 
 ---
 
-## 🤔 Apa Itu WadahNgopi?
+## ⚡ Apa Yang Baru di "New Apex" 2026?
 
-**WadahNgopi** adalah **Progressive Web App (PWA)** yang dirancang untuk menjadi portal pencarian cafe dan roastery paling lengkap di Indonesia, dimulai dari **Kalimantan Timur**.
+WadahNgopi kini berevolusi dari sekadar aplikasi direktori menjadi sebuah **Ekosistem Validasi Sosial** yang ditenagai oleh psikologi user dan engineering tingkat tinggi.
 
-### Masalah yang Diselesaikan
+### 🏢 WFC Scoring Ecosystem (Vibe Produktivitas)
+- **Anti-Manipulation Engine:** Sistem "One-User-One-Rating" yang mencegah *review bombing*.
+- **GPS Verified Badge:** Validasi lokasi real-time (radius 100m) untuk memastikan reviewer benar-benar ada di lokasi.
+- **Instant Sync:** Update skor rata-rata secara real-time tanpa refresh halaman.
+- **Suara Warga:** Kolom review yang didesain untuk kejujuran dan validasi komunitas.
 
-> _"Mau ngopi tapi bingung mau kemana? Buka Google Maps ribet, info jam buka gak update, review campur aduk. Scroll Instagram capek, belum tentu cafe-nya masih buka."_
+### 🎨 Ultra-Premium Visual Experience
+- **Glassmorphism UI:** Desain transparan yang elegan dengan pendaran *Ambient Mesh Orbs*.
+- **Social Share Engine:** Generate kartu laporan WFC (Report Card) secara otomatis dengan estetika premium untuk dibagikan ke Instagram/TikTok.
+- **Bento Grid Hero:** Layout modern yang adaptif dan informatif.
+- **Micro-Interactions:** Animasi *staggered reveal* dan feedback haptic yang memuaskan.
 
-WadahNgopi hadir untuk menyelesaikan masalah itu:
-
-| ❌ Tanpa WadahNgopi | ✅ Dengan WadahNgopi |
-|:-----|:-----|
-| Buka Google Maps → scroll review satu-satu | Buka → langsung lihat semua cafe + status buka/tutup |
-| Jam buka gak jelas, sering outdated | Jam operasional real-time (weekday/weekend) |
-| Gak tau cafe mana yang deket | Filter "Terdekat" — otomatis deteksi lokasi GPS |
-| Bingung milih? Scroll tanpa arah | **Cafe Roulette** — putar & dapetin rekomendasi random |
-| Info kopi berserakan di IG/TikTok | Feed berita & edukasi kopi terkurasi dalam 1 tempat |
-| Harus install app besar dari Play Store | **PWA** — install langsung dari browser, < 1MB |
-
-### Target User
-
-- 🧑‍💻 **Gen Z & Millennials** — yang suka nongkrong di cafe estetik
-- ☕ **Coffee Enthusiast** — yang cari roastery lokal berkualitas
-- 🏪 **Owner Cafe/Roastery** — yang mau eksposur digital gratis & fair
-- 🌏 **Wisatawan** — yang berkunjung ke kota baru dan nyari spot ngopi
+### 🧠 Psychology-Driven Copywriting
+- Kami tidak menggunakan bahasa database yang kaku. Kami menggunakan **Bahasa Kurasi**: 
+  - *"Spot paling pas buat ngegalau pas ujan."*
+  - *"WiFi kenceng, meja luas, gak bakal diusir walau cuma pesen satu latte."*
 
 ---
 
-## 💎 Fitur & Kegunaan
+## 💎 Fitur Utama
+
+### 🏪 Jelajahi Cafe & Roastery
+- **Pencarian Cerdas** — FULLTEXT search + Geo-location tracking via Haversine formula.
+- **Status Real-Time** — Indikator **BUKA** atau **TUTUP** yang akurat.
+- **Fair Play Algorithm** — Shuffled random per-session agar semua merchant dapat eksposur adil.
+
+### 🎯 Cafe Roulette
+- Bingung mau kemana? Putar roda keberuntungan dan biarkan sistem memilihkan spot terbaik untukmu.
+
+### 📱 Progressive Web App (PWA)
+- Install langsung dari browser, < 1MB, offline-capable, dan terasa seperti aplikasi native.
+
+---
+
+## 🧰 Modern Tech Stack
+
+| Layer | Teknologi | Implementasi |
+|:------|:----------|:-------------|
+| **Core** | Laravel 11 (PHP 8.3+) | Backbone sistem yang stabil dan aman |
+| **Hybrid UI** | React + Livewire 3 | Interaksi kompleks di sisi client (WFC Modal, DockNav) |
+| **Admin** | Filament v3 | Manajemen data super cepat untuk Partner & Admin |
+| **Styling** | Tailwind CSS v4 + Vanilla CSS | Estetika premium tanpa overhead berlebih |
+| **Database** | MySQL 8.0+ | Spatial queries & Full-text indexing |
+| **Asset Tool** | Vite 7 | Hot Module Replacement (HMR) kilat |
+
+---
+
+## 🛡️ Security & Reliability
+- **CSP Headers & Security Headers:** Proteksi tingkat tinggi terhadap serangan XSS dan Clickjacking.
+- **Rate Limiting:** Perlindungan Brute-force di seluruh entry point login dan API.
+- **IDOR Protection:** Validasi kepemilikan data yang ketat di level model.
+- **Automated Testing:** 198+ Test cases menggunakan Pest PHP untuk menjaga stabilitas.
+
+---
+
+## 🚀 Setup & Instalasi
 
 ### 🏪 Jelajahi Cafe — _"Temuin Spot Ngopi Favoritmu"_
 - **Pencarian Cerdas** — Ketik nama/alamat/deskripsi. Pakai FULLTEXT search + fallback LIKE.

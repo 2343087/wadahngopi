@@ -19,4 +19,17 @@ Route::middleware(['throttle:web'])->group(function () {
     Route::get('/roastery/{roastery}', [RoasteryController::class, 'show'])->name('roastery.show');
     Route::get('/cafes/{cafe}', [CafeController::class, 'show'])->name('cafes.show');
     Route::redirect('/cafes', '/explore'); // Ensure no 404 for list request
+
+    // WFC Scoring (Protected)
+    Route::post('/cafes/{cafe:id}/wfc-score', [\App\Http\Controllers\Api\WfcScoreController::class, 'store'])
+        ->middleware('auth')
+        ->name('cafes.wfc-score');
+
+    // Auth Actions
+    Route::post('/logout', function () {
+        auth()->logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+        return redirect('/');
+    })->name('logout');
 });

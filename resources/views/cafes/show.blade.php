@@ -208,11 +208,86 @@
                 @endif
             </section>
 
+            {{-- WFC Compatibility Score (React Hybrid) --}}
+            @php
+                $hasRated = auth()->check() ? $cafe->wfcScores->where('user_id', auth()->id())->isNotEmpty() : false;
+            @endphp
+            <div id="wfc-score-react"
+                 data-cafe-id="{{ $cafe->id }}"
+                 data-cafe-name="{{ $cafe->name }}"
+                 data-initial-score="{{ number_format($cafe->wfc_avg_score, 1) }}"
+                 data-initial-count="{{ $cafe->wfc_review_count }}"
+                 data-cafe-lat="{{ $cafe->latitude }}"
+                 data-cafe-lng="{{ $cafe->longitude }}"
+                 data-has-rated="{{ $hasRated ? 'true' : 'false' }}">
+            </div>
+
+            {{-- Catatan Komunitas (WFC Comments) --}}
+            @if($cafe->wfcScores->isNotEmpty())
+                <section class="mb-12 animate-up">
+                    <h2 class="text-sm font-bold text-espresso uppercase tracking-widest mb-5 flex items-center gap-2.5">
+                        <i class="ph-fill ph-chat-centered-text text-amber-600 text-lg"></i>
+                        Suara Warga
+                    </h2>
+                    <div class="space-y-4">
+                        @foreach($cafe->wfcScores->take(5) as $score)
+                            <div class="bg-white/40 backdrop-blur-md border border-slate-100 p-5 rounded-[24px] shadow-sm">
+                                <div class="flex justify-between items-start mb-3">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-bold text-[0.7rem]">
+                                            {{ strtoupper(substr($score->user->name, 0, 1)) }}
+                                        </div>
+                                        <div>
+                                            <div class="text-[0.75rem] font-black text-espresso">{{ $score->user->name }}</div>
+                                            <div class="text-[0.6rem] text-slate-400 font-bold">{{ $score->created_at->diffForHumans() }}</div>
+                                        </div>
+                                    </div>
+                                    @if($score->is_verified)
+                                        <span class="text-[0.55rem] font-black text-green-600 bg-green-50 px-2 py-1 rounded-lg flex items-center gap-1">
+                                            <i class="ph-fill ph-check-circle"></i> VERIFIED
+                                        </span>
+                                    @endif
+                                </div>
+                                <div class="flex gap-4 mb-3">
+                                    <div class="flex flex-col">
+                                        <span class="text-[0.5rem] font-bold text-slate-400 uppercase tracking-tighter">WiFi</span>
+                                        <div class="flex gap-0.5">
+                                            @for($i=1; $i<=5; $i++)
+                                                <i class="ph-fill ph-star text-[0.6rem] {{ $i <= $score->wifi_rating ? 'text-amber-400' : 'text-slate-200' }}"></i>
+                                            @endfor
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-[0.5rem] font-bold text-slate-400 uppercase tracking-tighter">Listrik</span>
+                                        <div class="flex gap-0.5">
+                                            @for($i=1; $i<=5; $i++)
+                                                <i class="ph-fill ph-star text-[0.6rem] {{ $i <= $score->outlet_rating ? 'text-amber-400' : 'text-slate-200' }}"></i>
+                                            @endfor
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-[0.5rem] font-bold text-slate-400 uppercase tracking-tighter">Vibe</span>
+                                        <div class="flex gap-0.5">
+                                            @for($i=1; $i<=5; $i++)
+                                                <i class="ph-fill ph-star text-[0.6rem] {{ $i <= $score->comfort_rating ? 'text-amber-400' : 'text-slate-200' }}"></i>
+                                            @endfor
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-[0.8rem] text-slate-600 leading-relaxed font-medium">
+                                    "{{ $score->comment }}"
+                                </p>
+                            </div>
+                        @endforeach
+                    </div>
+                </section>
+            @endif
+
             {{-- Features Section --}}
             <section class="mb-12">
                 <h2 class="text-sm font-bold text-espresso uppercase tracking-widest mb-5 flex items-center gap-2.5">
-                    <i class="ph-fill ph-sparkle text-amber-600 text-lg"></i>
-                    Fasilitas Tersedia
+                    <i class="ph-fill ph-armchair text-amber-600 text-lg"></i>
+                    Fasilitas Penunjang
                 </h2>
                 <div class="flex flex-wrap gap-2.5">
                     @forelse($cafe->facilities as $f)

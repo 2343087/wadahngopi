@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Auth;
 
+use App\Enums\UserRole;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Pages\Auth\Login as BaseLogin;
 use Illuminate\Contracts\Support\Htmlable;
@@ -59,5 +60,17 @@ class CustomLogin extends BaseLogin
             // Login failed — rate limiter already incremented above
             throw $e;
         }
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        if ($user && $user->role === UserRole::User) {
+            return route('home');
+        }
+
+        return parent::getRedirectUrl();
     }
 }

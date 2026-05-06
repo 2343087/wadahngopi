@@ -3,11 +3,7 @@
 @section('title', 'WadahNgopi - Premium Portal Cafe & Roastery')
 
 @section('content')
-    <div class="bg-noise flex flex-col min-h-screen min-h-[100dvh] relative overflow-hidden"
-         style="background:
-            radial-gradient(ellipse 80% 60% at 18% -8%, rgba(234,179,8,0.13) 0%, transparent 58%),
-            radial-gradient(ellipse 55% 45% at 82% 105%, rgba(202,138,4,0.09) 0%, transparent 52%),
-            radial-gradient(ellipse 100% 100% at 50% 50%, #FFFBF0 0%, #FEF3C7 100%);">
+    <div class="bg-noise flex flex-col min-h-full relative overflow-hidden">
 
         {{-- Ambient Floating Orbs --}}
         <div class="absolute -top-16 -left-12 w-72 h-72 rounded-full pointer-events-none"
@@ -53,8 +49,8 @@
                         <h1 class="text-[1.6rem] font-black text-white leading-[1.05] tracking-tighter mb-2">
                             <span class="text-shimmer">WadahNgopi</span>
                         </h1>
-                        <p class="text-[0.65rem] text-amber-100/60 font-semibold leading-relaxed max-w-[160px]">
-                            Satu wadah untuk para penikmat kopi Kalimantan Timur.
+                        <p class="text-[0.65rem] text-amber-100/60 font-semibold leading-relaxed max-w-[180px]">
+                            Spot pas buat kabur sejenak, nugas tanpa diusir, atau sekadar ngegalau pas ujan.
                         </p>
                     </div>
 
@@ -63,7 +59,7 @@
                        class="relative z-10 mt-5 inline-flex items-center gap-2 px-4 py-2.5 rounded-[14px] font-black text-[0.78rem] text-[#2A1C15] transition-all active:scale-95"
                        style="background: linear-gradient(135deg, #EAB308, #FBBF24); box-shadow: 0 6px 20px rgba(234,179,8,0.45); margin-top: 20px; display: inline-flex;">
                         <i class="ph-bold ph-compass text-[0.95rem]"></i>
-                        Jelajahi Cafe
+                        Cari Spot Favorit
                         <i class="ph-bold ph-arrow-right text-[0.7rem]"></i>
                     </a>
                 </div>
@@ -232,23 +228,43 @@
                 </a>
             </div>
 
-            {{-- ── PARTNER PORTAL ──────────────────────────────────────── --}}
+            {{-- ── ACCOUNT & PARTNER PORTAL ──────────────────────────────── --}}
             <div class="glass-bento animate-fade-up delay-400" style="padding: 18px;">
-                <p class="text-[0.48rem] font-black text-[#140C08]/45 tracking-[0.22em] text-center mb-3 uppercase">
-                    DAFTARKAN CAFE & ROASTERY ANDA
-                </p>
-                <div class="grid grid-cols-2 gap-2">
-                    <a href="/admin/login"
-                       class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-[14px] bg-white/50 border border-black/5 hover:bg-white/80 transition-all text-[#140C08] font-bold text-[0.75rem]"
-                       style="backdrop-filter: blur(8px); text-decoration: none;">
-                        Masuk
-                    </a>
-                    <a href="/admin/register"
-                       class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-[14px] hover:opacity-90 transition-all text-white font-black text-[0.75rem]"
-                       style="background: linear-gradient(135deg, #2A1C15, #140C08); box-shadow: 0 8px 16px -4px rgba(20,12,8,0.3); text-decoration: none;">
-                        Daftar
-                    </a>
-                </div>
+                @auth
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-600">
+                                <i class="ph-fill ph-user text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-[0.48rem] font-black text-[#140C08]/45 tracking-[0.22em] uppercase mb-0.5">SELAMAT DATANG</p>
+                                <p class="text-[0.85rem] font-black text-[#140C08] leading-tight">{{ auth()->user()->name }}</p>
+                            </div>
+                        </div>
+                        <form action="{{ route('logout') }}" method="POST" class="m-0">
+                            @csrf
+                            <button type="submit" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500/20 transition-all active:scale-90">
+                                <i class="ph-bold ph-sign-out text-lg"></i>
+                            </button>
+                        </form>
+                    </div>
+                @else
+                    <p class="text-[0.48rem] font-black text-[#140C08]/45 tracking-[0.22em] text-center mb-3 uppercase">
+                        DAFTARKAN CAFE & ROASTERY ANDA
+                    </p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <a href="/admin/login"
+                           class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-[14px] bg-white/50 border border-black/5 hover:bg-white/80 transition-all text-[#140C08] font-bold text-[0.75rem]"
+                           style="backdrop-filter: blur(8px); text-decoration: none;">
+                            Masuk
+                        </a>
+                        <a href="/admin/register"
+                           class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-[14px] hover:opacity-90 transition-all text-white font-black text-[0.75rem]"
+                           style="background: linear-gradient(135deg, #2A1C15, #140C08); box-shadow: 0 8px 16px -4px rgba(20,12,8,0.3); text-decoration: none;">
+                            Daftar
+                        </a>
+                    </div>
+                @endauth
             </div>
 
             {{-- Footer --}}
@@ -260,6 +276,14 @@
     </div>
 
     <style>
+        /* Fulin background ke container utama supaya gak kepotong di bawah */
+        #main-container {
+            background: 
+                radial-gradient(ellipse 80% 60% at 18% -8%, rgba(234,179,8,0.13) 0%, transparent 58%),
+                radial-gradient(ellipse 55% 45% at 82% 105%, rgba(202,138,4,0.09) 0%, transparent 52%),
+                radial-gradient(ellipse 100% 100% at 50% 50%, #FFFBF0 0%, #FEF3C7 100%) !important;
+        }
+
         .text-shimmer {
             background: linear-gradient(110deg, #fff 30%, #FCD34D 48%, #ffffff 55%, #FCD34D 62%, #fff 78%);
             background-size: 260% auto;
