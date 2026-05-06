@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wadahngopi-v3';
+const CACHE_NAME = 'wadahngopi-v4';
 const STATIC_ASSETS = [
     '/icons/icon-192x192.png',
     '/icons/icon-512x512.png',

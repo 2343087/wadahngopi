@@ -32,6 +32,12 @@ class SavedItems extends Component
     {
         $this->items = [];
 
+        if (auth()->check()) {
+            $bookmarks = \App\Models\Bookmark::where('user_id', auth()->id())->get();
+            $this->cafeIds = $bookmarks->where('bookmarkable_type', 'cafe')->pluck('bookmarkable_id')->toArray();
+            $this->roasteryIds = $bookmarks->where('bookmarkable_type', 'roastery')->pluck('bookmarkable_id')->toArray();
+        }
+
         // Load Cafes
         if (! empty($this->cafeIds)) {
             $cafes = Cafe::query()

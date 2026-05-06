@@ -1,12 +1,14 @@
 {
     "name": "WadahNgopi: Cafe & Roastery",
     "short_name": "WadahNgopi",
+    "id": "/",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#FFFDFB",
     "theme_color": "#1A0F0A",
     "orientation": "portrait-primary",
     "description": "Temukan cafe dan tempat nongkrong terbaik di Kalimantan. WiFi kencang, suasana nyaman, menu lengkap.",
+    "categories": ["food", "lifestyle"],
     "scope": "/",
     "icons": [
         {

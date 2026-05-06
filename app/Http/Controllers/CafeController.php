@@ -38,6 +38,17 @@ class CafeController extends Controller
             return $cafe;
         });
 
-        return view('cafes.show', compact('cafe'));
+        $hasRated = auth()->check()
+            ? $cafe->wfcScores->contains('user_id', auth()->id())
+            : false;
+
+        $hasCheckedInToday = auth()->check()
+            ? \App\Models\CheckIn::where('user_id', auth()->id())
+                ->where('cafe_id', $cafe->id)
+                ->whereDate('created_at', today())
+                ->exists()
+            : false;
+
+        return view('cafes.show', compact('cafe', 'hasRated', 'hasCheckedInToday'));
     }
 }

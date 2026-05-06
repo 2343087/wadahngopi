@@ -89,13 +89,45 @@
         showDeleteModal: false,
         itemToDelete: null,
         $wire: null,
-        initFromStorage(wireInstance) {
+        async initFromStorage(wireInstance) {
             this.$wire = wireInstance;
             const storedCafes = localStorage.getItem('wadah-bookmarks');
-            this.savedCafeIds = storedCafes ? JSON.parse(storedCafes) : [];
             const storedRoasteries = localStorage.getItem('wadah-roastery-bookmarks');
+            
+            this.savedCafeIds = storedCafes ? JSON.parse(storedCafes) : [];
             this.savedRoasteryIds = storedRoasteries ? JSON.parse(storedRoasteries) : [];
-            this.syncToLivewire();
+
+            const isAuth = {{ auth()->check() ? 'true' : 'false' }};
+
+            if (isAuth) {
+                // Sync to DB if we have local items
+                if (this.savedCafeIds.length > 0 || this.savedRoasteryIds.length > 0) {
+                    try {
+                        await fetch('/api/bookmarks/sync', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                cafes: this.savedCafeIds,
+                                roasteries: this.savedRoasteryIds
+                            })
+                        });
+                        // Clear local storage after successful sync
+                        localStorage.removeItem('wadah-bookmarks');
+                        localStorage.removeItem('wadah-roastery-bookmarks');
+                        this.savedCafeIds = [];
+                        this.savedRoasteryIds = [];
+                    } catch (e) { console.error('Sync failed', e); }
+                }
+                // For auth users, Livewire handles the fetching directly from DB.
+                // We just trigger a load.
+                this.$wire.loadItems();
+            } else {
+                this.syncToLivewire();
+            }
         },
         syncToLivewire() {
             if (this.$wire) this.$wire.updateIds(this.savedCafeIds, this.savedRoasteryIds);
@@ -104,16 +136,36 @@
             this.itemToDelete = item;
             this.showDeleteModal = true;
         },
-        executeDelete() {
+        async executeDelete() {
             if (!this.itemToDelete) return;
-            if (this.itemToDelete.type === 'cafe') {
-                this.savedCafeIds = this.savedCafeIds.filter(i => i != this.itemToDelete.id);
-                localStorage.setItem('wadah-bookmarks', JSON.stringify(this.savedCafeIds));
+            const isAuth = {{ auth()->check() ? 'true' : 'false' }};
+
+            if (isAuth) {
+                try {
+                    await fetch('/api/bookmarks/toggle', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            bookmarkable_id: this.itemToDelete.id,
+                            bookmarkable_type: this.itemToDelete.type
+                        })
+                    });
+                    this.$wire.loadItems();
+                } catch (e) { console.error('Delete failed', e); }
             } else {
-                this.savedRoasteryIds = this.savedRoasteryIds.filter(i => i != this.itemToDelete.id);
-                localStorage.setItem('wadah-roastery-bookmarks', JSON.stringify(this.savedRoasteryIds));
+                if (this.itemToDelete.type === 'cafe') {
+                    this.savedCafeIds = this.savedCafeIds.filter(i => i != this.itemToDelete.id);
+                    localStorage.setItem('wadah-bookmarks', JSON.stringify(this.savedCafeIds));
+                } else {
+                    this.savedRoasteryIds = this.savedRoasteryIds.filter(i => i != this.itemToDelete.id);
+                    localStorage.setItem('wadah-roastery-bookmarks', JSON.stringify(this.savedRoasteryIds));
+                }
+                this.syncToLivewire();
             }
-            this.syncToLivewire();
             this.showDeleteModal = false;
         }
     }));

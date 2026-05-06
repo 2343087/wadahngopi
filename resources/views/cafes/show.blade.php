@@ -208,10 +208,34 @@
                 @endif
             </section>
 
+            </section>
+
+            {{-- Tongkrongan CTA --}}
+            <section class="mb-8">
+                <a href="{{ route('tongkrongan.create') }}" class="w-full flex items-center justify-between bg-amber-50 border border-amber-200 rounded-2xl p-4 active:scale-[0.98] transition-transform no-underline">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center text-white shadow-sm">
+                            <i class="ph-fill ph-users-three text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-black text-[#2C1810]">Masukin ke Tongkrongan</h3>
+                            <p class="text-[0.65rem] font-bold text-amber-700">Vote bareng temen buat ke sini!</p>
+                        </div>
+                    </div>
+                    <i class="ph-bold ph-caret-right text-amber-500"></i>
+                </a>
+            </section>
+
+            {{-- Check-In Button (Gamification) --}}
+            <div id="check-in-react"
+                 data-cafe-id="{{ $cafe->id }}"
+                 data-cafe-name="{{ $cafe->name }}"
+                 data-cafe-lat="{{ $cafe->latitude }}"
+                 data-cafe-lng="{{ $cafe->longitude }}"
+                 data-is-authenticated="{{ auth()->check() ? 'true' : 'false' }}">
+            </div>
+
             {{-- WFC Compatibility Score (React Hybrid) --}}
-            @php
-                $hasRated = auth()->check() ? $cafe->wfcScores->where('user_id', auth()->id())->isNotEmpty() : false;
-            @endphp
             <div id="wfc-score-react"
                  data-cafe-id="{{ $cafe->id }}"
                  data-cafe-name="{{ $cafe->name }}"
@@ -220,6 +244,13 @@
                  data-cafe-lat="{{ $cafe->latitude }}"
                  data-cafe-lng="{{ $cafe->longitude }}"
                  data-has-rated="{{ $hasRated ? 'true' : 'false' }}">
+            </div>
+
+            {{-- Live Vibe Meter (React Hybrid) --}}
+            <div id="vibe-meter-react"
+                 data-cafe-id="{{ $cafe->id }}"
+                 data-cafe-lat="{{ $cafe->latitude }}"
+                 data-cafe-lng="{{ $cafe->longitude }}">
             </div>
 
             {{-- Catatan Komunitas (WFC Comments) --}}
@@ -707,12 +738,26 @@
                 },
 
                 // ------------------ UTILS ------------------
-                toggleBookmark() {
+                async toggleBookmark() {
                     try {
                         let b = JSON.parse(localStorage.getItem('wadah-bookmarks') || '[]');
                         this.isBookmarked ? b = b.filter(id => id !== props.id) : b.push(props.id);
                         localStorage.setItem('wadah-bookmarks', JSON.stringify(b));
                         this.isBookmarked = !this.isBookmarked;
+
+                        // Hybrid DB Sync for authenticated users
+                        if ({{ auth()->check() ? 'true' : 'false' }}) {
+                            await fetch('/api/bookmarks/toggle', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                                    'Accept': 'application/json',
+                                },
+                                body: JSON.stringify({ bookmarkable_id: props.id, bookmarkable_type: 'cafe' })
+                            });
+                        }
+
                         window.dispatchEvent(new CustomEvent('toast', { detail: { message: this.isBookmarked ? 'Disimpan ke favorit' : 'Dihapus dari favorit', type: 'success' } }));
                     } catch (e) { console.error(e); }
                 },

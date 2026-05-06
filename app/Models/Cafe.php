@@ -37,6 +37,8 @@ class Cafe extends Model
         'menu_images',
         'wfc_avg_score',
         'wfc_review_count',
+        'current_vibe',
+        'vibe_updated_at',
     ];
 
     /**
@@ -83,6 +85,22 @@ class Cafe extends Model
     public function wfcScores(): HasMany
     {
         return $this->hasMany(WfcScore::class);
+    }
+
+    /**
+     * The vibe votes that belong to the cafe.
+     */
+    public function vibeVotes(): HasMany
+    {
+        return $this->hasMany(VibeVote::class);
+    }
+
+    /**
+     * The check-ins for this cafe.
+     */
+    public function checkIns(): HasMany
+    {
+        return $this->hasMany(CheckIn::class);
     }
 
     /**

@@ -10,6 +10,8 @@
 
     <title>@yield('title', 'WadahNgopi')</title>
     
+    <link rel="manifest" href="/manifest.json">
+
     {{-- Original SEO & Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

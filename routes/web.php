@@ -25,6 +25,40 @@ Route::middleware(['throttle:web'])->group(function () {
         ->middleware('auth')
         ->name('cafes.wfc-score');
 
+    // Vibe Meter API (Public read, rate-limited write)
+    Route::get('/cafes/{cafe:id}/vibe', [\App\Http\Controllers\Api\VibeController::class, 'show'])
+        ->name('cafes.vibe.show');
+    Route::post('/cafes/{cafe:id}/vibe', [\App\Http\Controllers\Api\VibeController::class, 'store'])
+        ->name('cafes.vibe.store');
+
+    // Bookmark API (Auth Required)
+    Route::middleware('auth')->prefix('api/bookmarks')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\BookmarkController::class, 'index'])->name('bookmarks.index');
+        Route::post('/toggle', [\App\Http\Controllers\Api\BookmarkController::class, 'toggle'])->name('bookmarks.toggle');
+        Route::post('/sync', [\App\Http\Controllers\Api\BookmarkController::class, 'sync'])->name('bookmarks.sync');
+    });
+
+    // Check-in & Badges (Auth Required)
+    Route::middleware('auth')->group(function () {
+        Route::post('/cafes/{cafe:id}/check-in', [\App\Http\Controllers\Api\CheckInController::class, 'store'])
+            ->name('cafes.check-in');
+        Route::get('/api/badges', [\App\Http\Controllers\Api\CheckInController::class, 'badges'])
+            ->name('badges.index');
+        Route::get('/profile/badges', function () {
+            return view('profile.badges');
+        })->name('profile.badges');
+    });
+
+    // Tongkrongan (Public — no auth required)
+    Route::get('/tongkrongan/buat', [\App\Http\Controllers\TongkronganController::class, 'create'])
+        ->name('tongkrongan.create');
+    Route::post('/tongkrongan', [\App\Http\Controllers\TongkronganController::class, 'store'])
+        ->name('tongkrongan.store');
+    Route::get('/tongkrongan/{tongkrongan:uuid}', [\App\Http\Controllers\TongkronganController::class, 'show'])
+        ->name('tongkrongan.show');
+    Route::post('/tongkrongan/{tongkrongan:uuid}/vote/{item}', [\App\Http\Controllers\TongkronganController::class, 'vote'])
+        ->name('tongkrongan.vote');
+
     // Auth Actions
     Route::post('/logout', function () {
         auth()->logout();

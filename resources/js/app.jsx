@@ -3,10 +3,16 @@ import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import DockNav from './components/DockNav';
 import WfcScoreSection from './components/WfcScoreSection';
+import VibeMeter from './components/VibeMeter';
+import CheckInButton from './components/CheckInButton';
+import BadgeShowcase from './components/BadgeShowcase';
 
 const components = {
     'bottom-nav-react': DockNav,
     'wfc-score-react': WfcScoreSection,
+    'vibe-meter-react': VibeMeter,
+    'check-in-react': CheckInButton,
+    'badge-showcase-react': BadgeShowcase,
 };
 
 document.addEventListener('DOMContentLoaded', () => {

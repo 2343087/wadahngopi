@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\UserRole;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -30,6 +31,29 @@ class User extends Authenticatable implements FilamentUser
     public function roasteries()
     {
         return $this->hasMany(Roastery::class, 'owner_id');
+    }
+
+    public function bookmarks(): HasMany
+    {
+        return $this->hasMany(Bookmark::class);
+    }
+
+    public function checkIns(): HasMany
+    {
+        return $this->hasMany(CheckIn::class);
+    }
+
+    public function userBadges(): HasMany
+    {
+        return $this->hasMany(UserBadge::class);
+    }
+
+    /**
+     * Get the count of unique cafes visited.
+     */
+    public function getUniqueCafeVisitsAttribute(): int
+    {
+        return $this->checkIns()->distinct('cafe_id')->count('cafe_id');
     }
 
     /**

@@ -4,7 +4,7 @@
     "name": "bootstrap"
   },
   "resources/css/app.css": {
-    "file": "assets/app-DWn0fuXV.css",
+    "file": "assets/app-DN9aGf_z.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -22,7 +22,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-DJaRU9P3.js",
+    "file": "assets/app-BhJXlNfb.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
