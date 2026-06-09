@@ -69,7 +69,7 @@ class CafeSearchService
             function () use ($tableName) {
                 try {
                     \Illuminate\Support\Facades\DB::select(
-                        "SELECT ST_Distance_Sphere(
+                        "SELECT ST_Distance(
                             ST_GeomFromText('POINT(0 0)', 4326),
                             ST_GeomFromText('POINT(0 0)', 4326)
                         ) AS dist"
@@ -91,8 +91,8 @@ class CafeSearchService
             $point = "POINT($lat $lng)";
 
             return $query
-                ->whereRaw('ST_Distance_Sphere(location, ST_GeomFromText(?, 4326)) <= ?', [$point, $radiusKm * 1000])
-                ->selectRaw('(ST_Distance_Sphere(location, ST_GeomFromText(?, 4326)) / 1000) AS distance', [$point])
+                ->whereRaw('ST_Distance(location, ST_GeomFromText(?, 4326)) <= ?', [$point, $radiusKm * 1000])
+                ->selectRaw('(ST_Distance(location, ST_GeomFromText(?, 4326)) / 1000) AS distance', [$point])
                 ->orderBy('distance');
         }
 
@@ -100,7 +100,7 @@ class CafeSearchService
         // Works on MariaDB, MySQL 5.7, and any SQL database
         $haversine = "(
             6371 * ACOS(
-                LEAST(1, MAX(-1, COS(RADIANS(?)) * COS(RADIANS(latitude)) *
+                LEAST(1, GREATEST(-1, COS(RADIANS(?)) * COS(RADIANS(latitude)) *
                 COS(RADIANS(longitude) - RADIANS(?)) +
                 SIN(RADIANS(?)) * SIN(RADIANS(latitude))))
             )

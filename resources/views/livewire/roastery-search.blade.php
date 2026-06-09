@@ -139,9 +139,9 @@
 
     {{-- Premium Skeleton Shimmer (Shown while loading) --}}
     <div class="explore-cafe-grid" wire:loading>
-        <template x-for="i in 6" :key="'skel-'+i">
+        @for($i = 1; $i <= 6; $i++)
             <x-skeleton.roastery-card />
-        </template>
+        @endfor
     </div>
 
     {{-- Roastery Grid Premium --}}

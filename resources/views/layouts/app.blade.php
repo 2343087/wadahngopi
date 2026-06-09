@@ -10,6 +10,10 @@
 
     <title>@yield('title', 'WadahNgopi')</title>
     
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('favicon-192x192.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('favicon-192x192.png') }}">
+    
     <link rel="manifest" href="/manifest.json">
 
     {{-- Original SEO & Fonts --}}

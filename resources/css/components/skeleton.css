@@ -1,44 +1,44 @@
 /* Skeleton Loading - Premium Shimmer Effect */
 
 @media (prefers-reduced-motion: no-preference) {
-
     .skeleton,
     .skeleton-text,
     .skeleton-circle,
-    .skeleton-rect {
+    .skeleton-rect,
+    .skeleton-shimmer {
         position: relative;
         overflow: hidden;
-        background-color: #e5e7eb;
-        /* gray-200 */
+        background: linear-gradient(
+            90deg,
+            #F2EBE8 0%,
+            #F9F6F4 25%,
+            #FFFFFF 50%,
+            #F9F6F4 75%,
+            #F2EBE8 100%
+        );
+        background-size: 400% 100%;
+        animation: shimmer-sweep 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        border-color: rgba(26, 15, 10, 0.03) !important;
     }
 
-    /* Dark mode support logic should be handled via parent class or specific media query if needed, 
-       but Tailwind's 'dark:' classes on elements are preferred. 
-       Here we define the animation keyframes. */
-
+    /* Remove older ::after elements that could stack on top or break layout */
     .skeleton::after,
     .skeleton-text::after,
     .skeleton-circle::after,
-    .skeleton-rect::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        transform: translateX(-100%);
-        background-image: linear-gradient(90deg,
-                rgba(255, 255, 255, 0) 0,
-                rgba(255, 255, 255, 0.4) 20%,
-                rgba(255, 255, 255, 0.7) 60%,
-                rgba(255, 255, 255, 0));
-        animation: shimmer 2s infinite;
+    .skeleton-rect::after,
+    .skeleton-shimmer::after {
+        display: none !important;
     }
 }
 
-@keyframes shimmer {
-    100% {
-        transform: translateX(100%);
+/* Fallback for reduced motion: static warm grey gradient background without animation */
+@media (prefers-reduced-motion: reduce) {
+    .skeleton,
+    .skeleton-text,
+    .skeleton-circle,
+    .skeleton-rect,
+    .skeleton-shimmer {
+        background: #F2EBE8 !important;
     }
 }
 
@@ -57,31 +57,8 @@
     border-radius: 0.5rem;
 }
 
-/* Skeleton shimmer variant — same animation as .skeleton but usable as standalone */
-.skeleton-shimmer {
-    position: relative;
-    overflow: hidden;
-    background-color: #e5e7eb;
-}
-
-.skeleton-shimmer::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    transform: translateX(-100%);
-    background-image: linear-gradient(90deg,
-            rgba(255, 255, 255, 0) 0,
-            rgba(255, 255, 255, 0.4) 20%,
-            rgba(255, 255, 255, 0.7) 60%,
-            rgba(255, 255, 255, 0));
-    animation: shimmer 2s infinite;
-}
-
 /* Skeleton card container — dims overall opacity for card-level skeleton */
 .skeleton-card {
     pointer-events: none;
-    opacity: 0.85;
+    opacity: 0.9;
 }

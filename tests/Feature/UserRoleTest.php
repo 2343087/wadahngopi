@@ -19,9 +19,9 @@ it('has all expected role values', function () {
 
 it('provides human-readable labels', function () {
     expect(UserRole::Developer->label())->toBe('Developer');
-    expect(UserRole::Admin->label())->toBe('Cafe Owner');
-    expect(UserRole::Roastery->label())->toBe('Roastery Owner');
-    expect(UserRole::User->label())->toBe('User');
+    expect(UserRole::Admin->label())->toBe('Owner Cafe');
+    expect(UserRole::Roastery->label())->toBe('Owner Roastery');
+    expect(UserRole::User->label())->toBe('Pengunjung');
 });
 
 // --- User Model Role Integration ---
@@ -34,7 +34,8 @@ it('user model hasRole method works correctly', function () {
 });
 
 it('user with invalid role cannot access panel', function () {
-    $user = User::factory()->create(['role' => 'nonexistent']);
+    $user = User::factory()->create();
+    $user->setRawAttributes(array_merge($user->getAttributes(), ['role' => 'nonexistent']));
 
     expect($user->canAccessPanel(new \Filament\Panel))->toBeFalse();
 });

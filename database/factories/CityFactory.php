@@ -30,11 +30,12 @@ class CityFactory extends Factory
             'Ujoh Bilang',
         ];
 
-        $name = fake()->unique()->randomElement($kaltimCities);
+        static $index = 1;
+        $name = fake()->randomElement($kaltimCities) . ' ' . $index++;
 
         return [
             'name' => $name,
-            'slug' => \Illuminate\Support\Str::slug($name),
+            'slug' => Str::slug($name),
         ];
     }
 }

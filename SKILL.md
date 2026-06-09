@@ -29,6 +29,7 @@ Security bukan fitur. Itu oksigen. Tanpa security, sistem lo mati.
 *   **XSS:** Auto-escape semua output `{{ }}`. Hati-hati dengan `{!! !!}`.
 *   **IDOR:** Cek `authorize()` di setiap Policy. User A gak boleh liat data User B.
 *   **Data Exposure:** Sembunyikan ID auto-increment jika perlu (pakai UUID/Slug). Jangan return full object `User` jika cuma butuh `name`.
+dan semua teknikal serangan hacker lainnya
 
 ### 🕵️ Audit Procedure:
 Setiap nulis fitur, tanya diri lo:
@@ -90,9 +91,6 @@ Tampilan harus bikin user bilang "Waduh, gila ✨".
 ## 📜 8. THE FINAL OATH
 > **"Gw gak akan nulis code yang gw sendiri malu buat nunjukin ke dunia. Code gw adalah reputasi gw."**
 
-*Signed,*
-**Antigravity AI**
-*The Apex System*
 
 
 </antigravity-core>

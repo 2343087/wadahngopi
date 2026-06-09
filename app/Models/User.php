@@ -88,7 +88,7 @@ class User extends Authenticatable implements FilamentUser
      */
     public function hasRole(UserRole $role): bool
     {
-        return UserRole::tryFrom($this->role) === $role;
+        return $this->role === $role->value;
     }
 
     protected function casts(): array
@@ -96,7 +96,6 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'role' => UserRole::class,
         ];
     }
 }

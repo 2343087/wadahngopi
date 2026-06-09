@@ -87,9 +87,9 @@ it('denies user role from panel access', function () {
 
 it('provides human-readable labels for all roles', function () {
     expect(UserRole::Developer->label())->toBe('Developer');
-    expect(UserRole::Admin->label())->toBe('Cafe Owner');
-    expect(UserRole::Roastery->label())->toBe('Roastery Owner');
-    expect(UserRole::User->label())->toBe('User');
+    expect(UserRole::Admin->label())->toBe('Owner Cafe');
+    expect(UserRole::Roastery->label())->toBe('Owner Roastery');
+    expect(UserRole::User->label())->toBe('Pengunjung');
 });
 
 // --- XSS Protection ---

@@ -632,3 +632,31 @@
     align-items: center;
     gap: 5px;
 }
+
+/* Touch device optimizations: matikan 3D tilt, sembunyikan hover actions */
+@media (hover: none) and (pointer: coarse) {
+    .cafe-card-actions {
+        display: none !important;
+    }
+
+    .cafe-card-2026:hover {
+        transform: none !important;
+        box-shadow: 0 4px 20px rgba(26, 15, 10, 0.06), 0 1px 3px rgba(26, 15, 10, 0.04) !important;
+        border-color: rgba(26, 15, 10, 0.04) !important;
+    }
+
+    .cafe-card-2026:active {
+        transform: scale(0.97) !important;
+        transition-duration: 0.12s !important;
+    }
+
+    /* Matikan zoom image pada touch hover */
+    .cafe-card-2026:hover .cafe-card-img {
+        transform: scale(1.04) !important;
+    }
+
+    /* Sembunyikan card shine di touch */
+    .card-shine {
+        display: none !important;
+    }
+}

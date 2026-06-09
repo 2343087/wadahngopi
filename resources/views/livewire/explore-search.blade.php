@@ -160,9 +160,9 @@
 
     {{-- Premium Skeleton Shimmer (Shown while loading) --}}
     <div class="explore-cafe-grid" wire:loading>
-        <template x-for="i in 6" :key="'skel-'+i">
-            <x-skeleton.cafe-card />
-        </template>
+        @for($i = 1; $i <= 6; $i++)
+            <x-skeleton.cafe-card :is-featured="$i % 5 === 1" />
+        @endfor
     </div>
 
     {{-- Cafe Grid Premium - Hidden while loading more to prevent jump --}}
@@ -173,15 +173,7 @@
             @php $isFeatured = ($loop->iteration % 5 === 1); @endphp
             <a href="{{ route('cafes.show', $cafe) }}" 
                class="cafe-card-2026 group card-stagger {{ $isFeatured ? 'card-featured' : '' }}" 
-               wire:key="cafe-{{ $cafe->id }}"
-               x-data="{}" 
-               @mousemove="
-                    const r = $el.getBoundingClientRect();
-                    const x = (event.clientX - r.left) / r.width - 0.5;
-                    const y = (event.clientY - r.top) / r.height - 0.5;
-                    $el.style.transform = `perspective(1000px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) translateY(-8px) scale(1.025)`;
-               " 
-               @mouseleave="$el.style.transform = ''">
+               wire:key="cafe-{{ $cafe->id }}">
                     {{-- Fixed Height Image Container --}}
                     @php
                         $image = $cafe->image_path ? (str_starts_with($cafe->image_path, 'http') ? $cafe->image_path : Storage::url($cafe->image_path)) : 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800';
@@ -247,7 +239,7 @@
                             @endphp
                             
                             @foreach ($visibleSocials as $social)
-                                <button onclick="event.preventDefault(); window.open('{{ $social['url'] }}', '_blank')" class="quick-action-btn" title="{{ ucfirst($social['platform']) }}">
+                                <button onclick="event.stopPropagation(); window.open('{{ $social['url'] }}', '_blank')" class="quick-action-btn" title="{{ ucfirst($social['platform']) }}">
                                     <i class="ph-bold ph-@if($social['platform'] === 'twitter')x-logo @else{{ $social['platform'] }}-logo @endif"></i>
                                 </button>
                             @endforeach

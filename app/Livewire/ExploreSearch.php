@@ -71,7 +71,7 @@ class ExploreSearch extends Component
 
         if ($this->filter === 'terdekat') {
             // If we don't have location yet, don't trigger the filter query just yet
-            if (!$this->userLat || !$this->userLng) {
+            if ($this->userLat === null || $this->userLng === null) {
                 $this->dispatch('request-location');
                 // Temporarily revert to 'semua' until location is received
                 // This prevents "Empty results" while waiting for GPS
@@ -269,7 +269,7 @@ class ExploreSearch extends Component
             }
         } else {
             // 3. Robust Total Counting for standard filters
-            $locationHash = ($this->userLat && $this->userLng) ? round($this->userLat, 3) . ',' . round($this->userLng, 3) : 'none';
+            $locationHash = ($this->userLat !== null && $this->userLng !== null) ? round($this->userLat, 3) . ',' . round($this->userLng, 3) : 'none';
             $cacheKeyTotal = 'total_v11_' . md5($this->cityId . $this->search . $this->activeLetter . $this->filter . $locationHash);
             $totalResults = \Illuminate\Support\Facades\Cache::remember($cacheKeyTotal, now()->addMinutes(10), fn() => $query->count());
 
@@ -278,7 +278,7 @@ class ExploreSearch extends Component
                 $query->orderBy('name', 'asc');
             } elseif ($this->sort === 'name_za') {
                 $query->orderBy('name', 'desc');
-            } elseif ($this->sort === 'distance' && $this->userLat && $this->userLng) {
+            } elseif ($this->sort === 'distance' && $this->userLat !== null && $this->userLng !== null) {
                 // Distance order is handled by nearest scope
             } else {
                 $query->latest();

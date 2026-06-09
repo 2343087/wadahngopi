@@ -10,6 +10,11 @@ class WelcomeBanner extends Widget
 
     protected int|string|array $columnSpan = 'full';
 
+    public function getColumnSpan(): int|string|array
+    {
+        return 'full';
+    }
+
     public function render(): \Illuminate\Contracts\View\View
     {
         return view('filament.widgets.welcome-banner', [

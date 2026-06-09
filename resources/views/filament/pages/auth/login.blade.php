@@ -8,7 +8,8 @@
             display: none !important;
         }
 
-        .fi-simple-page {
+        body,
+        .fi-simple-layout {
             background: #060606 !important;
             padding: 0 !important;
             margin: 0 !important;
