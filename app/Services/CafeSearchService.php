@@ -68,12 +68,22 @@ class CafeSearchService
             now()->addHour(),
             function () use ($tableName) {
                 try {
-                    \Illuminate\Support\Facades\DB::select(
+                    // Test ST_Distance with WGS 84 (SRID 4326) between two points 1 degree apart.
+                    // MySQL 8.0+ returns meters (~111319m). MariaDB and MySQL 5.7 return degrees (1.0).
+                    $testDist = \Illuminate\Support\Facades\DB::select(
                         "SELECT ST_Distance(
                             ST_GeomFromText('POINT(0 0)', 4326),
-                            ST_GeomFromText('POINT(0 0)', 4326)
+                            ST_GeomFromText('POINT(0 1)', 4326)
                         ) AS dist"
                     );
+                    $distVal = (float) ($testDist[0]->dist ?? 0);
+
+                    // If it returns degrees (less than 100 meters), treat geographic spatial as unsupported
+                    // to trigger the Haversine fallback.
+                    if ($distVal < 100) {
+                        return false;
+                    }
+
                     // Also verify the location column exists and has data
                     $hasLocation = \Illuminate\Support\Facades\DB::select(
                         "SELECT COUNT(*) as cnt FROM `{$tableName}` WHERE location IS NOT NULL LIMIT 1"
