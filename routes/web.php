@@ -50,12 +50,16 @@ Route::middleware(['throttle:web'])->group(function () {
     });
 
     // Tongkrongan (Public — no auth required)
+    Route::get('/tongkrongan/search-cafes', [\App\Http\Controllers\TongkronganController::class, 'searchCafes'])
+        ->name('tongkrongan.search-cafes');
     Route::get('/tongkrongan/buat', [\App\Http\Controllers\TongkronganController::class, 'create'])
         ->name('tongkrongan.create');
     Route::post('/tongkrongan', [\App\Http\Controllers\TongkronganController::class, 'store'])
         ->name('tongkrongan.store');
     Route::get('/tongkrongan/{tongkrongan:uuid}', [\App\Http\Controllers\TongkronganController::class, 'show'])
         ->name('tongkrongan.show');
+    Route::get('/tongkrongan/{tongkrongan:uuid}/votes', [\App\Http\Controllers\TongkronganController::class, 'getVotes'])
+        ->name('tongkrongan.votes');
     Route::post('/tongkrongan/{tongkrongan:uuid}/vote/{item}', [\App\Http\Controllers\TongkronganController::class, 'vote'])
         ->name('tongkrongan.vote');
 

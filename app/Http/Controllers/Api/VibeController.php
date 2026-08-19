@@ -31,11 +31,13 @@ class VibeController extends Controller
             'level' => 'required|in:sepi,lumayan,rame,penuh',
             'user_lat' => 'nullable|numeric',
             'user_lng' => 'nullable|numeric',
-            'fingerprint' => 'required|string|max:64',
         ]);
 
+        // Secure fingerprint pake session ID bawaan Laravel biar ga bisa di-spoof
+        $fingerprint = $request->session()->getId();
+
         // Rate limit: 1 vote per cafe per fingerprint per 4 hours
-        $rateLimitKey = "vibe:{$cafe->id}:{$validated['fingerprint']}";
+        $rateLimitKey = "vibe:{$cafe->id}:{$fingerprint}";
         if (RateLimiter::tooManyAttempts($rateLimitKey, 1)) {
             return response()->json([
                 'message' => 'Lu udah vote buat cafe ini. Tunggu beberapa jam lagi ya!',
@@ -43,7 +45,7 @@ class VibeController extends Controller
         }
 
         // Check for recent duplicate
-        if ($this->vibeService->hasRecentVote($cafe->id, $validated['fingerprint'])) {
+        if ($this->vibeService->hasRecentVote($cafe->id, $fingerprint)) {
             return response()->json([
                 'message' => 'Lu udah vote buat cafe ini dalam 4 jam terakhir.',
             ], 422);
@@ -54,7 +56,7 @@ class VibeController extends Controller
             $validated['level'],
             $validated['user_lat'] ?? null,
             $validated['user_lng'] ?? null,
-            $validated['fingerprint'],
+            $fingerprint,
             auth()->id()
         );
 

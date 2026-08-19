@@ -54,9 +54,18 @@ const CheckInButton = ({ cafeId, cafeName, cafeLat, cafeLng, isAuthenticated }) 
                     setTimeout(() => setShowBadgePopup(true), 800);
                 }
 
+                let toastMessage = '📍 Check-in berhasil!';
+                if (data.is_verified) {
+                    toastMessage = '✅ Valid! Titik GPS pas di lokasi.';
+                } else if (data.verification_reason === 'too_far') {
+                    toastMessage = '📍 Jarak lumayan jauh (GPS nyasar di mall?), tapi tetep kecatat brok!';
+                } else if (data.verification_reason === 'no_gps') {
+                    toastMessage = '📍 Check-in manual tanpa GPS berhasil.';
+                }
+
                 window.dispatchEvent(new CustomEvent('toast', { 
                     detail: { 
-                        message: data.is_verified ? '✅ Check-in terverifikasi GPS!' : '📍 Check-in berhasil!', 
+                        message: toastMessage, 
                         type: 'success' 
                     } 
                 }));
@@ -83,6 +92,7 @@ const CheckInButton = ({ cafeId, cafeName, cafeLat, cafeLng, isAuthenticated }) 
                     onClick={handleCheckIn}
                     disabled={isCheckedIn || isLoading}
                     whileTap={{ scale: 0.96 }}
+                    aria-live="polite" /* biar screen reader tau pas lagi loading ngab */
                     className={`w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-bold text-sm transition-all shadow-lg ${
                         isCheckedIn 
                             ? 'bg-emerald-50 border-2 border-emerald-200 text-emerald-600' 
@@ -122,6 +132,8 @@ const CheckInButton = ({ cafeId, cafeName, cafeLat, cafeLng, isAuthenticated }) 
                         exit={{ opacity: 0 }}
                         className="fixed inset-0 z-[15000] bg-black/70 backdrop-blur-sm flex items-center justify-center p-6"
                         onClick={() => setShowBadgePopup(false)}
+                        role="status" /* tambah role status biar SR otomatis baca pas popup muncul ngab */
+                        aria-live="polite"
                     >
                         <motion.div
                             initial={{ scale: 0.5, opacity: 0 }}
@@ -138,22 +150,45 @@ const CheckInButton = ({ cafeId, cafeName, cafeLat, cafeLng, isAuthenticated }) 
                             >
                                 🏆
                             </motion.div>
-                            <h3 className="text-2xl font-black text-[#2C1810] mb-2">Badge Baru!</h3>
-                            <p className="text-slate-500 text-sm mb-6">Lo baru aja unlock achievement baru!</p>
+                            <motion.h3 
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.1 }}
+                                className="text-2xl font-black text-[#2C1810] mb-2"
+                            >
+                                Badge Baru!
+                            </motion.h3>
+                            <motion.p 
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2 }}
+                                className="text-slate-500 text-sm mb-6"
+                            >
+                                Lo baru aja unlock achievement baru!
+                            </motion.p>
                             <div className="space-y-3">
                                 {newBadges.map((slug, i) => (
-                                    <div key={i} className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center gap-3">
+                                    <motion.div 
+                                        key={i} 
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.3 + (i * 0.1) }}
+                                        className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center gap-3"
+                                    >
                                         <span className="text-2xl">🎖️</span>
                                         <span className="font-bold text-[#2C1810] text-sm">{slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
-                                    </div>
+                                    </motion.div>
                                 ))}
                             </div>
-                            <button 
+                            <motion.button 
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.5 }}
                                 onClick={() => setShowBadgePopup(false)}
-                                className="mt-6 w-full py-3 bg-[#1A0F0A] text-white rounded-2xl font-bold text-sm"
+                                className="mt-6 w-full py-3 bg-[#1A0F0A] text-white rounded-2xl font-bold text-sm hover:scale-[1.02] active:scale-95 transition-all"
                             >
                                 Mantap! 🔥
-                            </button>
+                            </motion.button>
                         </motion.div>
                     </motion.div>
                 )}

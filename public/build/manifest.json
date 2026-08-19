@@ -1,10 +1,10 @@
 {
-  "_bootstrap-CAiCLEjY.js": {
-    "file": "assets/bootstrap-CAiCLEjY.js",
+  "_bootstrap-pwXO6Gzd.js": {
+    "file": "assets/bootstrap-pwXO6Gzd.js",
     "name": "bootstrap"
   },
   "resources/css/app.css": {
-    "file": "assets/app-CuH0lCRA.css",
+    "file": "assets/app-Bpn0pZNL.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -13,21 +13,21 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-i3HPmDcN.js",
+    "file": "assets/app-QWPVM4Kd.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_bootstrap-CAiCLEjY.js"
+      "_bootstrap-pwXO6Gzd.js"
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-BhJXlNfb.js",
+    "file": "assets/app-Dhv267lp.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
     "imports": [
-      "_bootstrap-CAiCLEjY.js"
+      "_bootstrap-pwXO6Gzd.js"
     ]
   }
 }

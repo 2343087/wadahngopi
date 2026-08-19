@@ -89,8 +89,13 @@
     </script>
 
     {{-- Global Toast --}}
-    <div x-show="toast.show" x-cloak class="fixed top-8 left-1/2 -translate-x-1/2 z-[9999] pointer-events-none">
-        <div class="px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 backdrop-blur-xl border border-white/20 bg-espresso/90 text-white">
+    <div x-show="toast.show" x-cloak class="fixed top-8 left-1/2 -translate-x-1/2 z-[9999] pointer-events-none transition-all duration-300"
+         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4">
+        <div class="px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 backdrop-blur-xl border bg-espresso/90 text-white"
+             :class="toast.type === 'warning' ? 'border-amber-500/50' : (toast.type === 'error' ? 'border-rose-500/50' : 'border-white/20')">
+            <i class="ph-fill text-lg" 
+               :class="toast.type === 'warning' ? 'ph-warning-circle text-amber-500' : (toast.type === 'error' ? 'ph-x-circle text-rose-500' : 'ph-check-circle text-emerald-500')"></i>
             <span class="text-sm font-bold" x-text="toast.message"></span>
         </div>
     </div>

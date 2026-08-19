@@ -67,9 +67,16 @@ function initMagneticElements() {
 
 // 3. PWA HAPTIC FEEDBACK (Mobile Only)
 window.hapticFeedback = function(type = 'light') {
-    if (!window.navigator.vibrate) return;
+    if (window.navigator.vibrate) {
+        if (type === 'light') window.navigator.vibrate(15);
+        else if (type === 'medium') window.navigator.vibrate(30);
+        else if (type === 'error') window.navigator.vibrate([30, 50, 30]);
+        return;
+    }
     
-    if (type === 'light') window.navigator.vibrate(15);
-    else if (type === 'medium') window.navigator.vibrate(30);
-    else if (type === 'error') window.navigator.vibrate([30, 50, 30]);
+    // Fallback buat user ipon yang ga support getar cuy
+    document.body.classList.add('haptic-fallback');
+    setTimeout(() => {
+        document.body.classList.remove('haptic-fallback');
+    }, 150);
 };

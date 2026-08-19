@@ -35,15 +35,19 @@ class WfcScoreService
         $userLat = $data['user_lat'] ?? null;
         $userLng = $data['user_lng'] ?? null;
         $isVerified = false;
+        $reason = 'no_gps';
 
-        if ($userLat && $userLng) {
+        if ($userLat && $userLng && $cafe->latitude && $cafe->longitude) {
             $distance = $this->calculateDistance($userLat, $userLng, $cafe->latitude, $cafe->longitude);
             if ($distance <= 100) { // Increased to 100m for better GPS tolerance
                 $isVerified = true;
+                $reason = 'verified';
+            } else {
+                $reason = 'too_far';
             }
         }
 
-        return DB::transaction(function () use ($cafe, $data, $isVerified) {
+        return DB::transaction(function () use ($cafe, $data, $isVerified, $reason) {
             $score = WfcScore::create([
                 'cafe_id' => $cafe->id,
                 'user_id' => auth()->id(),
@@ -55,6 +59,8 @@ class WfcScoreService
                 'user_lng' => $data['user_lng'] ?? null,
                 'comment' => $data['comment'] ?? null,
             ]);
+
+            $score->verification_reason = $reason;
 
             $this->updateCafeAggregate($cafe);
 

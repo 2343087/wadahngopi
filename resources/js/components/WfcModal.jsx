@@ -10,6 +10,7 @@ const WfcModal = ({ cafeId, cafeName, cafeLat, cafeLng, isOpen, onClose, onSucce
     });
     const [comment, setComment] = useState('');
     const [isVerified, setIsVerified] = useState(false);
+    const [verificationReason, setVerificationReason] = useState('no_gps');
     const [error, setError] = useState(null);
     const [shareImage, setShareImage] = useState(null);
 
@@ -71,9 +72,14 @@ const WfcModal = ({ cafeId, cafeName, cafeLat, cafeLng, isOpen, onClose, onSucce
             
             if (response.ok) {
                 setIsVerified(result.is_verified);
-                generateShareCard(result.score, result.is_verified);
+                setVerificationReason(result.verification_reason || 'no_gps');
+                
+                // Langsung nembak success state biar UI ga kerasa ngelag
                 setStep('success');
                 if (onSuccess) onSuccess(result.new_aggregate);
+                
+                // Kerjain canvas-nya di background secara async
+                generateShareCardAsync(result.score, result.is_verified);
             } else {
                 setError(result.message || "Gagal kirim score.");
                 setStep('input');
@@ -84,8 +90,11 @@ const WfcModal = ({ cafeId, cafeName, cafeLat, cafeLng, isOpen, onClose, onSucce
         }
     };
 
-    const generateShareCard = (scoreData, verified) => {
-        const canvas = document.createElement('canvas');
+    // Lempar ke async event loop biar UI main thread ga freeze pas bikin gambar cuy
+    const generateShareCardAsync = (scoreData, verified) => {
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                const canvas = document.createElement('canvas');
         canvas.width = 1080;
         canvas.height = 1920;
         const ctx = canvas.getContext('2d');
@@ -225,6 +234,8 @@ const WfcModal = ({ cafeId, cafeName, cafeLat, cafeLng, isOpen, onClose, onSucce
         ctx.fillText('W', 540, 200);
 
         setShareImage(canvas.toDataURL('image/png', 0.9));
+            }, 0);
+        });
     };
 
     const handleShare = () => {
@@ -250,15 +261,15 @@ const WfcModal = ({ cafeId, cafeName, cafeLat, cafeLng, isOpen, onClose, onSucce
                     initial={{ y: 100, scale: 0.9 }}
                     animate={{ y: 0, scale: 1 }}
                     exit={{ y: 100, scale: 0.9 }}
-                    className="bg-[#1A0F0A] w-full max-w-md rounded-[32px] overflow-hidden shadow-2xl border border-white/10"
+                    className="bg-espresso w-full max-w-md rounded-[32px] overflow-hidden shadow-2xl border border-white/10"
                     onClick={e => e.stopPropagation()}
                 >
                     {step === 'input' && (
                         <div className="p-8">
                             <div className="flex justify-between items-center mb-6">
                                 <div>
-                                    <h3 className="text-white text-xl font-black">Validasi Skor WFC</h3>
-                                    <p className="text-amber-500/60 text-xs font-bold uppercase tracking-widest mt-1">{cafeName}</p>
+                                    <p className="text-white font-black text-sm">Lagi di {cafeName}?</p>
+                                    <p className="text-white/60 text-[0.65rem] font-bold uppercase">Kasih tau warga lain spot ini asik buat nugas atau nggak!</p>
                                 </div>
                                 <button onClick={onClose} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-white transition-colors">
                                     <i className="ph ph-x text-lg"></i>
@@ -267,7 +278,7 @@ const WfcModal = ({ cafeId, cafeName, cafeLat, cafeLng, isOpen, onClose, onSucce
 
                             {error && <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold rounded-xl">{error}</div>}
 
-                            <div className="space-y-6">
+                            <div className="space-y-6 animate-fade-up delay-100">
                                 <RatingRow label="Kestabilan WiFi" value={ratings.wifi_rating} onChange={v => setRatings({...ratings, wifi_rating: v})} />
                                 <RatingRow label="Ketersediaan Colokan" value={ratings.outlet_rating} onChange={v => setRatings({...ratings, outlet_rating: v})} />
                                 <RatingRow label="Vibe Produktivitas" value={ratings.comfort_rating} onChange={v => setRatings({...ratings, comfort_rating: v})} />
@@ -275,7 +286,7 @@ const WfcModal = ({ cafeId, cafeName, cafeLat, cafeLng, isOpen, onClose, onSucce
                                 <div>
                                     <label className="block text-white/40 text-[0.65rem] font-bold uppercase tracking-widest mb-2 px-1">Review Singkat (Wajib Jujur)</label>
                                     <textarea 
-                                        className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm focus:outline-none focus:border-amber-500 transition-colors"
+                                        className="w-full glass-card rounded-2xl p-4 text-white text-sm focus:outline-none focus:border-amber-500 transition-colors"
                                         placeholder="Spot paling pas buat ngegalau pas ujan, atau emang buat tempur tugas? Kasih tau warga lain!"
                                         rows="3"
                                         value={comment}
@@ -286,7 +297,7 @@ const WfcModal = ({ cafeId, cafeName, cafeLat, cafeLng, isOpen, onClose, onSucce
 
                             <button 
                                 onClick={handleSubmit}
-                                className="w-full mt-8 py-4 bg-amber-500 hover:bg-amber-400 text-[#1A0F0A] font-black rounded-2xl transition-all active:scale-95 shadow-xl shadow-amber-500/20"
+                                className="w-full mt-8 py-4 bg-amber-500 hover:bg-amber-400 text-black font-black rounded-2xl transition-all active:scale-95 shadow-xl shadow-amber-500/20 animate-up delay-300"
                             >
                                 KIRIM VALIDASI
                             </button>
@@ -303,25 +314,36 @@ const WfcModal = ({ cafeId, cafeName, cafeLat, cafeLng, isOpen, onClose, onSucce
 
                     {step === 'success' && (
                         <div className="p-8 text-center">
-                            <div className="w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <div className="w-20 h-20 bg-amber-500/20 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-up">
                                 <i className="ph-fill ph-check-circle text-4xl"></i>
                             </div>
-                            <h3 className="text-white text-2xl font-black">Berhasil Terkirim!</h3>
-                            <p className="text-white/60 text-sm mt-2 mb-8">
-                                {isVerified ? "Mantap! Skor lu terverifikasi lewat GPS." : "Skor terkirim, tapi lokasi lu nggak kedeteksi di sini."}
-                            </p>
+                            <h3 className="text-white text-2xl font-black animate-up delay-100">Berhasil Terkirim!</h3>
+                            
+                            {isVerified ? (
+                                <p className="text-white/60 text-sm mt-2 mb-8 animate-up delay-200">
+                                    Mantap! Skor lu terverifikasi lewat GPS.
+                                </p>
+                            ) : verificationReason === 'too_far' ? (
+                                <p className="text-amber-500/80 text-sm mt-2 mb-8 animate-up delay-200">
+                                    Skor terkirim! Jarak lumayan jauh (GPS mall suka nyasar), tapi gapapa brok tetep valid!
+                                </p>
+                            ) : (
+                                <p className="text-white/60 text-sm mt-2 mb-8 animate-up delay-200">
+                                    Skor terkirim secara manual tanpa GPS. Thanks udah nge-review!
+                                </p>
+                            )}
 
                             {shareImage && (
-                                <div className="mb-8 rounded-2xl overflow-hidden border border-white/10 shadow-lg">
+                                <div className="mb-8 rounded-2xl overflow-hidden border border-white/10 shadow-lg animate-up delay-300">
                                     <img src={shareImage} className="w-full aspect-[9/16] object-cover" alt="Share Card" />
                                 </div>
                             )}
 
-                            <div className="flex gap-3">
+                            <div className="flex gap-3 animate-up delay-400">
                                 <button onClick={handleShare} className="flex-1 py-4 bg-white/10 text-white font-black rounded-2xl hover:bg-white/20 transition-all">
                                     DOWNLOAD KARTU
                                 </button>
-                                <button onClick={onClose} className="flex-1 py-4 bg-amber-500 text-[#1A0F0A] font-black rounded-2xl hover:bg-amber-400 transition-all">
+                                <button onClick={onClose} className="flex-1 py-4 bg-amber-500 text-espresso font-black rounded-2xl hover:bg-amber-400 transition-all">
                                     SELESAI
                                 </button>
                             </div>
@@ -342,7 +364,7 @@ const RatingRow = ({ label, value, onChange }) => {
                     <button 
                         key={star}
                         onClick={() => onChange(star)}
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${star <= value ? 'bg-amber-500 text-[#1A0F0A]' : 'bg-white/5 text-white/20'}`}
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${star <= value ? 'bg-amber-500 text-espresso' : 'bg-white/5 text-white/20'}`}
                     >
                         <i className={`ph-fill ph-star text-sm`}></i>
                     </button>

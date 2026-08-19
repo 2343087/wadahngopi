@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
+import Card from './ui/Card';
+import Button from './ui/Button';
+import Badge from './ui/Badge';
 
 const BadgeShowcase = () => {
     const [badges, setBadges] = useState([]);
@@ -50,7 +53,7 @@ const BadgeShowcase = () => {
             {/* Header */}
             <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100 px-6 py-4">
                 <div className="flex items-center gap-3">
-                    <a href="/information" className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200 transition-all active:scale-90">
+                    <a href="/information" aria-label="Kembali ke profil" className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200 transition-all active:scale-90"> {/* tambah aria-label buat aksesibilitas ngab */}
                         <i className="ph-bold ph-arrow-left text-lg"></i>
                     </a>
                     <div>
@@ -62,25 +65,25 @@ const BadgeShowcase = () => {
 
             {/* Stats Banner */}
             <div className="px-6 pt-6 pb-4">
-                <div className="bg-gradient-to-br from-[#1A0F0A] to-[#2D1B12] rounded-[28px] p-6 text-white relative overflow-hidden">
+                <Card variant="premium" className="text-white text-center">
                     <div className="absolute top-0 right-0 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
-                    <div className="relative z-10 flex items-center gap-6">
-                        <div className="text-center">
+                    <div className="relative z-10 flex items-center justify-between gap-2">
+                        <div className="text-center flex-1">
                             <p className="text-3xl font-black text-amber-500">{stats.uniqueCafes}</p>
-                            <p className="text-[0.55rem] font-bold text-white/40 uppercase tracking-widest mt-1">Cafe Dikunjungi</p>
+                            <p className="text-[0.55rem] font-bold text-white/60 uppercase tracking-widest mt-1">Cafe Dikunjungi</p> {/* naikin kontras dikit biar tetep kebaca */}
                         </div>
                         <div className="w-px h-12 bg-white/10"></div>
-                        <div className="text-center">
+                        <div className="text-center flex-1">
                             <p className="text-3xl font-black text-white">{stats.totalCheckIns}</p>
-                            <p className="text-[0.55rem] font-bold text-white/40 uppercase tracking-widest mt-1">Total Check-in</p>
+                            <p className="text-[0.55rem] font-bold text-white/60 uppercase tracking-widest mt-1">Total Check-in</p> {/* naikin kontras dikit biar tetep kebaca */}
                         </div>
                         <div className="w-px h-12 bg-white/10"></div>
-                        <div className="text-center">
+                        <div className="text-center flex-1">
                             <p className="text-3xl font-black text-emerald-400">{earned.length}</p>
-                            <p className="text-[0.55rem] font-bold text-white/40 uppercase tracking-widest mt-1">Badge Earned</p>
+                            <p className="text-[0.55rem] font-bold text-white/60 uppercase tracking-widest mt-1">Badge Earned</p> {/* naikin kontras dikit biar tetep kebaca */}
                         </div>
                     </div>
-                </div>
+                </Card>
             </div>
 
             {/* Earned Badges */}
@@ -97,11 +100,12 @@ const BadgeShowcase = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.1 }}
-                                className="bg-white border border-amber-100 rounded-[24px] p-5 text-center shadow-sm hover:shadow-md transition-all"
                             >
-                                <span className="text-4xl block mb-2">{badge.icon}</span>
-                                <h3 className="text-sm font-black text-[#2C1810] mb-1">{badge.name}</h3>
-                                <p className="text-[0.6rem] text-slate-400 font-medium leading-snug">{badge.description}</p>
+                                <Card variant="plain" className="h-full text-center hover:-translate-y-1 border-amber-100">
+                                    <span className="text-4xl block mb-2">{badge.icon}</span>
+                                    <h3 className="text-sm font-black text-[#2C1810] mb-1">{badge.name}</h3>
+                                    <p className="text-[0.6rem] text-slate-400 font-medium leading-snug">{badge.description}</p>
+                                </Card>
                             </motion.div>
                         ))}
                     </div>
@@ -122,23 +126,24 @@ const BadgeShowcase = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.1 + 0.3 }}
-                                className="bg-slate-50/80 border border-slate-100 rounded-[24px] p-5 text-center relative overflow-hidden"
                             >
-                                <div className="opacity-30 grayscale">
-                                    <span className="text-4xl block mb-2">{badge.icon}</span>
-                                </div>
-                                <h3 className="text-sm font-bold text-slate-400 mb-1">{badge.name}</h3>
-                                <p className="text-[0.6rem] text-slate-300 font-medium leading-snug mb-3">{badge.description}</p>
-                                {/* Progress bar */}
-                                <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                                    <motion.div 
-                                        className="h-full bg-amber-400 rounded-full"
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${(badge.progress / badge.target) * 100}%` }}
-                                        transition={{ duration: 1, delay: 0.5 }}
-                                    />
-                                </div>
-                                <span className="text-[0.55rem] font-bold text-slate-400 mt-1.5 block">{badge.progress}/{badge.target}</span>
+                                <Card variant="plain" className="h-full bg-slate-50/80 text-center relative overflow-hidden">
+                                    <div className="opacity-30 grayscale">
+                                        <span className="text-4xl block mb-2">{badge.icon}</span>
+                                    </div>
+                                    <h3 className="text-sm font-bold text-slate-400 mb-1">{badge.name}</h3>
+                                    <p className="text-[0.6rem] text-slate-300 font-medium leading-snug mb-3">{badge.description}</p>
+                                    {/* Progress bar */}
+                                    <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                                        <motion.div 
+                                            className="h-full bg-amber-400 rounded-full"
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${(badge.progress / badge.target) * 100}%` }}
+                                            transition={{ duration: 1, delay: 0.5 }}
+                                        />
+                                    </div>
+                                    <span className="text-[0.55rem] font-bold text-slate-400 mt-1.5 block">{badge.progress}/{badge.target}</span>
+                                </Card>
                             </motion.div>
                         ))}
                     </div>
@@ -151,10 +156,13 @@ const BadgeShowcase = () => {
                     <span className="text-5xl block mb-4">🎯</span>
                     <h3 className="text-lg font-black text-[#2C1810] mb-2">Belum Ada Badge</h3>
                     <p className="text-sm text-slate-400 mb-6">Check-in di cafe untuk mulai kumpulkan badge!</p>
-                    <a href="/explore" className="inline-flex items-center gap-2 bg-amber-500 text-white px-6 py-3 rounded-2xl font-bold text-sm">
-                        <i className="ph-fill ph-compass"></i>
+                    <Button 
+                        onClick={() => window.location.href='/explore'} 
+                        icon="ph-fill ph-compass"
+                        variant="primary"
+                    >
                         Jelajahi Cafe
-                    </a>
+                    </Button>
                 </div>
             )}
         </div>

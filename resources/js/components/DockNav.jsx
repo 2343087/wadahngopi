@@ -26,6 +26,8 @@ const DockItem = ({ icon, label, url, active, mouseX, isMobile, onClick }) => {
     // Tooltip Visibility Logic
     const tooltipOpacity = useTransform(distance, [-40, 0, 40], [0, 1, 0]);
     const tooltipY = useTransform(distance, [-40, 0, 40], [0, -10, 0]);
+    const tooltipX = useTransform(distance, [-40, 0, 40], [0, 10, 0]);
+
 
     const handleClick = (e) => {
         if (onClick) {
@@ -46,21 +48,27 @@ const DockItem = ({ icon, label, url, active, mouseX, isMobile, onClick }) => {
             <motion.div
                 style={{ 
                     opacity: isMobile ? 0 : tooltipOpacity,
-                    y: tooltipY,
+                    y: isMobile ? tooltipY : 0,
+                    x: isMobile ? 0 : tooltipX,
                     scale: useTransform(tooltipOpacity, [0, 1], [0.8, 1])
                 }}
-                className="absolute z-[10001] -top-12 px-3 py-1 rounded-lg bg-espresso border border-amber-500/30 shadow-2xl pointer-events-none"
+                className={`absolute z-[10001] px-3 py-1 rounded-lg bg-espresso border border-amber-500/30 shadow-2xl pointer-events-none flex items-center justify-center ${
+                    isMobile ? '-top-12' : 'left-full ml-2'
+                }`}
             >
                 <span className="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em] whitespace-nowrap">
                     {label}
                 </span>
-                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-espresso rotate-45 border-r border-b border-amber-500/30"></div>
+                <div className={`absolute w-2 h-2 bg-espresso rotate-45 border-amber-500/30 ${
+                    isMobile ? '-bottom-1 left-1/2 -translate-x-1/2 border-r border-b' : '-left-1 top-1/2 -translate-y-1/2 border-l border-b'
+                }`}></div>
             </motion.div>
 
             <motion.a
                 ref={ref}
                 href={url}
                 onClick={handleClick}
+                aria-label={label} /* tambah aria-label buat aksesibilitas ngab */
                 style={{ width: size, height: size }}
                 className={`relative flex items-center justify-center rounded-2xl transition-all duration-300 ${
                     active 
@@ -80,7 +88,9 @@ const DockItem = ({ icon, label, url, active, mouseX, isMobile, onClick }) => {
             {active && (
                 <motion.div 
                     layoutId="active-indicator"
-                    className="absolute -bottom-2.5 w-5 h-1 bg-amber-500 rounded-full shadow-[0_0_12px_#EAB308]"
+                    className={`absolute bg-amber-500 rounded-full shadow-[0_0_12px_#EAB308] ${
+                        isMobile ? '-bottom-2.5 w-5 h-1 left-1/2 -translate-x-1/2' : '-left-2.5 h-5 w-1 top-1/2 -translate-y-1/2'
+                    }`}
                 />
             )}
         </div>
@@ -148,15 +158,16 @@ const DockNav = ({ currentRoute, routes, isAuthenticated, logoutUrl, csrfToken }
     };
 
     return (
-        <div className="fixed bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 z-[10000] pointer-events-none px-4 w-full flex justify-center">
+        <div className="fixed bottom-8 sm:bottom-10 md:bottom-auto md:top-1/2 md:-translate-y-1/2 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-8 z-[10000] pointer-events-none px-4 w-full md:w-auto flex justify-center md:flex-col">
             <motion.nav
-                onMouseMove={(e) => mouseX.set(e.pageX)}
+                onMouseMove={(e) => mouseX.set(isMobile ? e.pageX : e.pageY)}
                 onMouseLeave={() => mouseX.set(Infinity)}
                 onTouchMove={handleTouch}
                 onTouchEnd={() => mouseX.set(Infinity)}
-                className="pointer-events-auto flex items-end gap-2.5 sm:gap-4 px-4 sm:px-6 py-3.5 rounded-[28px] bg-espresso/95 backdrop-blur-3xl border border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)]"
+                className="pointer-events-auto flex flex-row items-end md:flex-col md:items-center gap-2.5 sm:gap-4 md:gap-6 px-4 sm:px-6 md:px-3.5 py-3.5 md:py-8 rounded-[28px] bg-espresso/95 backdrop-blur-3xl border border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)]"
                 style={{ 
-                    height: isMobile ? 72 : 78,
+                    height: isMobile ? 72 : 'auto',
+                    width: !isMobile ? 78 : 'auto',
                     maxWidth: 'fit-content'
                 }}
             >

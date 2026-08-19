@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import Card from './ui/Card';
 
 const VIBE_LEVELS = [
     { key: 'sepi', emoji: '🧘', label: 'Sepi', color: '#10b981', bg: 'from-emerald-500/20 to-emerald-600/10' },
@@ -105,7 +106,7 @@ const VibeMeter = ({ cafeId, cafeLat, cafeLng }) => {
                 )}
             </div>
 
-            <div className="bg-gradient-to-br from-[#1A0F0A] to-[#2D1B12] rounded-[32px] p-6 text-white relative overflow-hidden shadow-2xl">
+            <Card variant="premium" className="text-white shadow-2xl">
                 {/* Background Decor */}
                 <div className="absolute top-0 right-0 w-40 h-40 bg-amber-500/5 rounded-full blur-3xl -mr-20 -mt-20"></div>
                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl -ml-16 -mb-16"></div>
@@ -137,7 +138,7 @@ const VibeMeter = ({ cafeId, cafeLat, cafeLng }) => {
 
                 {/* Distribution Bars */}
                 {total > 0 && (
-                    <div className="relative z-10 space-y-2 mb-5">
+                    <div className="relative z-10 space-y-2 mb-5" role="group" aria-label="Statistik distribusi vibe">
                         {VIBE_LEVELS.map(v => {
                             const count = aggregate?.distribution?.[v.key] || 0;
                             const pct = total > 0 ? (count / total) * 100 : 0;
@@ -145,7 +146,14 @@ const VibeMeter = ({ cafeId, cafeLat, cafeLng }) => {
                                 <div key={v.key} className="flex items-center gap-3">
                                     <span className="text-sm w-6 text-center">{v.emoji}</span>
                                     <span className="text-[0.6rem] font-bold text-white/50 w-16 uppercase tracking-wider">{v.label}</span>
-                                    <div className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden">
+                                    <div 
+                                        className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden"
+                                        role="progressbar" 
+                                        aria-valuenow={Math.round(pct)} 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100" 
+                                        aria-label={`Persentase vibe ${v.label}`}
+                                    >
                                         <motion.div 
                                             className="h-full rounded-full"
                                             style={{ backgroundColor: v.color }}
@@ -163,17 +171,20 @@ const VibeMeter = ({ cafeId, cafeLat, cafeLng }) => {
 
                 {/* Vote Buttons */}
                 {!hasVoted ? (
-                    <div className="relative z-10 grid grid-cols-4 gap-2">
+                    <div className="relative z-10 grid grid-cols-4 gap-2" role="group" aria-label="Pilihan lapor vibe">
                         {VIBE_LEVELS.map(v => (
                             <motion.button
                                 key={v.key}
+                                aria-label={`Pilih vibe ${v.label}`}
+                                aria-pressed={selectedLevel === v.key}
+                                tabIndex={0}
                                 onClick={() => submitVibe(v.key)}
                                 disabled={isSubmitting}
                                 whileTap={{ scale: 0.92 }}
-                                className={`flex flex-col items-center gap-1.5 py-3 px-2 rounded-2xl border transition-all ${
+                                className={`flex flex-col items-center gap-1.5 py-3 px-2 rounded-2xl border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 focus-visible:ring-offset-espresso ${
                                     selectedLevel === v.key 
                                         ? 'border-amber-500/50 bg-white/10' 
-                                        : 'border-white/10 bg-white/5 hover:bg-white/10 active:bg-white/15'
+                                        : 'glass-card hover:bg-white/10 active:bg-white/15' /* pake class glass-card biar kodenya ga kepanjangan cuy */
                                 } ${isSubmitting ? 'opacity-50' : ''}`}
                             >
                                 <span className="text-2xl">{v.emoji}</span>
@@ -196,7 +207,7 @@ const VibeMeter = ({ cafeId, cafeLat, cafeLng }) => {
                         )}
                     </AnimatePresence>
                 )}
-            </div>
+            </Card>
         </section>
     );
 };

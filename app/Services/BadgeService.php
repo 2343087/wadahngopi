@@ -17,10 +17,16 @@ class BadgeService
     public function checkIn(User $user, Cafe $cafe, ?float $lat, ?float $lng): CheckIn
     {
         $isVerified = false;
+        $reason = 'no_gps'; // fallback klo gps user nyasar ke isekai
 
         if ($lat && $lng && $cafe->latitude && $cafe->longitude) {
             $distance = app(WfcScoreService::class)->calculateDistance($lat, $lng, $cafe->latitude, $cafe->longitude);
-            $isVerified = $distance <= 100;
+            if ($distance <= 100) {
+                $isVerified = true;
+                $reason = 'verified';
+            } else {
+                $reason = 'too_far';
+            }
         }
 
         // Prevent duplicate check-ins at the same cafe on the same day
@@ -40,6 +46,8 @@ class BadgeService
             'user_lat' => $lat,
             'user_lng' => $lng,
         ]);
+
+        $checkIn->verification_reason = $reason;
 
         // Evaluate badges after check-in
         $this->evaluateBadges($user);

@@ -12,6 +12,31 @@ use Illuminate\Support\Facades\RateLimiter;
 class TongkronganController extends Controller
 {
     /**
+     * Search cafes for Tongkrongan list creation.
+     */
+    public function searchCafes(Request $request)
+    {
+        $search = $request->query('q');
+        if (strlen($search) < 2) {
+            return response()->json([]);
+        }
+
+        // selected param can be passed to exclude already selected cafes
+        $selected = $request->query('selected', []);
+
+        $cafes = Cafe::where('status', 'published')
+            ->where('name', 'like', "%{$search}%")
+            ->when(!empty($selected), function ($query) use ($selected) {
+                $query->whereNotIn('id', $selected);
+            })
+            ->select(['id', 'name', 'address', 'slug', 'image_path'])
+            ->limit(5)
+            ->get();
+
+        return response()->json($cafes);
+    }
+
+    /**
      * Show the creation form.
      */
     public function create()
@@ -28,8 +53,10 @@ class TongkronganController extends Controller
             'title' => 'required|string|max:100',
             'cafe_ids' => 'required|array|min:2|max:5',
             'cafe_ids.*' => 'integer|exists:cafes,id',
-            'fingerprint' => 'required|string|max:64',
         ]);
+
+        // Secure fingerprint pake session ID bawaan Laravel biar ga bisa di-spoof
+        $fingerprint = $request->session()->getId();
 
         // Rate limit: 3 lists per IP per day
         $rateLimitKey = 'tongkrongan:' . $request->ip();
@@ -41,7 +68,7 @@ class TongkronganController extends Controller
 
         $tongkrongan = Tongkrongan::create([
             'title' => $validated['title'],
-            'creator_fingerprint' => $validated['fingerprint'],
+            'creator_fingerprint' => $fingerprint,
             'creator_user_id' => auth()->id(),
         ]);
 
@@ -79,6 +106,19 @@ class TongkronganController extends Controller
     }
 
     /**
+     * Get updated votes for a tongkrongan.
+     */
+    public function getVotes(Tongkrongan $tongkrongan)
+    {
+        $tongkrongan->load(['items.votes']);
+        $votes = $tongkrongan->items->mapWithKeys(function ($item) {
+            return [$item->id => $item->votes->count()];
+        });
+
+        return response()->json(['votes' => $votes]);
+    }
+
+    /**
      * Cast a vote on a tongkrongan item.
      */
     public function vote(Request $request, Tongkrongan $tongkrongan, TongkronganItem $item)
@@ -87,13 +127,12 @@ class TongkronganController extends Controller
             return response()->json(['message' => 'List ini sudah expired.'], 422);
         }
 
-        $validated = $request->validate([
-            'fingerprint' => 'required|string|max:64',
-        ]);
+        // Secure fingerprint pake session ID bawaan Laravel biar ga bisa di-spoof
+        $fingerprint = $request->session()->getId();
 
         // Check if already voted for this item
         $existing = TongkronganVote::where('tongkrongan_item_id', $item->id)
-            ->where('voter_fingerprint', $validated['fingerprint'])
+            ->where('voter_fingerprint', $fingerprint)
             ->first();
 
         if ($existing) {
@@ -107,7 +146,7 @@ class TongkronganController extends Controller
 
         TongkronganVote::create([
             'tongkrongan_item_id' => $item->id,
-            'voter_fingerprint' => $validated['fingerprint'],
+            'voter_fingerprint' => $fingerprint,
             'voter_user_id' => auth()->id(),
         ]);
 

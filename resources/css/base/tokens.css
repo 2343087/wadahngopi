@@ -6,7 +6,8 @@
     --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
 
     /* Brand Colors (Refined for Premium Contrast) */
-    --color-espresso: #0F0906; /* Deeper, richer espresso */
+    --color-espresso: #1A0F0A; /* Base espresso sesuai request cuy */
+    --color-espresso-dark: #2C1810; /* Dark variant buat teks */
     --color-coffee: #6F4E37;   /* Traditional coffee brown */
     --color-coffee-dark: #231109;
     --color-coffee-light: #A68A78;
@@ -42,6 +43,17 @@
     --transition-bounce: all 0.6s var(--ease-bounce);
     --transition-smooth: all 0.5s var(--ease-smooth);
     --transition-premium: all 0.7s var(--ease-premium);
+
+    /* UI Standardizations (Radius & Spacing) */
+    --radius-premium: 32px;
+    --radius-bento: 24px;
+    --radius-pill: 100px;
+    --radius-button: 16px;
+    
+    --spacing-bento: 24px;
+    --spacing-card-p: 16px;
+    --spacing-badge-x: 12px;
+    --spacing-badge-y: 6px;
 
     /* Typography System Tokens (Inside Theme for Tailwind 4) */
 

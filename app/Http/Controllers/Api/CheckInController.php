@@ -37,6 +37,7 @@ class CheckInController extends Controller
             'message' => $checkIn->wasRecentlyCreated ? 'Check-in berhasil!' : 'Udah check-in hari ini!',
             'check_in' => $checkIn,
             'is_verified' => $checkIn->is_verified,
+            'verification_reason' => $checkIn->verification_reason ?? 'no_gps',
             'new_badges' => $newBadges,
             'is_new' => $checkIn->wasRecentlyCreated,
         ]);

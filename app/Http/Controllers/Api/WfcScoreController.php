@@ -44,6 +44,7 @@ class WfcScoreController extends Controller
             'message' => 'Score submitted successfully!',
             'score' => $score,
             'is_verified' => $score->is_verified,
+            'verification_reason' => $score->verification_reason ?? 'no_gps',
             'new_aggregate' => [
                 'score' => number_format($cafe->fresh()->wfc_avg_score, 1),
                 'count' => $cafe->fresh()->wfc_review_count,

@@ -23,7 +23,7 @@
     </header>
 
     <main class="flex-1 w-full max-w-[430px] mx-auto relative z-10 px-6 pt-6 pb-32">
-        <livewire:tongkrongan-view :tongkrongan="$tongkrongan" />
+        <div id="tongkrongan-view-react" data-tongkrongan="{{ json_encode($tongkrongan) }}"></div>
     </main>
 </div>
 @endsection
