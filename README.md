@@ -100,10 +100,27 @@ Jika kamu ingin menjalankan WadahNgopi di komputermu sendiri untuk pengembangan 
    ```
    Untuk pengguna Windows dengan Laravel Herd, kamu juga bisa langsung menjalankan `start.bat` dari folder utama proyek.
 
-6. **Membuat akun pengelola (opsional)**
+6. **Siapkan akun uji coba untuk semua peran (untuk testing lokal tim)**
+   ```bash
+   php artisan db:seed --class=TestAccountsSeeder
+   ```
+   Jika ingin membuat akun developer khusus secara interaktif:
    ```bash
    php artisan cms:create-developer
    ```
+
+---
+
+## Akun Uji Coba (Khusus Testing Lokal Tim)
+
+Masuk melalui halaman `/admin/login`. Setelah menjalankan `php artisan db:seed --class=TestAccountsSeeder`, akun berikut siap dipakai untuk menguji seluruh alur setiap peran (hanya berjalan di lingkungan lokal/testing, tidak berjalan di produksi):
+
+| Peran | Role | Email | Kata Sandi | Ruang yang Bisa Diuji |
+| :--- | :--- | :--- | :--- | :--- |
+| **Developer** | `developer` | `dev@wadahngopi.test` | `Password123!` | Akses penuh CMS (`/admin`): tinjau & kelola semua kedai, roastery, kota, kabar kopi, dan akun. |
+| **Owner Cafe** | `admin` | `owner.cafe@wadahngopi.test` | `Password123!` | Akses CMS (`/admin`) untuk menambah dan mengelola data kedai kopi miliknya. |
+| **Owner Roastery** | `roastery` | `owner.roastery@wadahngopi.test` | `Password123!` | Akses CMS (`/admin`) untuk menambah dan mengelola data roastery miliknya. |
+| **Pengunjung** | `user` | `user@wadahngopi.test` | `Password123!` | Simpan favorit tersinkron (`/saved`), beri penilaian WFC, check-in lokasi, dan lencana kopi (`/profile/badges`). |
 
 ---
 
