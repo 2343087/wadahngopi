@@ -6,9 +6,11 @@ import SkeletonList from './components/SkeletonList.vue'
 import StateBlock from './components/StateBlock.vue'
 
 const resources = ref([])
+const summary = ref([])
 const current = ref(null)
 const listing = ref(null)
 const search = ref('')
+const statusFilter = ref('all')
 const form = ref(null)
 const initialSnapshot = ref('')
 const uploads = ref({})
@@ -21,21 +23,35 @@ const locating = ref(false)
 const error = ref('')
 const fieldErrors = ref({})
 const feedback = ref('')
+const slugTouched = ref(false)
 const confirmDelete = ref(null)
 const confirmDiscard = ref(null)
 const menuToggleBtn = ref(null)
 const drawerCloseBtn = ref(null)
 const drawerPanel = ref(null)
 const drawerOpen = ref(false)
-const accountInfo = ref({ account: '', role: '', canPublish: false })
+const accountInfo = ref({ account: '', email: '', role: '', roleKey: '', canPublish: false })
 const csrf = document.querySelector('meta[name="csrf-token"]').content
+
 let pendingLeaveAction = null
 let discardTrigger = null
 let deleteTrigger = null
 let reqSeq = 0
 let activeController = null
+let searchDebounce = null
+let feedbackTimer = null
 
-const statusLabels = { draft: 'Draf', review: 'Perlu ditinjau', published: 'Tayang' }
+const statusLabels = {
+    draft: 'Draf',
+    review: 'Perlu ditinjau',
+    published: 'Tayang',
+    active: 'Aktif',
+    developer: 'Developer',
+    admin: 'Owner Cafe',
+    roastery: 'Owner Roastery',
+    user: 'Pengunjung',
+}
+
 const resourceIcons = {
     cafes: 'store',
     roasteries: 'bean',
@@ -44,6 +60,19 @@ const resourceIcons = {
     facilities: 'facility',
     users: 'users',
 }
+
+const facilityIconPresets = [
+    { label: 'WiFi', value: 'bi-wifi' },
+    { label: 'AC', value: 'bi-snow' },
+    { label: 'Stopkontak', value: 'bi-plug' },
+    { label: 'Outdoor', value: 'bi-tree' },
+    { label: 'Indoor', value: 'bi-house' },
+    { label: 'Mushola', value: 'bi-moon-stars' },
+    { label: 'WC', value: 'bi-droplet' },
+    { label: 'Parkir', value: 'bi-car-front' },
+    { label: 'Live Music', value: 'bi-music-note-beamed' },
+    { label: '24 Jam', value: 'bi-clock' },
+]
 
 const endpoint = computed(() => '/admin/data/' + current.value?.key)
 const uploadKeys = { image_path: 'image_upload', images: 'images_upload', menu_images: 'menu_images_upload' }
@@ -80,6 +109,29 @@ const placeGroupOrder = [
     },
 ]
 
+const statusTabs = computed(() => {
+    if (!listing.value?.supports_status || !listing.value?.counts) return []
+    const counts = listing.value.counts
+    const tabs = [
+        { key: 'all', label: 'Semua', count: counts.all },
+        { key: 'published', label: 'Tayang', count: counts.published },
+    ]
+    if (current.value?.key !== 'information') {
+        tabs.push({ key: 'review', label: 'Perlu ditinjau', count: counts.review })
+    }
+    tabs.push({ key: 'draft', label: 'Draf', count: counts.draft })
+    return tabs
+})
+
+const tableHeaders = computed(() => {
+    const key = current.value?.key
+    if (key === 'facilities') return { name: 'Fasilitas', detail: 'Kedai kopi', status: 'Ikon' }
+    if (key === 'users') return { name: 'Pengguna', detail: 'Email', status: 'Peran' }
+    if (key === 'cities') return { name: 'Kota', detail: 'Ringkasan', status: 'Status' }
+    if (key === 'information') return { name: 'Judul kabar', detail: 'Kategori & tanggal', status: 'Status' }
+    return { name: 'Nama tempat', detail: 'Kota & alamat', status: 'Status' }
+})
+
 const fieldSections = computed(() => {
     const fields = listing.value?.fields || []
     if (!fields.length) return []
@@ -101,12 +153,12 @@ const fieldSections = computed(() => {
 
 function isFullWidth(field) {
     return ['textarea', 'hours', 'links', 'gallery', 'file', 'address', 'description', 'content', 'summary'].includes(field.type) ||
-        ['address', 'description', 'content', 'summary', 'title'].includes(field.name)
+        ['address', 'description', 'content', 'summary', 'title', 'icon'].includes(field.name)
 }
 
 function statusClass(val) {
-    if (val === 'published') return 'is-open'
-    if (val === 'review') return 'is-warning'
+    if (val === 'published' || val === 'developer') return 'is-open'
+    if (val === 'review' || val === 'admin' || val === 'roastery') return 'is-warning'
     return 'is-closed'
 }
 
@@ -116,10 +168,31 @@ function mediaUrl(path) {
     return '/storage/' + path.replace(/^\/+/, '')
 }
 
+function slugify(text) {
+    return String(text || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 120)
+}
+
+function showFeedback(message) {
+    if (feedbackTimer) clearTimeout(feedbackTimer)
+    feedback.value = message
+    if (message) {
+        feedbackTimer = setTimeout(() => {
+            feedback.value = ''
+            feedbackTimer = null
+        }, 6000)
+    }
+}
+
 function fieldHint(field) {
-    if (field.name === 'slug') return 'Gunakan huruf kecil, angka, dan tanda hubung (contoh: kopi-samarinda).'
+    if (field.name === 'slug') return 'Terisi otomatis dari nama/judul. Gunakan huruf kecil, angka, dan tanda hubung.'
     if (field.name === 'status' && !accountInfo.value.canPublish) {
-        return 'Perubahan pada tempat yang sudah tayang akan masuk status Perlu ditinjau sebelum ditayangkan admin.'
+        return 'Perubahan pada tempat yang sudah tayang akan masuk status Perlu ditinjau sebelum ditayangkan developer.'
     }
     if (field.name === 'latitude' || field.name === 'longitude') {
         return 'Isi keduanya agar tempat tampil pada pencarian Terdekat, atau gunakan tombol lokasi browser.'
@@ -128,7 +201,7 @@ function fieldHint(field) {
     if (field.name === 'password') return form.value?.id ? 'Kosongkan jika tidak ingin mengubah kata sandi.' : 'Minimal 8 karakter.'
     if (field.type === 'file') return 'Format JPG, PNG, WebP, atau GIF (maks. 5 MB).'
     if (field.type === 'gallery') return 'Maksimal 10 foto (JPG, PNG, WebP, GIF, maks. 5 MB/foto). Centang foto yang ingin dipertahankan.'
-    if (field.name === 'icon') return 'Opsional. Gunakan nama ikon huruf, angka, atau tanda hubung (contoh: wifi).'
+    if (field.name === 'icon') return 'Pilih ikon cepat di bawah atau ketik nama kelas ikon (contoh: bi-wifi).'
     return ''
 }
 
@@ -154,6 +227,17 @@ function clearFieldError(name) {
     fieldErrors.value = next
 }
 
+function onTextInput(field) {
+    clearFieldError(field.name)
+    if (field.name === 'slug') {
+        slugTouched.value = true
+        return
+    }
+    if (!form.value?.id && !slugTouched.value && (field.name === 'title' || field.name === 'name') && 'slug' in form.value) {
+        form.value.slug = slugify(form.value[field.name])
+    }
+}
+
 function clearPreviews() {
     for (const urls of Object.values(uploadPreviews.value)) {
         urls.forEach(url => URL.revokeObjectURL(url))
@@ -169,6 +253,16 @@ function handleFileChange(fieldName, fileList) {
         uploadPreviews.value[fieldName].forEach(url => URL.revokeObjectURL(url))
     }
     uploadPreviews.value[fieldName] = files.map(f => URL.createObjectURL(f))
+}
+
+function removeNewUpload(fieldName, idx) {
+    const files = [...(uploads.value[fieldName] || [])]
+    const previews = [...(uploadPreviews.value[fieldName] || [])]
+    if (previews[idx]) URL.revokeObjectURL(previews[idx])
+    files.splice(idx, 1)
+    previews.splice(idx, 1)
+    uploads.value[fieldName] = files
+    uploadPreviews.value[fieldName] = previews
 }
 
 function scrollTop() {
@@ -196,15 +290,22 @@ async function run(action, { listOnly = false } = {}) {
     }
 }
 
+async function refreshHomeMeta() {
+    const homeData = await api('/admin')
+    resources.value = homeData.resources
+    summary.value = homeData.summary || []
+    accountInfo.value = {
+        account: homeData.account || '',
+        email: homeData.email || '',
+        role: homeData.role || '',
+        roleKey: homeData.role_key || '',
+        canPublish: Boolean(homeData.can_publish),
+    }
+}
+
 async function init() {
     await run(async () => {
-        const homeData = await api('/admin')
-        resources.value = homeData.resources
-        accountInfo.value = {
-            account: homeData.account || '',
-            role: homeData.role || '',
-            canPublish: Boolean(homeData.can_publish),
-        }
+        await refreshHomeMeta()
         if (resources.value.length) {
             current.value = resources.value[0]
             await reload()
@@ -217,9 +318,39 @@ async function reload(page = 1) {
     activeController?.abort()
     const controller = new AbortController()
     activeController = controller
-    const data = await api(query(endpoint.value, { search: search.value, page }), { signal: controller.signal })
+    const params = { search: search.value, page }
+    if (statusFilter.value && statusFilter.value !== 'all') {
+        params.status = statusFilter.value
+    }
+    const data = await api(query(endpoint.value, params), { signal: controller.signal })
     if (controller.signal.aborted || seq !== reqSeq) return
     listing.value = data
+}
+
+function onSearchInput() {
+    if (searchDebounce) clearTimeout(searchDebounce)
+    searchDebounce = setTimeout(() => {
+        searchDebounce = null
+        void run(() => reload(1), { listOnly: true })
+    }, 320)
+}
+
+function setStatusFilter(nextStatus) {
+    if (statusFilter.value === nextStatus) return
+    statusFilter.value = nextStatus
+    void run(() => reload(1), { listOnly: true })
+}
+
+function jumpFromSummary(card) {
+    if (!card?.resource) return
+    const target = resources.value.find(r => r.key === card.resource)
+    if (!target) return
+    if (target.key === current.value?.key && !form.value) {
+        statusFilter.value = card.status || 'all'
+        void run(() => reload(1), { listOnly: true })
+        return
+    }
+    choose(target, card.status || 'all')
 }
 
 function requestLeave(action, trigger = document.activeElement) {
@@ -250,12 +381,13 @@ function onDiscardClosed() {
     discardTrigger = null
 }
 
-function choose(resource) {
+function choose(resource, initialStatus = 'all') {
     closeDrawer({ restoreFocus: false })
-    if (pending.value || !resource || (resource.key === current.value?.key && !form.value)) return
+    if (pending.value || !resource || (resource.key === current.value?.key && !form.value && statusFilter.value === initialStatus)) return
     requestLeave(() => {
         reqSeq++
         activeController?.abort()
+        if (searchDebounce) clearTimeout(searchDebounce)
         current.value = resource
         form.value = null
         initialSnapshot.value = ''
@@ -264,7 +396,8 @@ function choose(resource) {
         clearPreviews()
         listing.value = null
         search.value = ''
-        feedback.value = ''
+        statusFilter.value = initialStatus
+        showFeedback('')
         scrollTop()
         void run(() => reload())
     }, menuToggleBtn.value)
@@ -282,6 +415,7 @@ function closeForm() {
 }
 
 function resetSearch() {
+    if (searchDebounce) clearTimeout(searchDebounce)
     search.value = ''
     void run(() => reload(1), { listOnly: true })
 }
@@ -299,7 +433,7 @@ function defaults(record = {}) {
         if (field.type === 'gallery') {
             value = Object.values(value ?? {}).map(image => typeof image === 'string' ? { image } : { ...image })
         }
-        const initial = { status: 'draft', role: 'user', category: 'Berita' }
+        const initial = { status: accountInfo.value.canPublish ? 'published' : 'draft', role: 'user', category: 'Edukasi' }
         return [
             field.name,
             value ?? initial[field.name] ?? (field.type === 'checkbox' ? false : field.type === 'links' || field.type === 'gallery' ? [] : ''),
@@ -308,10 +442,11 @@ function defaults(record = {}) {
 }
 
 function open(record = null) {
-    feedback.value = ''
+    showFeedback('')
     fieldErrors.value = {}
     uploads.value = {}
     clearPreviews()
+    slugTouched.value = Boolean(record)
     scrollTop()
     if (!record) {
         form.value = defaults()
@@ -341,7 +476,7 @@ async function fillCoords() {
         const coords = await locate()
         form.value.latitude = Number(coords.lat.toFixed(6))
         form.value.longitude = Number(coords.lng.toFixed(6))
-        feedback.value = 'Koordinat lokasi berhasil diisi dari browser.'
+        showFeedback('Koordinat lokasi berhasil diisi dari browser.')
     } catch (e) {
         error.value = e.message
     } finally {
@@ -382,11 +517,11 @@ function submit() {
         initialSnapshot.value = ''
         uploads.value = {}
         clearPreviews()
-        feedback.value = accountInfo.value.canPublish
+        showFeedback(accountInfo.value.canPublish
             ? 'Perubahan data berhasil disimpan.'
-            : 'Perubahan disimpan. Editan pada tempat tayang akan ditinjau admin terlebih dahulu.'
+            : 'Perubahan disimpan. Editan pada tempat tayang akan ditinjau developer terlebih dahulu.')
         scrollTop()
-        await reload()
+        await Promise.all([reload(listing.value?.items?.current_page || 1), refreshHomeMeta()])
     })
 }
 
@@ -408,9 +543,9 @@ function remove() {
         initialSnapshot.value = ''
         uploads.value = {}
         clearPreviews()
-        feedback.value = 'Data berhasil dihapus.'
+        showFeedback('Data berhasil dihapus.')
         scrollTop()
-        await reload()
+        await Promise.all([reload(1), refreshHomeMeta()])
     })
 }
 
@@ -461,6 +596,8 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     activeController?.abort()
+    if (searchDebounce) clearTimeout(searchDebounce)
+    if (feedbackTimer) clearTimeout(feedbackTimer)
     window.removeEventListener('keydown', onKeydown)
     window.removeEventListener('beforeunload', onBeforeUnload)
     clearPreviews()
@@ -480,29 +617,33 @@ onBeforeUnmount(() => {
                     @click="openDrawer"
                 >
                     <Icon name="menu" />
-                    <span>Menu</span>
+                    <span class="cms-menu-label">Menu</span>
                 </button>
 
                 <a class="cms-topbar-brand" href="/">
                     <img src="/wadahngopi.png" alt="" width="28" height="28">
-                    <span>WadahNgopi CMS</span>
+                    <span>WadahNgopi</span>
+                    <span class="cms-brand-tag">CMS</span>
                 </a>
             </div>
 
             <div class="cms-topbar-actions">
-                <a class="button secondary" href="/">Lihat situs</a>
-                <a class="button secondary" href="/profile/badges">Lencana</a>
+                <a class="button secondary cms-topbar-btn" href="/">
+                    <Icon name="explore" />
+                    <span>Lihat situs</span>
+                </a>
                 <form action="/logout" method="post">
                     <input type="hidden" name="_token" :value="csrf">
-                    <button type="submit" class="secondary">Keluar</button>
+                    <button type="submit" class="secondary cms-topbar-btn">Keluar</button>
                 </form>
             </div>
         </header>
 
         <div class="cms-body">
-            <!-- Desktop Sidebar -->
+            <!-- Sticky Desktop Sidebar -->
             <aside class="cms-sidebar" aria-label="Menu pengelolaan CMS">
                 <nav aria-label="Modul CMS">
+                    <p class="cms-nav-heading">Ruang Kelola</p>
                     <ul class="cms-nav-list">
                         <li v-for="res in resources" :key="res.key">
                             <button
@@ -514,16 +655,25 @@ onBeforeUnmount(() => {
                                 @click="choose(res)"
                             >
                                 <Icon :name="resourceIcons[res.key] || 'store'" />
-                                <span>{{ res.label }}</span>
+                                <span class="cms-nav-label">{{ res.label }}</span>
+                                <span v-if="res.pending > 0" class="cms-nav-badge is-warning" :title="res.pending + ' menunggu ditinjau'">
+                                    {{ res.pending }}
+                                </span>
+                                <span v-else class="cms-nav-count tabular">{{ res.count }}</span>
                             </button>
                         </li>
                     </ul>
                 </nav>
 
                 <div class="cms-sidebar-footer">
-                    <div v-if="accountInfo.account" class="cms-account-meta">
-                        <strong>{{ accountInfo.account }}</strong>
-                        <span>{{ accountInfo.role || 'Pengelola' }}</span>
+                    <div v-if="accountInfo.account" class="cms-account-card">
+                        <div class="cms-account-avatar" aria-hidden="true">
+                            {{ accountInfo.account.slice(0, 1).toUpperCase() }}
+                        </div>
+                        <div class="cms-account-meta">
+                            <strong>{{ accountInfo.account }}</strong>
+                            <span>{{ accountInfo.role || 'Pengelola' }}</span>
+                        </div>
                     </div>
                 </div>
             </aside>
@@ -531,7 +681,13 @@ onBeforeUnmount(() => {
             <!-- White Workspace Sheet -->
             <main id="content" class="cms-sheet" tabindex="-1">
                 <div class="cms-workspace">
-                    <p v-if="feedback" class="notice-banner" role="status">{{ feedback }}</p>
+                    <div v-if="feedback" class="notice-banner cms-feedback" role="status" aria-live="polite">
+                        <span>{{ feedback }}</span>
+                        <button type="button" class="cms-banner-close" aria-label="Tutup pemberitahuan" @click="showFeedback('')">
+                            <Icon name="close" />
+                        </button>
+                    </div>
+
                     <StateBlock
                         v-if="error && !resources.length"
                         variant="error"
@@ -547,6 +703,21 @@ onBeforeUnmount(() => {
                         </button>
                     </p>
 
+                    <!-- Role-Aware Summary Strip (Listing View) -->
+                    <section v-if="!form && summary.length" class="cms-kpi-strip" aria-label="Ringkasan data">
+                        <button
+                            v-for="card in summary"
+                            :key="card.label"
+                            type="button"
+                            class="cms-kpi-card"
+                            :class="'tone-' + card.tone"
+                            @click="jumpFromSummary(card)"
+                        >
+                            <span class="cms-kpi-label">{{ card.label }}</span>
+                            <strong class="cms-kpi-value tabular">{{ card.value }}</strong>
+                        </button>
+                    </section>
+
                     <SkeletonList v-if="pending && !listing" variant="table" :count="5" />
 
                     <template v-else-if="current && listing">
@@ -555,8 +726,8 @@ onBeforeUnmount(() => {
                                 <h1>{{ form ? (form.id ? 'Edit ' : 'Tambah ') + current.label.toLowerCase() : current.label }}</h1>
                                 <p v-if="!form">
                                     {{ accountInfo.canPublish
-                                        ? 'Anda memiliki akses penuh untuk meninjau dan menayangkan data.'
-                                        : 'Kelola data milik Anda. Perubahan pada tempat tayang perlu ditinjau admin.' }}
+                                        ? 'Tinjau, perbarui, dan tayangkan data langsung ke direktori publik.'
+                                        : 'Kelola data milik Anda. Perubahan pada tempat tayang akan ditinjau developer terlebih dahulu.' }}
                                 </p>
                             </div>
 
@@ -638,12 +809,20 @@ onBeforeUnmount(() => {
                                                 <span>{{ field.label }}</span>
                                             </label>
 
-                                            <fieldset v-else-if="field.type === 'hours'" class="edit-group cms-field-full">
+                                            <fieldset
+                                                v-else-if="field.type === 'hours'"
+                                                class="edit-group cms-field-full"
+                                                :class="{ 'is-dimmed': Boolean(form.is_24_hours) }"
+                                            >
                                                 <legend>{{ field.label }}</legend>
-                                                <small class="field-hint">Kosongkan jika jadwal belum ditentukan, atau aktifkan Buka 24 jam.</small>
+                                                <small class="field-hint">
+                                                    {{ form.is_24_hours
+                                                        ? 'Buka 24 jam sedang aktif. Matikan centang Buka 24 jam untuk mengatur jam spesifik.'
+                                                        : 'Kosongkan jika jadwal belum ditentukan, atau aktifkan Buka 24 jam.' }}
+                                                </small>
                                                 <div v-for="(schedule, key) in form[field.name]" :key="key" class="form-row">
-                                                    <label>{{ key === 'weekday' ? 'Hari kerja buka' : 'Akhir pekan buka' }}<input v-model="schedule.open" type="time"></label>
-                                                    <label>{{ key === 'weekday' ? 'Hari kerja tutup' : 'Akhir pekan tutup' }}<input v-model="schedule.close" type="time"></label>
+                                                    <label>{{ key === 'weekday' ? 'Hari kerja buka' : 'Akhir pekan buka' }}<input v-model="schedule.open" type="time" :disabled="Boolean(form.is_24_hours)"></label>
+                                                    <label>{{ key === 'weekday' ? 'Hari kerja tutup' : 'Akhir pekan tutup' }}<input v-model="schedule.close" type="time" :disabled="Boolean(form.is_24_hours)"></label>
                                                 </div>
                                             </fieldset>
 
@@ -676,13 +855,23 @@ onBeforeUnmount(() => {
                                                         width="120"
                                                         height="80"
                                                     >
-                                                    <span class="field-hint">
-                                                        {{ uploadPreviews[field.name]?.[0] ? 'Pratinjau foto baru (belum disimpan)' : 'Foto tersimpan saat ini' }}
-                                                    </span>
+                                                    <div class="cms-media-meta">
+                                                        <span class="field-hint">
+                                                            {{ uploadPreviews[field.name]?.[0] ? 'Pratinjau foto baru (belum disimpan)' : 'Foto tersimpan saat ini' }}
+                                                        </span>
+                                                        <button
+                                                            v-if="uploadPreviews[field.name]?.[0]"
+                                                            type="button"
+                                                            class="plain-button"
+                                                            @click="removeNewUpload(field.name, 0)"
+                                                        >
+                                                            Batalkan pilihan foto baru
+                                                        </button>
+                                                    </div>
                                                 </div>
 
                                                 <ul v-if="field.type === 'gallery' && form[field.name].length" class="upload-grid">
-                                                    <li v-for="(image, index) in form[field.name]" :key="index" class="upload-tile">
+                                                    <li v-for="(image, index) in form[field.name]" :key="index" class="upload-tile" :class="{ 'is-removed': image.removed }">
                                                         <img
                                                             v-if="image.image"
                                                             :src="mediaUrl(image.image)"
@@ -697,17 +886,14 @@ onBeforeUnmount(() => {
                                                     </li>
                                                 </ul>
 
-                                                <div v-if="field.type === 'gallery' && uploadPreviews[field.name]?.length" class="cms-media-preview">
-                                                    <img
-                                                        v-for="(src, idx) in uploadPreviews[field.name]"
-                                                        :key="idx"
-                                                        class="cms-thumb"
-                                                        :src="src"
-                                                        :alt="'Foto baru ' + (idx + 1)"
-                                                        width="120"
-                                                        height="80"
-                                                    >
-                                                </div>
+                                                <ul v-if="field.type === 'gallery' && uploadPreviews[field.name]?.length" class="upload-grid">
+                                                    <li v-for="(src, idx) in uploadPreviews[field.name]" :key="idx" class="upload-tile">
+                                                        <img :src="src" :alt="'Foto baru ' + (idx + 1)" width="144" height="96">
+                                                        <button type="button" class="plain-button" @click="removeNewUpload(field.name, idx)">
+                                                            Hapus pilihan
+                                                        </button>
+                                                    </li>
+                                                </ul>
 
                                                 <label>
                                                     <span>Unggah {{ field.label.toLowerCase() }}</span>
@@ -736,9 +922,21 @@ onBeforeUnmount(() => {
                                                         :aria-invalid="Boolean(fieldErrors[field.name]) || undefined"
                                                         :step="field.type === 'number' ? 'any' : undefined"
                                                         :autocomplete="field.type === 'password' ? 'new-password' : undefined"
-                                                        @input="clearFieldError(field.name)"
+                                                        @input="onTextInput(field)"
                                                     >
                                                 </label>
+                                                <div v-if="field.name === 'icon' && current.key === 'facilities'" class="cms-icon-presets">
+                                                    <button
+                                                        v-for="preset in facilityIconPresets"
+                                                        :key="preset.value"
+                                                        type="button"
+                                                        class="cms-preset-chip"
+                                                        :class="{ 'is-selected': form.icon === preset.value }"
+                                                        @click="form.icon = preset.value; clearFieldError('icon')"
+                                                    >
+                                                        {{ preset.label }}
+                                                    </button>
+                                                </div>
                                                 <small v-if="fieldErrors[field.name]" class="field-error" role="alert">{{ fieldErrors[field.name] }}</small>
                                                 <small v-else-if="fieldHint(field)" class="field-hint">{{ fieldHint(field) }}</small>
                                                 <button
@@ -769,7 +967,7 @@ onBeforeUnmount(() => {
                                     >
                                         Batal
                                     </button>
-                                    <span v-if="isDirty" class="cms-dirty-badge">Ada perubahan belum disimpan</span>
+                                    <span v-if="isDirty" class="cms-dirty-badge">Belum disimpan</span>
                                 </div>
                                 <button
                                     v-if="removable"
@@ -785,37 +983,62 @@ onBeforeUnmount(() => {
 
                         <!-- Resource Listing -->
                         <template v-else>
-                            <div class="cms-toolbar">
-                                <form class="cms-search-form" @submit.prevent="run(() => reload(1), { listOnly: true })">
-                                    <label for="cms-search" class="sr-only">Cari {{ current.label.toLowerCase() }}</label>
-                                    <input
-                                        id="cms-search"
-                                        name="search"
-                                        v-model.trim="search"
-                                        type="search"
-                                        maxlength="100"
-                                        :placeholder="'Cari ' + current.label.toLowerCase() + '…'"
+                            <div class="cms-controls">
+                                <div v-if="statusTabs.length" class="cms-status-tabs" role="tablist" aria-label="Saring status">
+                                    <button
+                                        v-for="tab in statusTabs"
+                                        :key="tab.key"
+                                        type="button"
+                                        role="tab"
+                                        class="cms-status-tab"
+                                        :class="{ 'is-active': statusFilter === tab.key }"
+                                        :aria-selected="statusFilter === tab.key"
+                                        @click="setStatusFilter(tab.key)"
                                     >
-                                    <button type="submit" class="secondary" :disabled="pending || listLoading">
-                                        <Icon name="search" /> Cari
+                                        <span>{{ tab.label }}</span>
+                                        <span class="cms-tab-count tabular">{{ tab.count }}</span>
                                     </button>
-                                    <button v-if="search" type="button" class="plain-button" :disabled="listLoading" @click="resetSearch">
-                                        Reset
-                                    </button>
-                                </form>
+                                </div>
 
-                                <span v-if="listing.items.data.length" class="helper-text tabular">
-                                    {{ listLoading ? 'Memuat daftar…' : 'Halaman ' + listing.items.current_page + ' · ' + listing.items.data.length + ' entri ditampilkan' }}
-                                </span>
+                                <div class="cms-toolbar">
+                                    <form class="cms-search-form" @submit.prevent="run(() => reload(1), { listOnly: true })">
+                                        <label for="cms-search" class="sr-only">Cari {{ current.label.toLowerCase() }}</label>
+                                        <div class="cms-search-box">
+                                            <Icon name="search" class="cms-search-icon" />
+                                            <input
+                                                id="cms-search"
+                                                name="search"
+                                                v-model.trim="search"
+                                                type="search"
+                                                maxlength="100"
+                                                :placeholder="current.key === 'facilities' ? 'Cari fasilitas atau nama kedai…' : 'Cari ' + current.label.toLowerCase() + '…'"
+                                                @input="onSearchInput"
+                                            >
+                                            <button
+                                                v-if="search"
+                                                type="button"
+                                                class="cms-search-clear"
+                                                aria-label="Hapus pencarian"
+                                                @click="resetSearch"
+                                            >
+                                                <Icon name="close" />
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                    <span v-if="listing.items.data.length" class="helper-text tabular">
+                                        {{ listLoading ? 'Memuat daftar…' : 'Hal. ' + listing.items.current_page + ' · ' + listing.items.data.length + ' dari ' + (listing.total ?? listing.items.data.length) + ' data' }}
+                                    </span>
+                                </div>
                             </div>
 
                             <StateBlock
                                 v-if="!listing.items.data.length"
                                 variant="empty"
-                                :title="search ? 'Tidak ada data yang cocok' : 'Belum ada data ' + current.label.toLowerCase()"
-                                :description="search ? 'Ubah kata kunci pencarian atau tampilkan semua data.' : 'Tambahkan data baru untuk mulai mengelola ' + current.label.toLowerCase() + '.'"
-                                :action-label="search ? 'Reset pencarian' : listing.create ? 'Tambah ' + current.label.toLowerCase() : ''"
-                                @action="search ? (search = '', run(() => reload())) : open()"
+                                :title="search || statusFilter !== 'all' ? 'Tidak ada data yang cocok' : 'Belum ada data ' + current.label.toLowerCase()"
+                                :description="search || statusFilter !== 'all' ? 'Ubah kata kunci atau saringan status untuk melihat data lain.' : 'Tambahkan data baru untuk mulai mengelola ' + current.label.toLowerCase() + '.'"
+                                :action-label="search || statusFilter !== 'all' ? 'Tampilkan semua' : listing.create ? 'Tambah ' + current.label.toLowerCase() : ''"
+                                @action="search || statusFilter !== 'all' ? (search = '', statusFilter = 'all', run(() => reload(1), { listOnly: true })) : open()"
                             />
 
                             <template v-else>
@@ -824,29 +1047,44 @@ onBeforeUnmount(() => {
                                     <table class="cms-table">
                                         <thead>
                                             <tr>
-                                                <th>Nama</th>
-                                                <th>Keterangan</th>
-                                                <th>Status</th>
+                                                <th>{{ tableHeaders.name }}</th>
+                                                <th>{{ tableHeaders.detail }}</th>
+                                                <th>{{ tableHeaders.status }}</th>
                                                 <th class="cms-table-actions">Tindakan</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr v-for="record in listing.items.data" :key="record.id">
-                                                <td><strong>{{ record.name }}</strong></td>
-                                                <td class="helper-text">{{ record.detail || '-' }}</td>
+                                                <td>
+                                                    <div class="cms-row-identity">
+                                                        <img
+                                                            v-if="record.image"
+                                                            class="cms-row-thumb"
+                                                            :src="record.image"
+                                                            alt=""
+                                                            width="40"
+                                                            height="40"
+                                                            loading="lazy"
+                                                            @error="$event.currentTarget.style.display = 'none'"
+                                                        >
+                                                        <span v-else class="cms-row-avatar" aria-hidden="true">
+                                                            <Icon :name="resourceIcons[current.key] || 'store'" />
+                                                        </span>
+                                                        <strong>{{ record.name }}</strong>
+                                                    </div>
+                                                </td>
+                                                <td class="helper-text cms-row-detail">{{ record.detail || '-' }}</td>
                                                 <td>
                                                     <span
-                                                        v-if="record.status"
                                                         class="status-pill"
                                                         :class="statusClass(record.status)"
                                                     >
-                                                        {{ statusLabels[record.status] || record.status }}
+                                                        {{ record.status_label || statusLabels[record.status] || record.status || 'Aktif' }}
                                                     </span>
-                                                    <span v-else class="helper-text">Aktif</span>
                                                 </td>
                                                 <td class="cms-table-actions">
                                                     <button
-                                                        class="secondary"
+                                                        class="secondary cms-row-btn"
                                                         type="button"
                                                         :disabled="pending"
                                                         @click="open(record)"
@@ -863,16 +1101,30 @@ onBeforeUnmount(() => {
                                 <ul class="cms-mobile-list" :class="{ 'is-loading': listLoading }" :aria-busy="listLoading">
                                     <li v-for="record in listing.items.data" :key="record.id" class="cms-mobile-card">
                                         <div class="cms-mobile-card-head">
-                                            <strong>{{ record.name }}</strong>
+                                            <div class="cms-row-identity">
+                                                <img
+                                                    v-if="record.image"
+                                                    class="cms-row-thumb"
+                                                    :src="record.image"
+                                                    alt=""
+                                                    width="40"
+                                                    height="40"
+                                                    loading="lazy"
+                                                    @error="$event.currentTarget.style.display = 'none'"
+                                                >
+                                                <span v-else class="cms-row-avatar" aria-hidden="true">
+                                                    <Icon :name="resourceIcons[current.key] || 'store'" />
+                                                </span>
+                                                <strong>{{ record.name }}</strong>
+                                            </div>
                                             <span
-                                                v-if="record.status"
                                                 class="status-pill"
                                                 :class="statusClass(record.status)"
                                             >
-                                                {{ statusLabels[record.status] || record.status }}
+                                                {{ record.status_label || statusLabels[record.status] || record.status || 'Aktif' }}
                                             </span>
                                         </div>
-                                        <p v-if="record.detail" class="helper-text">{{ record.detail }}</p>
+                                        <p v-if="record.detail" class="helper-text cms-mobile-detail">{{ record.detail }}</p>
                                         <button
                                             class="secondary"
                                             type="button"
@@ -892,9 +1144,10 @@ onBeforeUnmount(() => {
                                         :disabled="pending || listLoading"
                                         @click="run(() => reload(listing.items.current_page - 1), { listOnly: true })"
                                     >
-                                        Sebelumnya
+                                        <Icon name="arrowLeft" /> Sebelumnya
                                     </button>
                                     <span v-else></span>
+                                    <span class="helper-text tabular">Halaman {{ listing.items.current_page }}</span>
                                     <button
                                         v-if="listing.items.next_page_url"
                                         class="secondary"
@@ -902,8 +1155,9 @@ onBeforeUnmount(() => {
                                         :disabled="pending || listLoading"
                                         @click="run(() => reload(listing.items.current_page + 1), { listOnly: true })"
                                     >
-                                        Selanjutnya
+                                        Selanjutnya <Icon name="arrow" />
                                     </button>
+                                    <span v-else></span>
                                 </div>
                             </template>
                         </template>
@@ -913,45 +1167,54 @@ onBeforeUnmount(() => {
         </div>
 
         <!-- Mobile CMS Drawer -->
-        <div v-if="drawerOpen" class="cms-drawer-backdrop" @click.self="closeDrawer">
-            <div
-                id="cms-mobile-drawer"
-                ref="drawerPanel"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="cms-drawer-title"
-                class="cms-drawer"
-            >
-                <div class="cms-drawer-head">
-                    <strong id="cms-drawer-title">Menu CMS</strong>
-                    <button ref="drawerCloseBtn" type="button" class="secondary" aria-label="Tutup menu" @click="closeDrawer">
-                        <Icon name="close" />
-                    </button>
-                </div>
-                <nav aria-label="Menu pengelolaan CMS">
-                    <ul class="cms-nav-list">
-                        <li v-for="res in resources" :key="res.key">
-                            <button
-                                type="button"
-                                class="cms-nav-item"
-                                :class="{ 'is-active': current?.key === res.key }"
-                                :disabled="pending"
-                                @click="choose(res)"
-                            >
-                                <Icon :name="resourceIcons[res.key] || 'store'" />
-                                <span>{{ res.label }}</span>
-                            </button>
-                        </li>
-                    </ul>
-                </nav>
-                <div class="cms-sidebar-footer">
-                    <div v-if="accountInfo.account" class="cms-account-meta">
-                        <strong>{{ accountInfo.account }}</strong>
-                        <span>{{ accountInfo.role || 'Pengelola' }}</span>
+        <Transition name="cms-drawer">
+            <div v-if="drawerOpen" class="cms-drawer-backdrop" @click.self="closeDrawer">
+                <div
+                    id="cms-mobile-drawer"
+                    ref="drawerPanel"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="cms-drawer-title"
+                    class="cms-drawer"
+                >
+                    <div class="cms-drawer-head">
+                        <strong id="cms-drawer-title">Ruang Kelola</strong>
+                        <button ref="drawerCloseBtn" type="button" class="secondary" aria-label="Tutup menu" @click="closeDrawer">
+                            <Icon name="close" />
+                        </button>
+                    </div>
+                    <nav aria-label="Menu pengelolaan CMS">
+                        <ul class="cms-nav-list">
+                            <li v-for="res in resources" :key="res.key">
+                                <button
+                                    type="button"
+                                    class="cms-nav-item"
+                                    :class="{ 'is-active': current?.key === res.key }"
+                                    :disabled="pending"
+                                    @click="choose(res)"
+                                >
+                                    <Icon :name="resourceIcons[res.key] || 'store'" />
+                                    <span class="cms-nav-label">{{ res.label }}</span>
+                                    <span v-if="res.pending > 0" class="cms-nav-badge is-warning">{{ res.pending }}</span>
+                                    <span v-else class="cms-nav-count tabular">{{ res.count }}</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div class="cms-sidebar-footer">
+                        <div v-if="accountInfo.account" class="cms-account-card">
+                            <div class="cms-account-avatar" aria-hidden="true">
+                                {{ accountInfo.account.slice(0, 1).toUpperCase() }}
+                            </div>
+                            <div class="cms-account-meta">
+                                <strong>{{ accountInfo.account }}</strong>
+                                <span>{{ accountInfo.role || 'Pengelola' }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </Transition>
 
         <dialog ref="confirmDelete" aria-labelledby="delete-title" @close="restoreDeleteFocus">
             <h2 id="delete-title">Hapus "{{ form?.name || form?.title || 'data ini' }}"?</h2>

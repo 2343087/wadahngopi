@@ -10,8 +10,10 @@ use App\Models\Information;
 use App\Models\Roastery;
 use App\Models\User;
 use App\Traits\OptimizesImages;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
@@ -40,39 +42,116 @@ class CmsController extends Controller
             return view('vue', ['title' => 'Kelola WadahNgopi']);
         }
 
+        $user = $request->user();
+        $isDev = $user->hasRole(UserRole::Developer);
+
+        $resources = collect(self::RESOURCES)
+            ->filter(fn ($entry) => $this->allowed('viewAny', $entry[0]))
+            ->map(function ($entry, $key) use ($user, $isDev) {
+                $class = $entry[0];
+                $base = $this->scopedQuery($class, $user, $isDev);
+                $count = (clone $base)->count();
+                $pending = in_array($class, [Cafe::class, Roastery::class], true)
+                    ? (clone $base)->where('status', 'review')->count()
+                    : 0;
+
+                return [
+                    'key' => $key,
+                    'label' => $entry[1],
+                    'count' => $count,
+                    'pending' => $pending,
+                ];
+            })
+            ->values();
+
         return [
-            'resources' => collect(self::RESOURCES)->filter(fn ($entry) => $this->allowed('viewAny', $entry[0]))
-                ->map(fn ($entry, $key) => ['key' => $key, 'label' => $entry[1]])->values(),
-            'account' => $request->user()->name,
-            'role' => UserRole::tryFrom((string) $request->user()->role)?->label() ?? $request->user()->role,
-            'can_publish' => $request->user()->hasRole(UserRole::Developer),
+            'resources' => $resources,
+            'summary' => $this->summaryCards($user, $isDev),
+            'account' => $user->name,
+            'email' => $user->email,
+            'role' => UserRole::tryFrom((string) $user->role)?->label() ?? $user->role,
+            'role_key' => $user->role,
+            'can_publish' => $isDev,
         ];
     }
 
     public function index(Request $request, string $resource)
     {
         [$class, , $name] = $this->resource($resource);
-        $filters = $request->validate(['search' => 'nullable|string|max:100', 'page' => 'nullable|integer|between:1,1000']);
-        $search = $filters['search'] ?? '';
-        $query = $class::query();
-        if (! $request->user()->hasRole(UserRole::Developer)) {
-            if (in_array($class, [Cafe::class, Roastery::class], true)) {
-                $query->where('owner_id', $request->user()->id);
-            } elseif ($class === Facility::class) {
-                $query->whereHas('cafe', fn ($query) => $query->where('owner_id', $request->user()->id));
+        $filters = $request->validate([
+            'search' => 'nullable|string|max:100',
+            'status' => 'nullable|in:all,published,review,draft',
+            'page' => 'nullable|integer|between:1,1000',
+        ]);
+        $search = trim((string) ($filters['search'] ?? ''));
+        $status = $filters['status'] ?? 'all';
+        $user = $request->user();
+        $isDev = $user->hasRole(UserRole::Developer);
+
+        $baseQuery = $this->scopedQuery($class, $user, $isDev);
+        $supportsStatus = in_array($class, [Cafe::class, Roastery::class, Information::class], true);
+
+        $counts = null;
+        if ($supportsStatus) {
+            if ($class === Information::class) {
+                $counts = [
+                    'all' => (clone $baseQuery)->count(),
+                    'published' => (clone $baseQuery)->where('is_published', true)->count(),
+                    'draft' => (clone $baseQuery)->where('is_published', false)->count(),
+                    'review' => 0,
+                ];
+            } else {
+                $counts = [
+                    'all' => (clone $baseQuery)->count(),
+                    'published' => (clone $baseQuery)->where('status', 'published')->count(),
+                    'review' => (clone $baseQuery)->where('status', 'review')->count(),
+                    'draft' => (clone $baseQuery)->where('status', 'draft')->count(),
+                ];
             }
         }
 
+        $query = clone $baseQuery;
+        if (in_array($class, [Cafe::class, Roastery::class], true)) {
+            $query->with('city:id,name');
+        } elseif ($class === Facility::class) {
+            $query->with('cafe:id,name');
+        } elseif ($class === City::class) {
+            $query->withCount('cafes');
+        }
+
+        if ($supportsStatus && $status !== 'all') {
+            if ($class === Information::class) {
+                $query->where('is_published', $status === 'published');
+            } else {
+                $query->where('status', $status);
+            }
+        }
+
+        if ($search !== '') {
+            $like = '%'.addcslashes($search, '%_\\').'%';
+            $query->where(function (Builder $q) use ($class, $name, $like) {
+                $q->where($name, 'like', $like);
+                if (in_array($class, [Cafe::class, Roastery::class], true)) {
+                    $q->orWhere('address', 'like', $like);
+                } elseif ($class === Facility::class) {
+                    $q->orWhereHas('cafe', fn (Builder $sub) => $sub->where('name', 'like', $like));
+                } elseif ($class === User::class) {
+                    $q->orWhere('email', 'like', $like);
+                } elseif ($class === Information::class) {
+                    $q->orWhere('category', 'like', $like);
+                } elseif ($class === City::class) {
+                    $q->orWhere('slug', 'like', $like);
+                }
+            });
+        }
+
         return [
-            'items' => $query->when($search, fn ($query) => $query->where($name, 'like', '%'.addcslashes($search, '%_\\').'%'))
-                ->latest('id')->simplePaginate(20)->through(fn (Model $record) => [
-                    'id' => $record->id,
-                    'name' => $record->{$name},
-                    'detail' => $record->email ?? $record->address ?? $record->category ?? null,
-                    'status' => $record->status ?? ($record instanceof Information ? ($record->is_published ? 'published' : 'draft') : null),
-                ]),
+            'items' => $query->latest('id')->simplePaginate(20)->through(fn (Model $record) => $this->serializeRow($record, $name)),
             'fields' => $this->fields($class),
             'create' => $this->allowed('create', $class),
+            'supports_status' => $supportsStatus,
+            'counts' => $counts,
+            'total' => (clone $baseQuery)->count(),
         ];
     }
 
@@ -110,8 +189,111 @@ class CmsController extends Controller
             throw ValidationException::withMessages(['record' => 'Pindahkan data yang masih terhubung sebelum menghapusnya.']);
         }
         $record->delete();
+        Cache::flush();
 
         return response()->noContent();
+    }
+
+    private function scopedQuery(string $class, User $user, bool $isDev): Builder
+    {
+        $query = $class::query();
+        if (! $isDev) {
+            if (in_array($class, [Cafe::class, Roastery::class], true)) {
+                $query->where('owner_id', $user->id);
+            } elseif ($class === Facility::class) {
+                $query->whereHas('cafe', fn (Builder $q) => $q->where('owner_id', $user->id));
+            }
+        }
+
+        return $query;
+    }
+
+    private function summaryCards(User $user, bool $isDev): array
+    {
+        if ($isDev) {
+            $cafeReview = Cafe::where('status', 'review')->count();
+            $roasteryReview = Roastery::where('status', 'review')->count();
+
+            return [
+                ['label' => 'Kedai tayang', 'value' => Cafe::where('status', 'published')->count(), 'tone' => 'success', 'resource' => 'cafes', 'status' => 'published'],
+                ['label' => 'Menunggu tinjauan', 'value' => $cafeReview + $roasteryReview, 'tone' => ($cafeReview + $roasteryReview) > 0 ? 'warning' : 'neutral', 'resource' => $cafeReview >= $roasteryReview ? 'cafes' : 'roasteries', 'status' => 'review'],
+                ['label' => 'Roastery tayang', 'value' => Roastery::where('status', 'published')->count(), 'tone' => 'neutral', 'resource' => 'roasteries', 'status' => 'published'],
+                ['label' => 'Kabar aktif', 'value' => Information::where('is_published', true)->count(), 'tone' => 'neutral', 'resource' => 'information', 'status' => 'published'],
+            ];
+        }
+
+        if ($user->hasRole(UserRole::Admin)) {
+            $base = Cafe::where('owner_id', $user->id);
+
+            return [
+                ['label' => 'Kedai Anda', 'value' => (clone $base)->count(), 'tone' => 'neutral', 'resource' => 'cafes', 'status' => 'all'],
+                ['label' => 'Sudah tayang', 'value' => (clone $base)->where('status', 'published')->count(), 'tone' => 'success', 'resource' => 'cafes', 'status' => 'published'],
+                ['label' => 'Perlu ditinjau', 'value' => (clone $base)->where('status', 'review')->count(), 'tone' => 'warning', 'resource' => 'cafes', 'status' => 'review'],
+                ['label' => 'Fasilitas tercatat', 'value' => Facility::whereHas('cafe', fn (Builder $q) => $q->where('owner_id', $user->id))->count(), 'tone' => 'neutral', 'resource' => 'facilities', 'status' => 'all'],
+            ];
+        }
+
+        $base = Roastery::where('owner_id', $user->id);
+
+        return [
+            ['label' => 'Roastery Anda', 'value' => (clone $base)->count(), 'tone' => 'neutral', 'resource' => 'roasteries', 'status' => 'all'],
+            ['label' => 'Sudah tayang', 'value' => (clone $base)->where('status', 'published')->count(), 'tone' => 'success', 'resource' => 'roasteries', 'status' => 'published'],
+            ['label' => 'Perlu ditinjau', 'value' => (clone $base)->where('status', 'review')->count(), 'tone' => 'warning', 'resource' => 'roasteries', 'status' => 'review'],
+        ];
+    }
+
+    private function serializeRow(Model $record, string $nameCol): array
+    {
+        $detail = null;
+        $status = null;
+        $statusLabel = null;
+        $image = null;
+
+        if ($record instanceof Cafe || $record instanceof Roastery) {
+            $city = $record->city?->name;
+            $addr = $record->address ? Str::limit($record->address, 70) : null;
+            $detail = collect([$city, $addr])->filter()->implode(' · ') ?: 'Belum ada alamat';
+            $status = $record->status;
+            $image = $this->mediaPath($record->image_path);
+        } elseif ($record instanceof Facility) {
+            $detail = $record->cafe?->name ? 'Kedai: '.$record->cafe->name : 'Belum terhubung ke kedai';
+            $status = 'active';
+            $statusLabel = $record->icon ?: 'Aktif';
+        } elseif ($record instanceof Information) {
+            $date = $record->published_at?->format('d M Y');
+            $detail = collect([$record->category, $date])->filter()->implode(' · ');
+            $status = $record->is_published ? 'published' : 'draft';
+            $image = $this->mediaPath($record->image_path);
+        } elseif ($record instanceof City) {
+            $detail = '/'.$record->slug.' · '.($record->cafes_count ?? 0).' kedai';
+            $status = 'active';
+            $statusLabel = 'Aktif';
+        } elseif ($record instanceof User) {
+            $detail = $record->email;
+            $status = $record->role;
+            $statusLabel = UserRole::tryFrom((string) $record->role)?->label() ?? $record->role;
+        }
+
+        return [
+            'id' => $record->id,
+            'name' => $record->{$nameCol},
+            'detail' => $detail,
+            'status' => $status,
+            'status_label' => $statusLabel,
+            'image' => $image,
+        ];
+    }
+
+    private function mediaPath(?string $path): ?string
+    {
+        if (! $path || str_contains($path, '..')) {
+            return null;
+        }
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '/storage/')) {
+            return $path;
+        }
+
+        return '/storage/'.ltrim($path, '/');
     }
 
     private function resource(string $key): array
@@ -167,7 +349,11 @@ class CmsController extends Controller
                 $field('images', 'Galeri', 'gallery'), $field('menu_images', 'Foto menu', 'gallery'),
             ];
             if (auth()->user()->hasRole(UserRole::Developer)) {
-                $fields[] = $field('owner_id', 'Pemilik (ID akun)', 'number');
+                $owners = User::orderBy('name')->get(['id', 'name', 'email', 'role'])
+                    ->mapWithKeys(fn (User $u) => [
+                        $u->id => $u->name.' ('.$u->email.' — '.(UserRole::tryFrom((string) $u->role)?->label() ?? $u->role).')',
+                    ]);
+                $fields[] = $field('owner_id', 'Pemilik akun', 'select', $owners);
             }
             if ($class === Cafe::class) {
                 $fields[] = $field('has_wifi', 'Tersedia WiFi', 'checkbox');
@@ -259,6 +445,9 @@ class CmsController extends Controller
                 unset($data['password']);
             }
         }
+        if ($record instanceof Information && ! empty($data['is_published']) && empty($data['published_at']) && ! $record->published_at) {
+            $data['published_at'] = now();
+        }
         if ($place) {
             $data['description'] = isset($data['description']) ? clean($data['description']) : ($data['description'] ?? null);
             if ($data['replace_links'] ?? false) {
@@ -300,11 +489,15 @@ class CmsController extends Controller
                 unset($data[$input]);
             }
 
-            return DB::transaction(function () use ($record, $data) {
+            $saved = DB::transaction(function () use ($record, $data) {
                 $record->fill($data)->save();
 
                 return $record;
             });
+
+            Cache::flush();
+
+            return $saved;
         } catch (\Throwable $error) {
             Storage::disk('public')->delete($uploaded);
             throw $error;
