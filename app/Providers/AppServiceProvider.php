@@ -10,6 +10,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -29,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Only register observers outside of migration context
         // (SoftDeletes global scope causes issues during migrate:fresh)
-        if (!app()->runningInConsole() || !collect($_SERVER['argv'] ?? [])->contains(fn($v) => str_contains($v, 'migrate'))) {
+        if (! app()->runningInConsole() || ! collect($_SERVER['argv'] ?? [])->contains(fn ($v) => str_contains($v, 'migrate'))) {
             Cafe::observe(CafeObserver::class);
             Roastery::observe(RoasteryObserver::class);
         }
@@ -39,7 +40,9 @@ class AppServiceProvider extends ServiceProvider
             ini_set('memory_limit', '512M');
         }
         if (app()->isLocal()) {
-            //
+            if (env('WADAHNGOPI_USE_BUILD', false)) {
+                Vite::useHotFile(storage_path('framework/vite-preview.hot'));
+            }
         } else {
             // Force HTTPS & Fix Proxy Header issues in production
             URL::forceScheme('https');

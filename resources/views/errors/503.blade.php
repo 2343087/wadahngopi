@@ -1,66 +1,44 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full">
-
+<html lang="id">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sedang Maintenance - WadahNgopi</title>
+    <title>Sedang Maintenance | WadahNgopi</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #3c2415 0%, #6F4E37 50%, #8B6914 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
+            font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+            background: #F7F6F3;
+            color: #241F1A;
+            min-height: 100svh;
+            display: grid;
+            place-items: center;
+            padding: 1.5rem;
         }
-
-        .container {
-            text-align: center;
+        main {
+            max-width: 32rem;
             padding: 2rem;
-            max-width: 500px;
+            border-radius: 1rem;
+            background: #FFFFFF;
         }
-
-        .icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-
+        img { display: block; margin-bottom: 1.25rem; }
         h1 {
-            font-size: 1.75rem;
+            font-family: Georgia, "Times New Roman", serif;
+            font-weight: 400;
+            font-size: 2rem;
+            line-height: 1.1;
             margin-bottom: 0.75rem;
-            font-weight: 700;
         }
-
-        p {
-            font-size: 1rem;
-            opacity: 0.85;
-            line-height: 1.6;
-        }
-
-        .brand {
-            margin-top: 2rem;
-            font-size: 0.875rem;
-            opacity: 0.5;
-        }
+        p { color: #615850; line-height: 1.6; font-size: 1rem; }
+        .brand { margin-top: 1.5rem; font-size: 0.875rem; color: #615850; }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <div class="icon">☕</div>
-        <h1>Sedang Maintenance</h1>
-        <p>WadahNgopi sedang melakukan perbaikan singkat untuk memberikan pengalaman terbaik. Kami akan kembali dalam
-            beberapa saat.</p>
-        <div class="brand">WadahNgopi &mdash; Tempat Nongkrong Digital</div>
-    </div>
+    <main>
+        <img src="/wadahngopi.png" alt="WadahNgopi" width="40" height="40">
+        <h1>Sedang dalam pemeliharaan.</h1>
+        <p>WadahNgopi sedang melakukan pembaruan singkat. Silakan muat ulang halaman ini beberapa saat lagi.</p>
+        <p class="brand">WadahNgopi · Samarinda</p>
+    </main>
 </body>
-
 </html>

@@ -1,0 +1,76 @@
+:root {
+    color-scheme: light;
+
+    /* Primitive & Semantic Palette: Porcelain Stone (low-chroma), Espresso, Bronze, Sage */
+    --bg: #F5F4F2;
+    --surface: #FFFFFF;
+    --surface-alt: #ECEAE6;
+    --surface-hover: #E3E0DA;
+
+    --ink: #241F1A;
+    --espresso: #302119;
+    --muted: #5C534B;
+    --ink-on-dark: #F5F4F2;
+    --muted-on-dark: #DDD6CE;
+
+    --accent: #8C6234;
+    --accent-hover: #734E26;
+    --bronze-soft: #E2B77E;
+    --bronze-pale: #F1E5D4;
+
+    --sage: #26422F;
+    --sage-bg: #EBF2ED;
+    --danger: #831E15;
+    --danger-bg: #FCEEEB;
+    --warning: #7C4A10;
+    --warning-bg: #FAF0DF;
+
+    --border: #DCD9D2;
+    --control-border: #7A7167;
+    --focus-ring: #8C6234;
+
+    /* Functional Liquid Glass Layer Tokens (navigation & sticky controls only) */
+    --glass-bg: rgb(245 244 242 / 0.86);
+    --glass-border: rgb(36 31 26 / 0.08);
+
+    /* CMS Framed-Sheet Tokens */
+    --cms-frame: #ECEAE5;
+    --cms-sheet: #FFFFFF;
+    --cms-border: #DCD9D2;
+    --cms-row-hover: #F7F6F4;
+
+    /* Typography: strict 5-step editorial + functional scale */
+    --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+    --font-body: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+
+    --text-sm: 0.875rem;
+    --text-base: 1.0625rem;
+    --text-lead: 1.25rem;
+    --text-page-title: clamp(1.75rem, 1.35rem + 1.6vw, 2.5rem);
+    --text-head: clamp(1.75rem, 1.35rem + 1.8vw, 2.5rem);
+    --text-display: clamp(2.15rem, 1.4rem + 3.8vw, 4.25rem);
+
+    /* Layout & Spacing */
+    --margin: clamp(1rem, 3.2vw, 2.5rem);
+    --gutter: clamp(0.875rem, 1.6vw, 1.5rem);
+    --container: 82.5rem;
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-pill: 999px;
+
+    /* Motion */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --t-press: 140ms;
+    --t-hover: 180ms;
+    --t-ui: 240ms;
+    --t-reveal: 700ms;
+
+    /* Z-Index */
+    --z-sticky: 20;
+    --z-dock: 30;
+    --z-drawer: 40;
+    --z-dialog: 50;
+    --z-skip: 60;
+}

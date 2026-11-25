@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cafe;
+use App\Models\WfcScore;
 use App\Services\WfcScoreService;
 use Illuminate\Http\Request;
 
@@ -18,17 +19,18 @@ class WfcScoreController extends Controller
 
     public function store(Request $request, Cafe $cafe)
     {
+        abort_unless($cafe->status === 'published', 404);
         $validated = $request->validate([
             'wifi_rating' => 'required|integer|min:1|max:5',
             'outlet_rating' => 'required|integer|min:1|max:5',
             'comfort_rating' => 'required|integer|min:1|max:5',
-            'user_lat' => 'nullable|numeric',
-            'user_lng' => 'nullable|numeric',
+            'user_lat' => 'nullable|required_with:user_lng|numeric|between:-90,90',
+            'user_lng' => 'nullable|required_with:user_lat|numeric|between:-180,180',
             'comment' => 'nullable|string|max:500',
         ]);
 
         // Prevent multiple ratings from the same user for the same cafe
-        $existing = \App\Models\WfcScore::where('cafe_id', $cafe->id)
+        $existing = WfcScore::where('cafe_id', $cafe->id)
             ->where('user_id', auth()->id())
             ->first();
 
@@ -42,7 +44,6 @@ class WfcScoreController extends Controller
 
         return response()->json([
             'message' => 'Score submitted successfully!',
-            'score' => $score,
             'is_verified' => $score->is_verified,
             'verification_reason' => $score->verification_reason ?? 'no_gps',
             'new_aggregate' => [

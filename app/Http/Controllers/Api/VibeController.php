@@ -10,15 +10,15 @@ use Illuminate\Support\Facades\RateLimiter;
 
 class VibeController extends Controller
 {
-    public function __construct(protected VibeService $vibeService)
-    {
-    }
+    public function __construct(protected VibeService $vibeService) {}
 
     /**
      * Get current vibe aggregate for a cafe.
      */
     public function show(Cafe $cafe)
     {
+        abort_unless($cafe->status === 'published', 404);
+
         return response()->json($this->vibeService->getAggregatedVibe($cafe));
     }
 
@@ -27,10 +27,11 @@ class VibeController extends Controller
      */
     public function store(Request $request, Cafe $cafe)
     {
+        abort_unless($cafe->status === 'published', 404);
         $validated = $request->validate([
             'level' => 'required|in:sepi,lumayan,rame,penuh',
-            'user_lat' => 'nullable|numeric',
-            'user_lng' => 'nullable|numeric',
+            'user_lat' => 'nullable|required_with:user_lng|numeric|between:-90,90',
+            'user_lng' => 'nullable|required_with:user_lat|numeric|between:-180,180',
         ]);
 
         // Secure fingerprint pake session ID bawaan Laravel biar ga bisa di-spoof
@@ -65,7 +66,6 @@ class VibeController extends Controller
 
         return response()->json([
             'message' => 'Vibe berhasil dicatat!',
-            'vote' => $vote,
             'is_verified' => $vote->is_verified,
             'aggregate' => $this->vibeService->getAggregatedVibe($cafe),
         ]);

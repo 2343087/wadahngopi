@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -34,11 +35,8 @@ return Application::configure(basePath: dirname(__DIR__))
             '::1',
         ]);
 
-        // Sanitize Livewire requests (strip browser-injected toJSON calls from Boost)
-        $middleware->append(\App\Http\Middleware\SanitizeLivewireRequests::class);
-
         // Add security headers
-        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+        $middleware->append(SecurityHeaders::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

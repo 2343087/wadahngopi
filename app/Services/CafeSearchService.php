@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class CafeSearchService
 {
@@ -40,10 +43,10 @@ class CafeSearchService
 
                                 // Overnight case: 22:00 - 02:00 (Close < Open)
                                 ->orWhere(function ($overnight) use ($now, $openCol, $closeCol) {
-                                $overnight->whereRaw("$closeCol < $openCol")
-                                    ->where(fn($k) => $k->whereRaw("? >= $openCol", [$now])
-                                        ->orWhereRaw("? <= $closeCol", [$now]));
-                            });
+                                    $overnight->whereRaw("$closeCol < $openCol")
+                                        ->where(fn ($k) => $k->whereRaw("? >= $openCol", [$now])
+                                            ->orWhereRaw("? <= $closeCol", [$now]));
+                                });
                         });
                 });
         });
@@ -61,16 +64,19 @@ class CafeSearchService
     public function scopeNearest(Builder $query, float $lat, float $lng, int $radiusKm = 20): Builder
     {
         $tableName = $query->getModel()->getTable();
+        if ($query->getQuery()->columns === null) {
+            $query->select($tableName.'.*');
+        }
 
         // Check if MySQL Spatial functions are available (cached per hour)
-        $hasSpatial = \Illuminate\Support\Facades\Cache::remember(
+        $hasSpatial = Cache::remember(
             "spatial_support_{$tableName}",
             now()->addHour(),
             function () use ($tableName) {
                 try {
                     // Test ST_Distance with WGS 84 (SRID 4326) between two points 1 degree apart.
                     // MySQL 8.0+ returns meters (~111319m). MariaDB and MySQL 5.7 return degrees (1.0).
-                    $testDist = \Illuminate\Support\Facades\DB::select(
+                    $testDist = DB::select(
                         "SELECT ST_Distance(
                             ST_GeomFromText('POINT(0 0)', 4326),
                             ST_GeomFromText('POINT(0 1)', 4326)
@@ -85,7 +91,7 @@ class CafeSearchService
                     }
 
                     // Also verify the location column exists and has data
-                    $hasLocation = \Illuminate\Support\Facades\DB::select(
+                    $hasLocation = DB::select(
                         "SELECT COUNT(*) as cnt FROM `{$tableName}` WHERE location IS NOT NULL LIMIT 1"
                     );
 
@@ -108,13 +114,13 @@ class CafeSearchService
 
         // Fallback: Haversine formula using latitude/longitude columns
         // Works on MariaDB, MySQL 5.7, and any SQL database
-        $haversine = "(
+        $haversine = '(
             6371 * ACOS(
                 LEAST(1, GREATEST(-1, COS(RADIANS(?)) * COS(RADIANS(latitude)) *
                 COS(RADIANS(longitude) - RADIANS(?)) +
                 SIN(RADIANS(?)) * SIN(RADIANS(latitude))))
             )
-        )";
+        )';
 
         return $query
             ->whereNotNull('latitude')
@@ -156,32 +162,41 @@ class CafeSearchService
         // Try Fulltext first, fallback to LIKE if index doesn't exist
         // Cache the FULLTEXT index check per-table for 1 hour to avoid extra query per search
         $tableName = $query->getModel()->getTable();
-        $hasFulltext = \Illuminate\Support\Facades\Cache::remember(
+        $hasFulltext = Cache::remember(
             "fulltext_index_{$tableName}",
             now()->addHour(),
             function () use ($tableName) {
                 try {
-                    \Illuminate\Support\Facades\DB::select(
+                    DB::select(
                         "SELECT 1 FROM `{$tableName}` WHERE MATCH(`name`, `address`, `description`) AGAINST('test' IN BOOLEAN MODE) LIMIT 1"
                     );
 
                     return true;
-                } catch (\Illuminate\Database\QueryException $e) {
+                } catch (QueryException $e) {
                     return false;
                 }
             }
         );
 
+        $compactTerm = preg_replace('/\s+/', '', $safeTerm);
+
         if ($hasFulltext) {
-            $query->where(function ($q) use ($safeTerm, $sanitizedTerm) {
+            $query->where(function ($q) use ($safeTerm, $sanitizedTerm, $compactTerm) {
                 $q->whereFullText(['name', 'address', 'description'], $sanitizedTerm, ['mode' => 'boolean'])
-                    ->orWhere('name', 'like', "%{$safeTerm}%");
+                    ->orWhere('name', 'like', "%{$safeTerm}%")
+                    ->orWhere('address', 'like', "%{$safeTerm}%");
+                if ($compactTerm !== '') {
+                    $q->orWhereRaw("REPLACE(name, ' ', '') LIKE ?", ["%{$compactTerm}%"]);
+                }
             });
         } else {
-            $query->where(function ($q) use ($safeTerm) {
+            $query->where(function ($q) use ($safeTerm, $compactTerm) {
                 $q->where('name', 'like', "%{$safeTerm}%")
                     ->orWhere('address', 'like', "%{$safeTerm}%")
                     ->orWhere('description', 'like', "%{$safeTerm}%");
+                if ($compactTerm !== '') {
+                    $q->orWhereRaw("REPLACE(name, ' ', '') LIKE ?", ["%{$compactTerm}%"]);
+                }
             });
         }
     }
@@ -195,8 +210,8 @@ class CafeSearchService
         $now = $currentTime ?: now()->format('H:i:s');
 
         // Normalize to H:i:s format
-        $open = strlen($open) === 5 ? $open . ':00' : $open;
-        $close = strlen($close) === 5 ? $close . ':00' : $close;
+        $open = strlen($open) === 5 ? $open.':00' : $open;
+        $close = strlen($close) === 5 ? $close.':00' : $close;
 
         // If open and close are exactly the same, treat as 24-hours or misconfig
         if ($open === $close) {

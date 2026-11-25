@@ -1,211 +1,118 @@
 <p align="center">
-  <img src="public/wadahngopi.png" width="100" alt="WadahNgopi Logo">
+  <img src="public/wadahngopi.png" width="96" alt="Logo WadahNgopi">
 </p>
 
-<h1 align="center">WadahNgopi: Apex WFC Ecosystem ☕</h1>
+<h1 align="center">WadahNgopi</h1>
 
 <p align="center">
-  <strong>Platform Pencarian Cafe & Roastery №1 di Indonesia — Ultra-Premium 2026 Edition</strong><br>
-  <em>Bukan sekadar direktori — ini adalah kurator vibe produktivitas dan status sosial lo.</em>
-</p>
-
-<p align="center">
-  <a href="https://laravel.com"><img src="https://img.shields.io/badge/Laravel-11%2B-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 11"></a>
-  <a href="https://react.dev"><img src="https://img.shields.io/badge/React-Hybrid-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React Hybrid"></a>
-  <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind-v4-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind v4"></a>
-  <a href="https://filamentphp.com"><img src="https://img.shields.io/badge/Filament-v3-EEBB0B?style=for-the-badge&logo=filament&logoColor=white" alt="Filament v3"></a>
-  <img src="https://img.shields.io/badge/PWA-Ready-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white" alt="PWA Ready">
+  <strong>Panduan santai untuk menemukan kedai kopi dan roastery lokal di Samarinda.</strong><br>
+  Untuk hari ketika kamu butuh meja yang tenang buat bekerja, mencari biji kopi segar, atau sekadar berhenti berdebat mau nongkrong di mana.
 </p>
 
 ---
 
-## ⚡ Apa Itu WadahNgopi?
+## Cerita di Balik WadahNgopi
 
-WadahNgopi berevolusi dari sekadar aplikasi direktori tempat ngopi biasa menjadi **Ekosistem Validasi Sosial & Produktivitas** yang ditenagai oleh psikologi *habit-forming* dan arsitektur *engineering* tingkat dewa. Aplikasi ini dibangun buat *freelancer*, mahasiswa, dan *remote workers* yang butuh tempat *Work From Cafe* (WFC) yang bener-bener terkurasi, sekaligus jadi ajang nongkrong yang asik bareng temen.
+Hampir semua orang di Samarinda pernah mengalami momen yang sama. Sore sudah turun, tugas masih setengah jalan, atau teman-teman di grup WhatsApp akhirnya sepakat buat ketemu—lalu muncul pertanyaan klasik:
 
----
+*"Enaknya ngopi di mana, ya?"*
 
-## 🚀 Fitur Unggulan & Cara Kerjanya
+Setelah itu biasanya kita membuka banyak tab sekaligus. Cari nama tempat di peta, geser foto satu per satu untuk menebak ada colokan atau tidak, buka media sosialnya untuk memastikan jam tutupnya, lalu tetap saja ragu apakah tempatnya sedang buka atau sudah penuh.
 
-Projek ini dilengkapi dengan **Retention Suite**, sekumpulan fitur yang didesain buat bikin *user* balik lagi dan terus berinteraksi.
-
-### 1. 🏢 WFC Scoring Ecosystem (Vibe Produktivitas)
-Sistem penilaian *Work From Cafe* yang objektif dan divalidasi.
-- **Tiga Pilar Penilaian:** Pengguna bisa memberi rating terpisah untuk **Kecepatan WiFi**, **Ketersediaan Stopkontak (Listrik)**, dan **Kenyamanan Tempat**.
-- **Anti-Manipulation Engine:** Sistem "Satu User Satu Rating" mencegah *review bombing* (serangan review palsu).
-- **Suara Warga:** Kolom komentar (*review*) yang jujur dari komunitas.
-
-### 2. 📊 Live Vibe Meter (Crowdsourcing Keramaian)
-Pengen ke cafe tapi takut gak dapet tempat duduk?
-- **Fungsi:** Menampilkan status keramaian cafe secara *real-time* ("Sepi", "Sedang", "Rame").
-- **Cara Kerja:** User yang sedang berada di lokasi bisa nge-vote status keramaian. Vote ini punya **masa berlaku (decay) 4 jam**, artinya data keramaian selalu *fresh* dan aktual.
-- **Validasi GPS:** Buat mencegah spam, fitur ini ngecek jarak user via GPS. Hanya user yang berada dalam **radius 100 meter** dari cafe yang bisa nge-vote.
-
-### 3. 🤝 Tongkrongan (Voting List Kolaboratif)
-Fitur janjian nongkrong tanpa ribet debat di grup WhatsApp.
-- **Fungsi:** Lo bisa bikin *list* kandidat cafe (min 2, max 5) dan share link-nya ke grup WA biar temen-temen lo bisa *vote* cafe mana yang mau didatengin.
-- **Frictionless Voting:** Temen lo yang buka link **TIDAK PERLU LOGIN** buat ikutan *vote*. Sistem mendeteksi pemilih unik via *device fingerprinting* (disimpan di *localStorage*).
-- **Masa Aktif:** List "Tongkrongan" ini otomatis kedaluwarsa (*expired*) dalam waktu 24 jam untuk menjaga kebersihan database.
-
-### 4. 🏅 Badge Gamification (Habit Builder)
-Sistem pencapaian ala game buat bikin user rajin eksplor cafe baru.
-- **Fungsi:** User dapet lencana (*badge*) yang bisa dipamerin di profil mereka.
-- **Cara Kerja:** Tersedia tombol **Check-In** di halaman cafe. Saat user tekan tombol ini di lokasi (divalidasi dengan GPS radius 100m), sistem nyatet kehadiran mereka.
-- **Contoh Badge:**
-  - *First Timer*: Check-in pertama kali.
-  - *Explorer*: Sudah check-in di 5 cafe berbeda.
-  - *Night Owl*: Check-in di atas jam 9 malam.
-  - *Weekend Warrior*: Sering check-in pas *weekend*.
-
-### 5. 💾 Hybrid Bookmarking (Simpan Tanpa Login)
-Sistem favorit yang *seamless* antara pengguna awam dan pengguna terdaftar.
-- **Fungsi:** Simpan cafe atau *roastery* favorit biar gak lupa.
-- **Cara Kerja:** Kalau lo cuma pengunjung biasa (Guest), data favorit disimpan di memori HP (`localStorage`). Kalau lo akhirnya daftar dan **Login**, data favorit dari HP lo akan **otomatis tersinkronisasi** ke *database* utama (PostgreSQL), lalu dihapus dari HP. Jadi datanya aman tersimpan di *cloud* tanpa hilang.
-
-### 6. 🏪 Pencarian Cerdas & Geo-Location
-- Menggunakan fitur **FULLTEXT Search** MySQL untuk pencarian nama dan deskripsi yang ngebut.
-- Fitur "Terdekat" menggunakan perhitungan rumus **Haversine** untuk menghitung jarak antara koordinat GPS user dan latitude/longitude cafe di database.
-
-### 7. 🎯 Cafe Roulette (Roda Keberuntungan)
-Kalau bingung mau kemana, klik tombol *Roulette*! Sistem bakal ngacak cafe-cafe yang **sedang buka saat itu juga** dan memberikan rekomendasi spot nongkrong secara acak dengan animasi putaran roda dan *haptic feedback* (getar) di HP lo.
-
-### 8. 📱 PWA (Progressive Web App)
-WadahNgopi gak perlu di-download dari Play Store.
-- **Instalasi:** Cukup buka dari *browser* HP (Chrome/Safari), lalu pilih "Add to Home Screen". Aplikasi akan terinstal di HP dengan ukuran di bawah 1 MB!
-- **Offline-capable:** Menggunakan *Service Worker* dan *Manifest* untuk nge-cache aset statis, jadinya aplikasi tetep kerasa enteng, layar penuh tanpa URL bar, dan kerasa kayak aplikasi *Native*.
-
-### 9. 🛡️ Filament Admin Dashboard
-Panel *backend* eksklusif buat admin atau *owner* cafe.
-- **Role-Based Access:** Ada batasan akses antara Super Admin, Admin Cafe, dan Penulis Artikel.
-- **CRUD Super Cepat:** Manajemen tambah/edit/hapus foto cafe, jam operasional, dan info detail secara mudah dan intuitif.
+**WadahNgopi** hadir untuk memotong semua keraguan itu. Satu tempat yang rapi, netral, dan jujur untuk mengenal kedai kopi serta roastery lokal di Samarinda. Tidak ada kedai yang diistimewakan di halaman depan—sorotan kedai berganti secara acak supaya setiap sudut ngopi lokal punya kesempatan yang sama untuk ditemukan.
 
 ---
 
-## 🧰 Modern Tech Stack
+## Apa yang Bisa Kamu Lakukan di Sini
 
-Kombinasi teknologi yang dipakai dijamin *future-proof* dan *blazing fast*.
+### 1. Menjelajah Tanpa Ribet
+Buka halaman **Jelajahi** atau **Roastery** dan temukan tempat sesuai kebutuhanmu saat itu juga. Kamu bisa mengetik nama kedai, potongan nama jalan, atau bahkan mengetik cepat tanpa spasi. Kalau sedang terburu-buru, nyalakan saringan **Sedang buka** atau **Terdekat** untuk melihat kedai yang memang masih melayani di sekitarmu. Butuh suasana tertentu? Buka panel filter untuk memilih fasilitas seperti WiFi, AC, ruang terbuka, mushola, atau ketersediaan stopkontak.
 
-| Layer | Teknologi | Alasan Pemilihan |
-|:------|:----------|:-------------|
-| **Backend Core** | Laravel 11/12 (PHP 8.3+) | Backbone sistem yang stabil, aman, dan ekosistem terkuat di PHP. |
-| **Frontend Utama** | Livewire 3 + Alpine.js | Bikin interaksi web terasa seperti *Single Page Application* (SPA) tanpa perlu *setup* framework JS yang berat. |
-| **Frontend Kompleks** | React.js (Hybrid) | Buat komponen UI interaktif kayak *Vibe Meter*, *Check-In*, dan sistem *Rating* ditenagai oleh React + Vite biar makin *smooth*. |
-| **Admin Panel** | Filament v3 | *Zero-config* dashboard paling *powerful* buat Laravel saat ini. |
-| **Styling** | Tailwind CSS v4 | *Utility-first CSS* dengan konsep desain *Glassmorphism* (transparan + blur) khas UI Ultra-Premium 2026. |
-| **Database** | MySQL 8.0+ | Dukungan *Spatial queries* untuk perhitungan titik GPS dan indeks pencarian *Full-text*. |
-| **Asset Bundler**| Vite 7 | Compile aset statis secepat kilat dengan *Hot Module Replacement* (HMR). |
+### 2. Melihat Detail Tempat Sebelum Berangkat
+Setiap halaman kedai merangkum hal-hal yang paling sering bikin penasaran sebelum duduk di sana: galeri foto suasana, foto daftar menu, jam operasional, alamat lengkap beserta tautan Google Maps, kontak WhatsApp, hingga akun media sosialnya.
+
+### 3. Tahu Seberapa Nyaman untuk Bekerja & Seramai Apa Sekarang
+- **Penilaian WFC (Work From Cafe):** Pengunjung bisa berbagi penilaian objektif soal kecepatan WiFi, ketersediaan stopkontak, dan kenyamanan tempat duduk.
+- **Vibe Meter:** Sedang berada di lokasi? Kamu bisa ikut memberi kabar apakah suasana kedai saat itu sedang sepi, nyaman, atau ramai. Laporan keramaian otomatis menyegarkan diri setiap beberapa jam agar selalu sesuai keadaan terbaru.
+
+### 4. Berhenti Berdebat di Grup Lewat *Tongkrongan*
+Susah menentukan tujuan saat mau jalan bareng? Buka fitur **Voting Tongkrongan**, pilih dua sampai lima kandidat kedai, lalu bagikan satu tautan ke grup teman-temanmu. Mereka bisa langsung memilih kedai favorit tanpa perlu repot membuat akun terlebih dahulu. Tautan voting aktif selama 24 jam dan hasilnya langsung terlihat bersama.
+
+### 5. Kalau Benar-Benar Bingung, Serahkan pada *Roulette*
+Di halaman beranda ada tombol **Pilihkan satu kedai**. Sekali tekan, WadahNgopi akan mengambilkan satu rekomendasi acak dari kedai yang benar-benar sedang buka saat itu juga.
+
+### 6. Simpan Tempat Favorit & Kumpulkan Lencana
+- **Simpan:** Menemukan kedai yang cocok untuk akhir pekan nanti? Tekan ikon simpan. Tanpa masuk akun pun daftar simpananmu tetap tersimpan di peramban, dan akan otomatis menyatu ke akunmu begitu kamu masuk.
+- **Check-In & Lencana Kopi:** Tandai kunjunganmu saat berada di lokasi dan kumpulkan lencana kecil sebagai catatan perjalanan menyusuri kedai kopi lokal.
+
+### 7. Kabar Kopi
+Ruang baca santai berisi panduan dan catatan seputar dunia kopi—mulai dari mengenal karakter biji Arabica, Robusta, Liberica, hingga Excelsa—tanpa dipenuhi pengumuman lama yang sudah lewat.
+
+### 8. Ruang Kelola untuk Pemilik Kedai & Roastery
+Pemilik kedai dan roastery bisa masuk melalui halaman `/admin` untuk memperbarui foto tempat, daftar menu, fasilitas, jam operasional, hingga tautan kontak secara mandiri.
+
+### 9. Ringan dan Bisa Dipasang di Ponsel
+WadahNgopi bisa dibuka langsung dari peramban ponsel dan dipasang ke layar utama (*Add to Home Screen*) tanpa perlu mengunduh aplikasi besar dari toko aplikasi. Navigasi bawahnya dirancang ramah jempol agar nyaman digeser dan dipakai dengan satu tangan.
 
 ---
 
-## 🛡️ Security & Engineering Standard
+## Menjalankan Proyek di Komputer Lokal
 
-Project ini gak asal jalan, tapi dibangun pakai standar keamanan tinggi:
-- **Anti N+1 Queries:** Kode database sangat dioptimasi (pakai *Eager Loading* `->with()`) biar halaman gak lambat walau ngambil banyak data relasi.
-- **CSP Headers & Rate Limiting:** Proteksi ketat dari serangan XSS dan batas permintaan server (misal: cuma bisa bikin Tongkrongan 3 kali sehari) buat cegah *spamming*.
-- **IDOR Protection:** Validasi kepemilikan data—user A gak bakal bisa hapus rating user B.
-- **Atomic View Counter:** Sistem hitung "Dilihat Berapa Kali" pakai metode tarikan berkala (*batching*) biar *database* gak meledak walau banyak yang klik dalam waktu bersamaan.
+Jika kamu ingin menjalankan WadahNgopi di komputermu sendiri untuk pengembangan atau uji coba:
 
----
+### Kebutuhan Dasar
+- PHP 8.2 atau lebih baru (disarankan PHP 8.4)
+- Composer
+- Node.js 20+ dan NPM
+- MySQL 8.0+
 
-## 🚀 Panduan Setup & Instalasi (Development)
+### Langkah Singkat
 
-Buat lo yang mau *clone* dan ngerjain project ini di laptop/PC lo, ikutin langkah ini:
-
-### Prasyarat
-- PHP 8.2 ke atas (Direkomendasikan PHP 8.4)
-- Composer 2.x
-- Node.js versi 20+
-- Database MySQL 8.0+
-- (Opsional) Laravel Herd untuk mempermudah jalanin PHP dan Node.
-
-### Langkah Instalasi (Local)
-
-1. **Clone repository ini**
+1. **Salin repositori dan masuk ke folder proyek**
    ```bash
    git clone https://github.com/2343087/wadahngopi.git
    cd wadahngopi
    ```
 
-2. **Install dependency PHP & Node.js**
+2. **Pasang paket pendukung**
    ```bash
    composer install
    npm install
    ```
 
-3. **Setup File Environment (.env)**
-   Copy file pengaturan dasar dan generate kunci aplikasi.
+3. **Siapkan berkas konfigurasi lingkungan**
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
-   *Buka file `.env` pakai text editor, lalu atur koneksi `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD` sesuai MySQL di laptop lo.*
+   Sesuaikan nama database, pengguna, dan kata sandi MySQL di berkas `.env`.
 
-4. **Jalankan Migrasi & Data Dummy (Seeding)**
-   Perintah ini bakal bikin semua tabel struktur database dan ngisi data awal (termasuk lencana Badge).
+4. **Siapkan database dan tautan penyimpanan gambar**
    ```bash
-   php artisan migrate --seed
-   php artisan db:seed --class=BadgeSeeder
+   php artisan migrate
+   php artisan storage:link
    ```
 
-5. **Buat Akun Admin**
-   Buat akun supaya lo bisa masuk ke Dashboard Filament.
-   ```bash
-   php artisan make:filament-user
-   ```
-
-6. **Build Aset Frontend**
-   Compile semua file React, Tailwind, dan CSS lo.
+5. **Bangun aset tampilan dan jalankan aplikasi**
    ```bash
    npm run build
-   # atau untuk mode development berjalan: npm run dev
-   ```
-
-7. **Nyalakan Server**
-   ```bash
    php artisan serve
    ```
-   *Akses di browser: `http://localhost:8000`*
+   Untuk pengguna Windows dengan Laravel Herd, kamu juga bisa langsung menjalankan `start.bat` dari folder utama proyek.
 
----
-
-## 🌐 Deploy ke Production (Contoh: Hostinger)
-
-Kalau udah siap tayang (*live*) ke internet:
-1. Beli paket hosting (Minimal yang mendukung SSH dan Node.js).
-2. Via SSH, *clone* repository lo di dalam folder `public_html`.
-3. Jalankan `composer install --no-dev --optimize-autoloader` dan `npm run build` di server.
-4. Setting `.env` dengan kredensial database *live* dari Hostinger. Ubah `APP_ENV=production` dan `APP_DEBUG=false`.
-5. PENTING: Karena Shared Hosting rata-rata gak punya *Redis*, pastikan `CACHE_STORE=file` dan `SESSION_DRIVER=file`.
-6. Migrasi database: `php artisan migrate --force`.
-7. Optimasi performa server:
+6. **Membuat akun pengelola (opsional)**
    ```bash
-   php artisan config:cache
-   php artisan route:cache
-   php artisan view:cache
+   php artisan cms:create-developer
    ```
-8. Arahkan *Document Root* domain lo ke folder `/public` di pengaturan panel hosting.
 
 ---
 
-## 🏆 Kenapa WadahNgopi Lebih Unggul dari Kompetitor?
+## Sekilas di Balik Layar
 
-- **Dibanding Google Maps:** WadahNgopi punya data khusus cafe, info *vibe* colokan dan WiFi, dan *interface* yang *Gen-Z friendly*. Maps terlalu *general*.
-- **Dibanding TikTok/IG:** Kalau di sosmed lo nyari dari *hashtag* susah disaring. Di WadahNgopi, lo bisa langsung filter cafe mana yang *"Buka Sekarang"*, *"Ada WiFi Kenceng"*, dan yang jaraknya paling deket pakai peta.
-- **Fair-Play Exposure:** Di aplikasi lain, cafe yang ngebayar mahal selalu tampil di atas. WadahNgopi ngacak urutan cafe (Shuffle) untuk tiap sesi *user*, sehingga UMKM dan cafe lokal kecil tetep dapet *exposure* yang adil!
-
----
-
-## 👑 Tim Pengembang & Arsitek
-
-WadahNgopi dikembangkan oleh *engineers* yang percaya bahwa koding bukan sekadar ngetik, tapi merancang sistem yang kuat (*secure*), cepat, dan memanjakan mata (*Premium Aesthetics*).
-
-- **Chomelius Delon** — *Lead Architect & Apex Engineer* ([GitHub](https://github.com/2343087))
-- **RisyalPramudititi Ricol** — *Core Contributor & Feature Engineer* ([GitHub](https://github.com/RisyalPramudititia))
+WadahNgopi dibangun menggunakan **Laravel 12** di sisi server, **Vue 3** dan **Vite** untuk antarmuka yang responsif, serta **MySQL 8** untuk pencarian teks dan perhitungan jarak lokasi. Pengujian otomatis berjalan lewat Pest/PHPUnit dan pemeriksaan gaya kode menggunakan Laravel Pint.
 
 ---
 
 <p align="center">
-  <strong>© 2026 WadahNgopi — by AK Kreatif</strong><br>
-  <em>Diseduh dengan ❤️ dan baris kode presisi dari Kalimantan.</em><br><br>
-  <code>☕ brew(); code(); repeat();</code>
+  Dibuat dengan perhatian untuk penikmat kopi, pekerja jarak jauh, dan ruang ngopi lokal di Samarinda.
 </p>

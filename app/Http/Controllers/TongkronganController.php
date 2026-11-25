@@ -7,7 +7,9 @@ use App\Models\Tongkrongan;
 use App\Models\TongkronganItem;
 use App\Models\TongkronganVote;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\Rule;
 
 class TongkronganController extends Controller
 {
@@ -16,17 +18,22 @@ class TongkronganController extends Controller
      */
     public function searchCafes(Request $request)
     {
-        $search = $request->query('q');
+        $data = $request->validate([
+            'q' => 'nullable|string|max:100',
+            'selected' => 'sometimes|array|max:5',
+            'selected.*' => 'integer|min:1',
+        ]);
+        $search = $data['q'] ?? '';
         if (strlen($search) < 2) {
             return response()->json([]);
         }
 
         // selected param can be passed to exclude already selected cafes
-        $selected = $request->query('selected', []);
+        $selected = $data['selected'] ?? [];
 
         $cafes = Cafe::where('status', 'published')
             ->where('name', 'like', "%{$search}%")
-            ->when(!empty($selected), function ($query) use ($selected) {
+            ->when(! empty($selected), function ($query) use ($selected) {
                 $query->whereNotIn('id', $selected);
             })
             ->select(['id', 'name', 'address', 'slug', 'image_path'])
@@ -41,7 +48,7 @@ class TongkronganController extends Controller
      */
     public function create()
     {
-        return view('tongkrongan.create');
+        return view('vue', ['title' => 'Buat daftar tongkrongan']);
     }
 
     /**
@@ -52,32 +59,30 @@ class TongkronganController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:100',
             'cafe_ids' => 'required|array|min:2|max:5',
-            'cafe_ids.*' => 'integer|exists:cafes,id',
+            'cafe_ids.*' => ['integer', 'distinct', Rule::exists('cafes', 'id')->where('status', 'published')->whereNull('deleted_at')],
         ]);
 
         // Secure fingerprint pake session ID bawaan Laravel biar ga bisa di-spoof
         $fingerprint = $request->session()->getId();
 
         // Rate limit: 3 lists per IP per day
-        $rateLimitKey = 'tongkrongan:' . $request->ip();
+        $rateLimitKey = 'tongkrongan:'.$request->ip();
         if (RateLimiter::tooManyAttempts($rateLimitKey, 3)) {
             return response()->json([
                 'message' => 'Maksimal 3 list per hari. Coba lagi besok!',
             ], 429);
         }
 
-        $tongkrongan = Tongkrongan::create([
-            'title' => $validated['title'],
-            'creator_fingerprint' => $fingerprint,
-            'creator_user_id' => auth()->id(),
-        ]);
-
-        foreach ($validated['cafe_ids'] as $cafeId) {
-            TongkronganItem::create([
-                'tongkrongan_id' => $tongkrongan->id,
-                'cafe_id' => $cafeId,
+        $tongkrongan = DB::transaction(function () use ($validated, $fingerprint) {
+            $list = Tongkrongan::create([
+                'title' => $validated['title'],
+                'creator_fingerprint' => $fingerprint,
+                'creator_user_id' => auth()->id(),
             ]);
-        }
+            $list->items()->createMany(array_map(fn ($id) => ['cafe_id' => $id], $validated['cafe_ids']));
+
+            return $list;
+        });
 
         RateLimiter::hit($rateLimitKey, 86400);
 
@@ -91,18 +96,23 @@ class TongkronganController extends Controller
     /**
      * Show a shared tongkrongan.
      */
-    public function show(Tongkrongan $tongkrongan)
+    public function show(Request $request, Tongkrongan $tongkrongan)
     {
-        if ($tongkrongan->is_expired) {
-            return view('tongkrongan.expired', compact('tongkrongan'));
+        if (! $request->expectsJson()) {
+            return view('vue', ['title' => $tongkrongan->title]);
         }
 
-        $tongkrongan->load([
-            'items.cafe' => fn($q) => $q->select(['id', 'name', 'slug', 'address', 'image_path', 'is_24_hours', 'operating_hours', 'weekday_open', 'weekday_close', 'weekend_open', 'weekend_close']),
-            'items.votes',
-        ]);
+        $items = $tongkrongan->items()->whereHas('cafe', fn ($query) => $query->where('status', 'published'))
+            ->with('cafe:id,name,slug,address')->withCount('votes')
+            ->withExists(['votes as voted' => fn ($query) => $query->where('voter_fingerprint', $request->session()->getId())])->get();
 
-        return view('tongkrongan.show', compact('tongkrongan'));
+        return [
+            'title' => $tongkrongan->title, 'expired' => $tongkrongan->is_expired,
+            'items' => $items->map(fn ($item) => [
+                'id' => $item->id, 'name' => $item->cafe->name, 'address' => $item->cafe->address,
+                'url' => route('cafes.show', $item->cafe, false), 'votes' => $item->votes_count, 'voted' => $item->voted,
+            ]),
+        ];
     }
 
     /**
@@ -110,10 +120,8 @@ class TongkronganController extends Controller
      */
     public function getVotes(Tongkrongan $tongkrongan)
     {
-        $tongkrongan->load(['items.votes']);
-        $votes = $tongkrongan->items->mapWithKeys(function ($item) {
-            return [$item->id => $item->votes->count()];
-        });
+        $votes = $tongkrongan->items()->whereHas('cafe', fn ($query) => $query->where('status', 'published'))
+            ->withCount('votes')->get()->pluck('votes_count', 'id');
 
         return response()->json(['votes' => $votes]);
     }
@@ -123,6 +131,7 @@ class TongkronganController extends Controller
      */
     public function vote(Request $request, Tongkrongan $tongkrongan, TongkronganItem $item)
     {
+        abort_unless($item->tongkrongan_id === $tongkrongan->id && $item->cafe?->status === 'published', 404);
         if ($tongkrongan->is_expired) {
             return response()->json(['message' => 'List ini sudah expired.'], 422);
         }
@@ -138,6 +147,7 @@ class TongkronganController extends Controller
         if ($existing) {
             // Toggle: remove vote
             $existing->delete();
+
             return response()->json([
                 'action' => 'removed',
                 'vote_count' => $item->votes()->count(),

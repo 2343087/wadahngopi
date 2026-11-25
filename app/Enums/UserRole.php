@@ -20,7 +20,7 @@ enum UserRole: string
     }
 
     /**
-     * Check if the role can access the Filament admin panel.
+     * Check if the role can manage content.
      */
     public function canAccessPanel(): bool
     {

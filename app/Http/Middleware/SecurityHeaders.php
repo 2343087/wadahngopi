@@ -11,11 +11,12 @@ class SecurityHeaders
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
+        $response->setVary('Accept', false);
 
         // Prevent MIME type sniffing
         $response->headers->set('X-Content-Type-Options', 'nosniff');
@@ -37,25 +38,22 @@ class SecurityHeaders
 
         // Content Security Policy - prevent XSS and injection attacks
         // Relaxed for local development (Vite ports) and GTM
-        $isLocal = !app()->isProduction();
+        $isLocal = ! app()->isProduction();
         $viteUrl = $isLocal ? ' *.test:* localhost:* wss://*.test:* wss://localhost:*' : '';
         $gtmDomains = ' https://www.googletagmanager.com https://www.google-analytics.com';
 
         $csp = implode('; ', [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net" . $gtmDomains . $viteUrl,
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.bunny.net https://cdn.jsdelivr.net https://unpkg.com" . $viteUrl,
+            "script-src 'self' 'unsafe-inline'".$viteUrl,
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.bunny.net https://cdn.jsdelivr.net https://unpkg.com".$viteUrl,
             "font-src 'self' https://fonts.gstatic.com https://fonts.bunny.net https://cdn.jsdelivr.net data:",
-            "img-src 'self' data: https: blob:" . $gtmDomains,
-            "connect-src 'self' https: wss:" . $gtmDomains . $viteUrl,
+            "img-src 'self' data: https: blob:".$gtmDomains,
+            "connect-src 'self' https: wss:".$gtmDomains.$viteUrl,
             "frame-ancestors 'self'",
             "base-uri 'self'",
             "form-action 'self'",
         ]);
         $response->headers->set('Content-Security-Policy', $csp);
-
-
-
 
         // HSTS - Force HTTPS (enable in production)
         if (app()->environment('production')) {

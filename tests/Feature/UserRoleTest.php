@@ -37,13 +37,13 @@ it('user with invalid role cannot access panel', function () {
     $user = User::factory()->create();
     $user->setRawAttributes(array_merge($user->getAttributes(), ['role' => 'nonexistent']));
 
-    expect($user->canAccessPanel(new \Filament\Panel))->toBeFalse();
+    expect($user->canAccessCms())->toBeFalse();
 });
 
 it('developer can access panel', function () {
     $dev = User::factory()->create(['role' => 'developer']);
 
-    expect($dev->canAccessPanel(new \Filament\Panel))->toBeTrue();
+    expect($dev->canAccessCms())->toBeTrue();
 });
 
 // --- Policy Tests ---

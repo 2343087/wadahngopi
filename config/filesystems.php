@@ -60,13 +60,6 @@ return [
             'report' => false,
         ],
 
-        'livewire' => [
-            'driver' => 'local',
-            'root' => storage_path('app'),
-            'throw' => false,
-            'report' => false,
-        ],
-
     ],
 
     /*

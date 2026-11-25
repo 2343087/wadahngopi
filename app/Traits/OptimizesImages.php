@@ -44,7 +44,9 @@ trait OptimizesImages
             ->toWebp($quality);
 
         // Store to disk
-        Storage::disk('public')->put($path, (string) $optimizedImage);
+        if (! Storage::disk('public')->put($path, (string) $optimizedImage)) {
+            throw new \RuntimeException('Gagal menyimpan foto.');
+        }
 
         return $path;
     }

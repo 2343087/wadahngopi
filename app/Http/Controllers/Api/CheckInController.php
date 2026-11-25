@@ -9,18 +9,17 @@ use Illuminate\Http\Request;
 
 class CheckInController extends Controller
 {
-    public function __construct(protected BadgeService $badgeService)
-    {
-    }
+    public function __construct(protected BadgeService $badgeService) {}
 
     /**
      * Check in at a cafe.
      */
     public function store(Request $request, Cafe $cafe)
     {
+        abort_unless($cafe->status === 'published', 404);
         $validated = $request->validate([
-            'user_lat' => 'nullable|numeric',
-            'user_lng' => 'nullable|numeric',
+            'user_lat' => 'nullable|required_with:user_lng|numeric|between:-90,90',
+            'user_lng' => 'nullable|required_with:user_lat|numeric|between:-180,180',
         ]);
 
         $checkIn = $this->badgeService->checkIn(
@@ -35,7 +34,6 @@ class CheckInController extends Controller
 
         return response()->json([
             'message' => $checkIn->wasRecentlyCreated ? 'Check-in berhasil!' : 'Udah check-in hari ini!',
-            'check_in' => $checkIn,
             'is_verified' => $checkIn->is_verified,
             'verification_reason' => $checkIn->verification_reason ?? 'no_gps',
             'new_badges' => $newBadges,
